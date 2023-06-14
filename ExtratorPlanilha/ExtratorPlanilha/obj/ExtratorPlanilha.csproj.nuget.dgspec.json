@@ -1,0 +1,103 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
+        "projectName": "ExtratorPlanilha",
+        "projectPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
+        "packagesPath": "C:\\Users\\Yann S.O\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Yann S.O\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.pkg.github.com/sempreodonto/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Aspose.Cells": {
+              "target": "Package",
+              "version": "[23.6.0, )"
+            },
+            "Auth0.ManagementApi": {
+              "target": "Package",
+              "version": "[7.20.0, )"
+            },
+            "DocumentFormat.OpenXml": {
+              "target": "Package",
+              "version": "[2.20.0, )"
+            },
+            "Google.Apis": {
+              "target": "Package",
+              "version": "[1.60.0, )"
+            },
+            "Google.Apis.Sheets.v4": {
+              "target": "Package",
+              "version": "[1.60.0.3071, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Core": {
+              "target": "Package",
+              "version": "[2.2.5, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

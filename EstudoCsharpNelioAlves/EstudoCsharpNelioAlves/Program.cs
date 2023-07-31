@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 
 class Program : Estudo
 {
-    public static double Pi = 3.14;
+
     static void Main(String[] args)
     {
         /* 
@@ -48,15 +48,15 @@ class Program : Estudo
 
         */
 
-        Calculadora calculadora = new Calculadora();
+
 
         double MinhaVariavel = 10;
-        Console.WriteLine(calculadora.Circunferencia(MinhaVariavel));
+        Console.WriteLine(Calculadora.Circunferencia(MinhaVariavel));
 
         Console.Write("Entre o valor do raio: ");
         double raio = double.Parse(Console.ReadLine(),CultureInfo.InvariantCulture);
-        double circ = calculadora.Circunferencia(raio);
-        double volume = calculadora.Volume(raio);
+        double circ = Calculadora.Circunferencia(raio);
+        double volume = Calculadora.Volume(raio);
 
         Console.WriteLine("Circunferência: " + circ.ToString("F2",CultureInfo.InvariantCulture));
         Console.WriteLine("Volume: " + volume.ToString("F2", CultureInfo.InvariantCulture));

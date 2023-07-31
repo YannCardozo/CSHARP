@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "MhIDZPHbxBiDlxsVknOT5EJERq4479CUi6Wmw0vZFJ7/KeFDjfre8Bf8H93EH0WoR3Z/0ATzzKr6Pf8ewVIakg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\yann_\\REPO\\Projetos\\BLAZOR\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\yann_\\.nuget\\packages\\bogus\\34.0.2\\bogus.34.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}

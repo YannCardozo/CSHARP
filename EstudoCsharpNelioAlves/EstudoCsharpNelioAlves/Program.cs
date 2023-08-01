@@ -8,28 +8,44 @@ class Program : Estudo
 
     static void Main(String[] args)
     {
-        /* 
-         * 
-         *Aula  de instanciação
-         *
-         *
-         //Estudo estudo = new Estudo();
-         //Produto produto = new Produto();
 
-         //int qte;
+
+        //Gerando CONSTRUTOR DE PRODUTO
+        //Produto tv = new Produto("tv",500.0,10);
+
+        //Console.WriteLine(tv.ToString());
+
+
+         //Aula  de instanciação
+
+         //Estudo estudo = new Estudo();
+
+
+
+
+
+         int qte;
+         string nome;
+         double preço;
 
          // estudo.Printando();
 
          //produto.Nome = "alfa";
          Console.WriteLine("Digite o nome do produto: ");
-         produto.Nome = Console.ReadLine();
+         nome = Console.ReadLine();
          Console.WriteLine("Digite o preço do produto: ");
-         produto.preço = double.Parse(Console.ReadLine(),CultureInfo.InvariantCulture);
+         preço = double.Parse(Console.ReadLine(),CultureInfo.InvariantCulture);
          Console.WriteLine("Digite a quantidade do produto: ");
-         produto.Quantidade = int.Parse(Console.ReadLine());
+         qte = int.Parse(Console.ReadLine());
          Console.WriteLine("\n\n\n\n");
          Console.WriteLine("Seu estoque é: ");
-         Console.WriteLine(produto);
+
+        //Produto produto = new Produto(nome,preço,qte);
+        Produto produto = new Produto(nome,preço);
+        Console.WriteLine(produto);
+
+        Produto teste = new Produto();
+
          Console.WriteLine("\n\n\n\n");
          Console.WriteLine("Quantos " +produto.Nome + " vai adicionar ao estoque?");
          qte = int.Parse(Console.ReadLine());
@@ -46,10 +62,9 @@ class Program : Estudo
         //estudo.EntradaDeDados();
         //estudo.InicioClassesObjeto();
 
-        */
 
-
-
+        //Calculadora
+        /*
         double MinhaVariavel = 10;
         Console.WriteLine(Calculadora.Circunferencia(MinhaVariavel));
 
@@ -60,6 +75,8 @@ class Program : Estudo
 
         Console.WriteLine("Circunferência: " + circ.ToString("F2",CultureInfo.InvariantCulture));
         Console.WriteLine("Volume: " + volume.ToString("F2", CultureInfo.InvariantCulture));
+        */
+
 
 
 

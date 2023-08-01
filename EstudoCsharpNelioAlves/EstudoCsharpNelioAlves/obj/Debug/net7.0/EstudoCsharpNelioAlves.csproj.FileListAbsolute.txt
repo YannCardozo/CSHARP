@@ -32,3 +32,20 @@ C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoC
 C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.pdb
 C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.genruntimeconfig.cache
 C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\ref\EstudoCsharpNelioAlves.dll
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\bin\Debug\net7.0\EstudoCsharpNelioAlves.exe
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\bin\Debug\net7.0\EstudoCsharpNelioAlves.deps.json
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\bin\Debug\net7.0\EstudoCsharpNelioAlves.runtimeconfig.json
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\bin\Debug\net7.0\EstudoCsharpNelioAlves.dll
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\bin\Debug\net7.0\EstudoCsharpNelioAlves.pdb
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\bin\Debug\net7.0\Bogus.dll
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.csproj.AssemblyReference.cache
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.AssemblyInfoInputs.cache
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.AssemblyInfo.cs
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.csproj.CoreCompileInputs.cache
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.csproj.CopyComplete
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.dll
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\refint\EstudoCsharpNelioAlves.dll
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.pdb
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\EstudoCsharpNelioAlves.genruntimeconfig.cache
+C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\obj\Debug\net7.0\ref\EstudoCsharpNelioAlves.dll

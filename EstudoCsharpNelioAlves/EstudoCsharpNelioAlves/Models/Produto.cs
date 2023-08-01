@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bogus.DataSets;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,9 +10,12 @@ namespace EstudoCsharpNelioAlves.Models
 {
     public class Produto
     {
+        //encapsulamento
         private string? _nome;
         private double _preço;
         private int _quantidade;
+
+
 
         //2ª sobrecarga do construtor padrão
         public Produto() { }
@@ -25,6 +29,35 @@ namespace EstudoCsharpNelioAlves.Models
             _quantidade = quantidade;
         
         }
+
+        //usando as PROPRIEDADES , imnplementação de PROPRIEDADES para a classe Nome,
+        //agora aceitará no program.cs a seguinte sintaxe: p.Nome = "String Qualquer"; ao inves de p.SetNome("TV");
+        public string Nome 
+        { get { return _nome; }
+          set
+            {
+                if (value != null && value.Length > 1)
+                {
+                    _nome = value;
+                }
+            }
+        }
+        //criação propriedade preço que retorna o metodo getpreco
+        public double Preco
+        {
+            get { return _preço; }
+        }
+
+        //podemos fazer dessa forma as "auto properties" , 
+        public double Preco { get; private set; }
+
+
+        //criação da propriedade quantidade que retorna a quantidade igual o metodo getquantidade
+        public int Quantidade
+        {
+            get { return _quantidade; }
+        }
+
 
         public string GetNome()
         {
@@ -43,7 +76,7 @@ namespace EstudoCsharpNelioAlves.Models
             }
 
         }
-
+        
 
         //para restringir o acesso ao preço e quantidade, só através dos métodos que poderá ser possível alterar os valores no programa.
         public double GetPreco(double preço)

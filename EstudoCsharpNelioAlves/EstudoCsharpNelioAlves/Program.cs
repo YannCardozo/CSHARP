@@ -10,12 +10,24 @@ class Program : Estudo
     {
         //testando o encapsulamento
 
-        Produto p = new Produto("tv",500.00,10);
+        Produto p = new Produto("tv", 500.00, 10);
 
-        Console.WriteLine(p.GetNome());
 
-        p.SetNome("Tv");
-        Console.WriteLine(p.GetNome());
+        //após gerar as PROPRIEDADES ( GET{} AND SET{} ) , podemos melhorar a sintaxe do nosso código.
+
+        p.Nome = "alfa";
+        Console.WriteLine(p.ToString());
+
+
+
+
+
+
+
+        //Console.WriteLine(p.GetNome());
+
+        //p.SetNome("Tv");
+        //Console.WriteLine(p.GetNome());
 
         //Gerando CONSTRUTOR DE PRODUTO
         //Produto tv = new Produto("tv",500.0,10);

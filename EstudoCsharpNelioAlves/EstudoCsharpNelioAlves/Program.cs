@@ -8,7 +8,14 @@ class Program : Estudo
 
     static void Main(String[] args)
     {
+        //testando o encapsulamento
 
+        Produto p = new Produto("tv",500.00,10);
+
+        Console.WriteLine(p.GetNome());
+
+        p.SetNome("Tv");
+        Console.WriteLine(p.GetNome());
 
         //Gerando CONSTRUTOR DE PRODUTO
         //Produto tv = new Produto("tv",500.0,10);
@@ -16,52 +23,52 @@ class Program : Estudo
         //Console.WriteLine(tv.ToString());
 
 
-         //Aula  de instanciação
+        //Aula  de instanciação
 
-         //Estudo estudo = new Estudo();
-
-
+        //Estudo estudo = new Estudo();
 
 
 
-         int qte;
-         string nome;
-         double preço;
 
-         // estudo.Printando();
+        /*
+        int qte;
+        string nome;
+        double preço;
 
-         //produto.Nome = "alfa";
-         Console.WriteLine("Digite o nome do produto: ");
-         nome = Console.ReadLine();
-         Console.WriteLine("Digite o preço do produto: ");
-         preço = double.Parse(Console.ReadLine(),CultureInfo.InvariantCulture);
-         Console.WriteLine("Digite a quantidade do produto: ");
-         qte = int.Parse(Console.ReadLine());
-         Console.WriteLine("\n\n\n\n");
-         Console.WriteLine("Seu estoque é: ");
+        // estudo.Printando();
 
-        //Produto produto = new Produto(nome,preço,qte);
-        Produto produto = new Produto(nome,preço);
+        //produto.Nome = "alfa";
+        Console.WriteLine("Digite o nome do produto: ");
+        nome = Console.ReadLine();
+        Console.WriteLine("Digite o preço do produto: ");
+        preço = double.Parse(Console.ReadLine(),CultureInfo.InvariantCulture);
+        Console.WriteLine("Digite a quantidade do produto: ");
+        qte = int.Parse(Console.ReadLine());
+        Console.WriteLine("\n\n\n\n");
+        Console.WriteLine("Seu estoque é: ");
+
+       //Produto produto = new Produto(nome,preço,qte);
+       Produto produto = new Produto(nome,preço);
+       Console.WriteLine(produto);
+
+       Produto teste = new Produto();
+
+        Console.WriteLine("\n\n\n\n");
+        Console.WriteLine("Quantos " +produto.Nome + " vai adicionar ao estoque?");
+        qte = int.Parse(Console.ReadLine());
+        produto.AdicionarProdutos(qte);
+        Console.WriteLine("Depois de adicionado ficou: ");
         Console.WriteLine(produto);
 
-        Produto teste = new Produto();
 
-         Console.WriteLine("\n\n\n\n");
-         Console.WriteLine("Quantos " +produto.Nome + " vai adicionar ao estoque?");
-         qte = int.Parse(Console.ReadLine());
-         produto.AdicionarProdutos(qte);
-         Console.WriteLine("Depois de adicionado ficou: ");
-         Console.WriteLine(produto);
+       //Console.WriteLine("Deseja adicionar mais produtos?");
+       //produto.AdicionarProdutos(produto.quantidade);
 
-
-        //Console.WriteLine("Deseja adicionar mais produtos?");
-        //produto.AdicionarProdutos(produto.quantidade);
-
-        //int alfa = -4;
-        //Console.Write(alfa);
-        //estudo.EntradaDeDados();
-        //estudo.InicioClassesObjeto();
-
+       //int alfa = -4;
+       //Console.Write(alfa);
+       //estudo.EntradaDeDados();
+       //estudo.InicioClassesObjeto();
+       */
 
         //Calculadora
         /*

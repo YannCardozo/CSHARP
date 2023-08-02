@@ -49,7 +49,7 @@ namespace EstudoCsharpNelioAlves.Models
         }
 
         //podemos fazer dessa forma as "auto properties" , 
-        public double Preco { get; private set; }
+        //public double Preco { get; private set; }
 
 
         //criação da propriedade quantidade que retorna a quantidade igual o metodo getquantidade

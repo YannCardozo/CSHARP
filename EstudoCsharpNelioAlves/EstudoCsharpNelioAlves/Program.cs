@@ -18,8 +18,11 @@ class Program : Estudo
         p.Nome = "alfa";
         Console.WriteLine(p.ToString());
 
+        Carro golf = new Carro();
+        golf.Codigo = 0;
+        golf.Nome = "Fiat Uno";
 
-
+        Console.WriteLine(golf.ToString());
 
 
 

@@ -22,10 +22,19 @@ class Program : Estudo
         //golf.Codigo = 0;
         //golf.Nome = "Fiat Uno";
 
+
+
         Console.WriteLine(golf.ToString());
 
 
+        Point ponto = new Point();
+        ponto.X = 10;
+        ponto.Y = 20;
+        Console.WriteLine(ponto);
 
+        ponto = new Point();
+
+        Console.WriteLine(ponto);
 
         //Console.WriteLine(p.GetNome());
 

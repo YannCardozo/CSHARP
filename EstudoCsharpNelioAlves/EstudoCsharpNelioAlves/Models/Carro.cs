@@ -16,6 +16,17 @@ namespace EstudoCsharpNelioAlves.Models
         private int _quantidade;
 
 
+        //declarando assim as AUTO PROPERTIES , com restrição no método SET , quando declarado assim não precisamos declarar as propriedades Nome 
+        //,Preço e Quantidade, por exemplo.
+
+       /* public int _codigo { get; private set; }
+        public string? _nome { get; private set; }
+        public double _preço { get; private set; }
+        public int _quantidade { get; private set; }
+       */
+
+
+
         public Carro(int codigo, string nome, double preço, int quantidade)
         {
             
@@ -50,6 +61,14 @@ namespace EstudoCsharpNelioAlves.Models
                 _nome = value;
                         
             }
+        }
+        public double Preço
+        {
+            get { return _preço; }
+        }
+        public int Quantidade
+        {
+            get { return _quantidade;}
         }
         public double ValorEstoque()
         {

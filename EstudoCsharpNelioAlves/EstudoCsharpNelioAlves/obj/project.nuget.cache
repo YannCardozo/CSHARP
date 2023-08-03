@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "3b4uRYP67/Jd9MwUlYQlMTGZ680an8g2YDvXMZ/eWsmQY8S5CIf7hV8jVFs2P7PsGFoA5vlFgTO2QYY+ckF1TQ==",
+  "dgSpecHash": "MQVhojQ071zYTHcx1e6YK2K9t3l7PrrGny2l3roeEG4R8GCgs2ASVI5+s8Uvt7KmAmRZHgp15qofrXCARhJl1g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\yann_\\REPO\\Projetos\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves.csproj",
+  "projectFilePath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\yann_\\.nuget\\packages\\bogus\\34.0.2\\bogus.34.0.2.nupkg.sha512"
+    "C:\\Users\\Yann S.O\\.nuget\\packages\\bogus\\34.0.2\\bogus.34.0.2.nupkg.sha512"
   ],
   "logs": []
 }

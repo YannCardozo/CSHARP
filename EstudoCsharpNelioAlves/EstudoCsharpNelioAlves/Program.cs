@@ -18,9 +18,9 @@ class Program : Estudo
         p.Nome = "alfa";
         Console.WriteLine(p.ToString());
 
-        Carro golf = new Carro();
-        golf.Codigo = 0;
-        golf.Nome = "Fiat Uno";
+        Carro golf = new Carro(2,"golf do ano",25.600,3);
+        //golf.Codigo = 0;
+        //golf.Nome = "Fiat Uno";
 
         Console.WriteLine(golf.ToString());
 

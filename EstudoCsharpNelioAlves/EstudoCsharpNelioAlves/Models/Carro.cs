@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace EstudoCsharpNelioAlves.Models
 {
@@ -15,6 +16,14 @@ namespace EstudoCsharpNelioAlves.Models
         private int _quantidade;
 
 
+        public Carro(int codigo, string nome, double preço, int quantidade)
+        {
+            
+            _codigo = codigo;
+            _nome = nome;
+            _preço = preço;
+            _quantidade = quantidade;
+        }
 
         public int Codigo
         {
@@ -42,11 +51,24 @@ namespace EstudoCsharpNelioAlves.Models
                         
             }
         }
+        public double ValorEstoque()
+        {
+            return _quantidade * _preço;
+        }
 
+        public void AdicionarCarro(int quantidade)
+        {
+            _quantidade += quantidade;
+        }
+
+        public void RemoverCarro(int quantidade)
+        {
+            _quantidade -= quantidade;
+        }
 
         public override string ToString()
         {
-            return "O carro " + _nome + " tem valor de: " + _preço + " em estoque de: " +_quantidade;
+            return "O carro " + _nome + " tem valor de: " + _preço.ToString("F3", CultureInfo.InvariantCulture) + " em estoque de: " +_quantidade;
         }
     }
 }

@@ -2,15 +2,18 @@
 using EstudoCsharpNelioAlves;
 using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
+using System.Collections.Generic;
 
 class Program : Estudo
 {
 
     static void Main(String[] args)
     {
-        //testando o encapsulamento
+
 
         Produto p = new Produto("tv", 500.00, 10);
+
+
 
 
         //após gerar as PROPRIEDADES ( GET{} AND SET{} ) , podemos melhorar a sintaxe do nosso código.
@@ -26,15 +29,17 @@ class Program : Estudo
 
         Console.WriteLine(golf.ToString());
 
+        int testando1 = Calculadora.Sum(1, 2);
 
-        Point ponto = new Point();
-        ponto.X = 10;
-        ponto.Y = 20;
-        Console.WriteLine(ponto);
 
-        ponto = new Point();
+        //Point ponto = new Point();
+        //ponto.X = 10;
+        //ponto.Y = 20;
+        //Console.WriteLine(ponto);
 
-        Console.WriteLine(ponto);
+        //ponto = new Point();
+
+        //Console.WriteLine(ponto);
 
         //Console.WriteLine(p.GetNome());
 

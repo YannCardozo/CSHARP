@@ -1,6 +1,8 @@
-﻿using System;
+﻿using EstudoCsharpNelioAlves.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,23 +22,39 @@ namespace EstudoCsharpNelioAlves
                 Console.WriteLine(dado);
             }
 
-            //outra forma de imprimir uma lista , nesse caso você junta toda a lista em uma string e a separa todos os elementos por uma virgula.
+            //transformar uma lista em uma string separadas por virgula
             string listaComoString = string.Join(", ", ListaDeString2);
             Console.WriteLine(listaComoString);
+
+            ListaDeString2.Add("Maria");
+            ListaDeString2.Add("Joao");
+            ListaDeString2.Add("Marcos");
+            ListaDeString2.Insert(3, "NAtali Marques");
+            Console.WriteLine("--------------------------------");
+            foreach (string unidade in ListaDeString2)
+            {
+                Console.WriteLine(unidade);
+            }
+
+
+            //contando quantos elementos tem na lista agora:
+            ContandoListas(ListaDeString2);
+            EncontrandoItenNaLista(ListaDeString2);
+            //parar programa:
             //Environment.Exit(1);
-         }
+        }
         public void ContandoListas(List<string> lista)
         {   
             //contando quantos elementos tem na lista
-            Console.WriteLine(lista.Count());
+            Console.WriteLine("A lista tem: " + lista.Count());
 
         }
         public static void EncontrandoItenNaLista(List<string> lista)
         {
-            Verifica("s");
-            static bool Verifica(string s)
+            lista.Find(x => x.Contains("M"));
+            foreach(string achei in lista)
             {
-                return true;
+                Console.WriteLine("Encontrados: " + achei);
             }
         }
     }

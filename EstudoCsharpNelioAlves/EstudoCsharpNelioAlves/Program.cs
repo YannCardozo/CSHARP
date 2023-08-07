@@ -13,8 +13,9 @@ class Program : Estudo
 
         Produto p = new Produto("tv", 500.00, 10);
 
+        Listas ListaParaTestar = new Listas();
 
-
+        ListaParaTestar.DeclarandoListasComImprimindo();
 
         //após gerar as PROPRIEDADES ( GET{} AND SET{} ) , podemos melhorar a sintaxe do nosso código.
 
@@ -32,14 +33,7 @@ class Program : Estudo
         int testando1 = Calculadora.Sum(1, 2);
 
 
-        //Point ponto = new Point();
-        //ponto.X = 10;
-        //ponto.Y = 20;
-        //Console.WriteLine(ponto);
 
-        //ponto = new Point();
-
-        //Console.WriteLine(ponto);
 
         //Console.WriteLine(p.GetNome());
 

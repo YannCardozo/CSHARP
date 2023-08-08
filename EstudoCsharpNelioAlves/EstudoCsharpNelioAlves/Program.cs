@@ -34,6 +34,31 @@ class Program : Estudo
 
 
 
+        List<Produto> ProdutoLista = new List<Produto>();
+
+        Produto ProdutoObjeto = new Produto("Alfa",5.5);
+
+
+        ProdutoObjeto.Nome = "tetando";
+
+        string original = "abcde FGHIJ ABC abc DEFG";
+
+        string s1 = original.ToUpper();
+
+        Console.WriteLine(s1);
+
+
+        DateTime HoraDoDia = DateTime.Now;
+        Console.Write(HoraDoDia);
+
+        HoraDoDia = DateTime.ParseExact("2023-08-08", "yyyy-MM-dd", CultureInfo.InvariantCulture);
+        Console.WriteLine(HoraDoDia);
+
+        //ProdutoObjeto
+       
+
+        //List<Calculadora> Trilobita = new List<Calculadora>();
+
 
         //Console.WriteLine(p.GetNome());
 

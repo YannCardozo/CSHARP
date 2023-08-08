@@ -12,14 +12,37 @@ namespace EstudoCsharpNelioAlves
 
 
 
+        public string Nome
+        {
+            get { return Nome; }
+            set
+            {
+                if (value != null && value.Length > 1)
+                {
+                    Nome = value;
+                }
+            }
+        }
+
+        public double Variavel
+        {
+            get { return Variavel; }
+            set
+            {
+                Variavel = value;
+            }
+        }
+
+
+
         public static double Circunferencia(double raio)
         {
             //Console.Write("valor: " + Pi);
             return 2.0 * double.Pi * raio;
         }
-        public static double Volume(double raio)
+        public static double Volume(double Variavel)
         {
-            return 4.0 / 3.0 * double.Pi * Math.Pow(raio, 3);
+            return 4.0 / 3.0 * double.Pi * Math.Pow(Variavel, 3);
         }
         public static int Sum(params int[] numbers)
         {

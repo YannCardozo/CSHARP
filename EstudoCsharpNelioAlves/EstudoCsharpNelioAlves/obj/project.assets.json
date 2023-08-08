@@ -44,23 +44,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Yann S.O\\.nuget\\packages\\": {},
+    "C:\\Users\\aluno.unilasalle\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves.csproj",
+      "projectUniqueName": "C:\\Users\\aluno.unilasalle\\Desktop\\testando\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves.csproj",
       "projectName": "EstudoCsharpNelioAlves",
-      "projectPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves.csproj",
-      "packagesPath": "C:\\Users\\Yann S.O\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\obj\\",
+      "projectPath": "C:\\Users\\aluno.unilasalle\\Desktop\\testando\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves.csproj",
+      "packagesPath": "C:\\Users\\aluno.unilasalle\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\aluno.unilasalle\\Desktop\\testando\\CSHARP\\EstudoCsharpNelioAlves\\EstudoCsharpNelioAlves\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Yann S.O\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\aluno.unilasalle\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -70,8 +70,7 @@
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://nuget.pkg.github.com/sempreodonto/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {

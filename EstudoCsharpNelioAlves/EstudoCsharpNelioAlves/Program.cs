@@ -3,6 +3,7 @@ using EstudoCsharpNelioAlves;
 using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections.Generic;
+using EstudoCsharpNelioAlves.Models.Enums;
 
 class Program : Estudo
 {
@@ -10,8 +11,24 @@ class Program : Estudo
     static void Main(String[] args)
     {
 
+        //Mexendo com ENUMS
 
-        Produto p = new Produto("tv", 500.00, 10);
+        Order PedidoDoCurso = new Order
+        {
+            Id = 1080,
+            Situação = DateTime.Now,
+            Status = OrderStatus.PagamentoPendente
+        };
+
+        Console.WriteLine(PedidoDoCurso);
+
+        string txt = OrderStatus.PagamentoPendente.ToString();
+        Console.WriteLine(txt);
+
+        OrderStatus Os = Enum.Parse<OrderStatus>("Entregue");
+        Console.WriteLine(Os);
+
+   /*     Produto p = new Produto("tv", 500.00, 10);
 
         Listas ListaParaTestar = new Listas();
 
@@ -59,7 +76,7 @@ class Program : Estudo
 
         DataTeste.MostraDataCompleta();
         DataTeste.AdicionaHoras();
-        
+      */  
 
         //ProdutoObjeto
        

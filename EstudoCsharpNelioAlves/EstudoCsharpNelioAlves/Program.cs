@@ -49,10 +49,17 @@ class Program : Estudo
 
 
         DateTime HoraDoDia = DateTime.Now;
-        Console.Write(HoraDoDia);
+       // Console.Write(HoraDoDia);
 
-        HoraDoDia = DateTime.ParseExact("2023-08-08", "yyyy-MM-dd", CultureInfo.InvariantCulture);
-        Console.WriteLine(HoraDoDia);
+        //Console.Write(HoraDoDia.ToLongDateString());
+
+        DatasEhoras DataTeste = new DatasEhoras();
+
+
+
+        DataTeste.MostraDataCompleta();
+        DataTeste.AdicionaHoras();
+        
 
         //ProdutoObjeto
        

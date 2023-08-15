@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace EstudoCsharpNelioAlves.Models
 {
@@ -11,9 +12,8 @@ namespace EstudoCsharpNelioAlves.Models
         public double LimiteEmprestimo { get; set; }
 
         public ContaPJ() 
-        { 
-        
-        
+        {
+            
         }
 
         //herdando o construtor com os dois pontos :  
@@ -24,7 +24,23 @@ namespace EstudoCsharpNelioAlves.Models
             LimiteEmprestimo = emprestimo;
         }
 
-        public void 
+        public void Emprestimo(double quantia)
+        {
+            if(quantia <= LimiteEmprestimo)
+            {
+                Saldo += quantia;
+            }
+            else
+            {
+                Console.WriteLine("Empréstimo limite é de: " + LimiteEmprestimo);
+            }
+        }
+        public override string ToString()
+        {
+            string retornostring = "Conta: " + this.Holder + " com número: " + this.Numero + " saldo de: " + this.Saldo.ToString("F2", CultureInfo.InvariantCulture) + " de valor de empréstimo: " + LimiteEmprestimo.ToString("F2", CultureInfo.InvariantCulture);
+
+            return retornostring;
+        }
 
     }
 }

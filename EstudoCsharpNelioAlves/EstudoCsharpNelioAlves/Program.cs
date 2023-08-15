@@ -28,58 +28,65 @@ class Program : Estudo
         OrderStatus Os = Enum.Parse<OrderStatus>("Entregue");
         Console.WriteLine(Os);
 
-   /*     Produto p = new Produto("tv", 500.00, 10);
 
-        Listas ListaParaTestar = new Listas();
-
-        ListaParaTestar.DeclarandoListasComImprimindo();
-
-        //após gerar as PROPRIEDADES ( GET{} AND SET{} ) , podemos melhorar a sintaxe do nosso código.
-
-        p.Nome = "alfa";
-        Console.WriteLine(p.ToString());
-
-        Carro golf = new Carro(2,"golf do ano",25.600,3);
-        //golf.Codigo = 0;
-        //golf.Nome = "Fiat Uno";
+        ContaPJ NovoCliente = new ContaPJ(01, "Maria joaquina", 250.000, 5500);
 
 
+        Console.WriteLine(NovoCliente.ToString());
+        Console.WriteLine(NovoCliente.Saldo);
 
-        Console.WriteLine(golf.ToString());
+        /*     Produto p = new Produto("tv", 500.00, 10);
 
-        int testando1 = Calculadora.Sum(1, 2);
+             Listas ListaParaTestar = new Listas();
 
+             ListaParaTestar.DeclarandoListasComImprimindo();
 
+             //após gerar as PROPRIEDADES ( GET{} AND SET{} ) , podemos melhorar a sintaxe do nosso código.
 
-        List<Produto> ProdutoLista = new List<Produto>();
+             p.Nome = "alfa";
+             Console.WriteLine(p.ToString());
 
-        Produto ProdutoObjeto = new Produto("Alfa",5.5);
-
-
-        ProdutoObjeto.Nome = "tetando";
-
-        string original = "abcde FGHIJ ABC abc DEFG";
-
-        string s1 = original.ToUpper();
-
-        Console.WriteLine(s1);
-
-
-        DateTime HoraDoDia = DateTime.Now;
-       // Console.Write(HoraDoDia);
-
-        //Console.Write(HoraDoDia.ToLongDateString());
-
-        DatasEhoras DataTeste = new DatasEhoras();
+             Carro golf = new Carro(2,"golf do ano",25.600,3);
+             //golf.Codigo = 0;
+             //golf.Nome = "Fiat Uno";
 
 
 
-        DataTeste.MostraDataCompleta();
-        DataTeste.AdicionaHoras();
-      */  
+             Console.WriteLine(golf.ToString());
+
+             int testando1 = Calculadora.Sum(1, 2);
+
+
+
+             List<Produto> ProdutoLista = new List<Produto>();
+
+             Produto ProdutoObjeto = new Produto("Alfa",5.5);
+
+
+             ProdutoObjeto.Nome = "tetando";
+
+             string original = "abcde FGHIJ ABC abc DEFG";
+
+             string s1 = original.ToUpper();
+
+             Console.WriteLine(s1);
+
+
+             DateTime HoraDoDia = DateTime.Now;
+            // Console.Write(HoraDoDia);
+
+             //Console.Write(HoraDoDia.ToLongDateString());
+
+             DatasEhoras DataTeste = new DatasEhoras();
+
+
+
+             DataTeste.MostraDataCompleta();
+             DataTeste.AdicionaHoras();
+           */
 
         //ProdutoObjeto
-       
+
 
         //List<Calculadora> Trilobita = new List<Calculadora>();
 

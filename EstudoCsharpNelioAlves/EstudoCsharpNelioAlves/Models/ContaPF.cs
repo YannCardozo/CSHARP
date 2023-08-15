@@ -8,11 +8,11 @@ namespace EstudoCsharpNelioAlves.Models
 {
     public class ContaPF
     {
-        public int Numero { get; set; }
-        public string Holder { get; set; }
-        public double Saldo { get; set; }
+        public int Numero { get; private set; }
+        public string Holder { get; private set; }
+        public double Saldo { get; protected  set; }
 
-
+        //protected permite que SUBCLASSES ALTEREM a propriedade da classe ( programa não pode alterar ) , agora ContaPJ pode alterar o valor de Saldo
 
 
         public ContaPF() 

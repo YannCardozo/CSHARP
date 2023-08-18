@@ -25,5 +25,11 @@ namespace EstudoCsharpNelioAlves.Models
         {
             Saldo += Saldo * taxadeinteresse;
         }
+        //precsa colocar virtual para fazer o override
+        public override void Saque(double quantia)
+        {
+           // base.
+            Saldo -= quantia;
+        }
     }
 }

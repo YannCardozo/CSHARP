@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EstudoCsharpNelioAlves.Models
 {
-    public class ContaPF
+    abstract class ContaPF
     {
         public int Numero { get; private set; }
         public string Holder { get; private set; }
@@ -27,10 +27,10 @@ namespace EstudoCsharpNelioAlves.Models
             Saldo = saldo;
         }
 
-        public void Saque(double quantia)
+        public virtual void Saque(double quantia)
         {
-            Saldo -= quantia;
-            Console.WriteLine("Você sacou: " + quantia + " seu saldo atual é de: " + Saldo);
+            Saldo -= quantia - 5;
+            Console.WriteLine("Você sacou ( com a taxa de R$5,00 ): " + quantia + " seu saldo atual é de: " + Saldo);
         }
         public void Deposito(double quantia)
         {

@@ -35,6 +35,38 @@ class Program : Estudo
         Console.WriteLine(NovoCliente.ToString());
         Console.WriteLine(NovoCliente.Saldo);
 
+        ContaPJ TestandoPJ = new ContaPJ(02, "TestePJ", 2500000, 55000);
+        ContaPF TestandoPF = new ContaPJ(03, "TestePF", 3500000, 125000);
+        ContaPoupança TestandoPoupança = new ContaPoupança(04, "TestePoupança", 500000, 35000);
+
+        TestandoPJ.Saque(2300);
+        TestandoPF.Saque(3000);
+        TestandoPoupança.Saque(5000);
+
+        Console.WriteLine(TestandoPJ.Saldo);
+        Console.WriteLine(TestandoPF.Saldo);
+        Console.WriteLine(TestandoPoupança.Saldo);
+
+        List<ContaPF> listaPF = new List<ContaPF>();
+
+        listaPF.Add(new ContaPoupança(1001,"Alex",3556.55,0.01));
+        listaPF.Add(new ContaPJ(1002, "Maria", 500.0, 0.01));
+        listaPF.Add(new ContaPoupança(1003, "Bob", 500.0, 0.01));
+        listaPF.Add(new ContaPJ(1004, "Ana", 500.0, 0.01));
+
+
+        double sum = 0.0;
+
+        foreach(ContaPF conta in listaPF)
+        {
+            sum += conta.Saldo;
+        }
+
+        Console.WriteLine(sum);
+
+
+
+
         /*     Produto p = new Produto("tv", 500.00, 10);
 
              Listas ListaParaTestar = new Listas();

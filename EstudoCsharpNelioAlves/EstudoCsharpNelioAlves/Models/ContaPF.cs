@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EstudoCsharpNelioAlves.Models
 {
-    abstract class ContaPF
+    public class ContaPF
     {
         public int Numero { get; private set; }
         public string Holder { get; private set; }

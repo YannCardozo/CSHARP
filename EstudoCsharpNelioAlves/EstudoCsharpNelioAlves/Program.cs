@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections.Generic;
 using EstudoCsharpNelioAlves.Models.Enums;
+using System;
 
 class Program : Estudo
 {
@@ -65,7 +66,65 @@ class Program : Estudo
         Console.WriteLine(sum);
 
 
+        
 
+        Reservas TestandoReservas = new Reservas();
+
+        Console.WriteLine("Preencha o numero do quarto:");
+        TestandoReservas.Numero_UH = int.Parse(Console.ReadLine());
+        Console.WriteLine("Informe a entrada e depois saida");
+        TestandoReservas.checkin = DateTime.Parse(Console.ReadLine());
+        TestandoReservas.checkout = DateTime.Parse(Console.ReadLine());
+
+        if (TestandoReservas.checkout <= TestandoReservas.checkin)
+        {
+            Console.WriteLine("Checkout precisa ser efetuado depois do check-in, preencha de novo.");
+
+        }
+        else
+        {
+            Console.WriteLine(TestandoReservas);
+        }
+
+
+        //TestandoReservas(405, DateTime.Now(),)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* 
+            try
+            {
+                Console.WriteLine("preencha 2 numeros para prosseguir:");
+                int n1 = int.Parse(Console.ReadLine());
+                int n2 = int.Parse(Console.ReadLine());
+                int result = n1 / n2;
+                Console.WriteLine(result);
+            }
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("Division by zero is not allowed");
+            }
+            catch (FormatException e)
+            {
+                Console.WriteLine("Format error! " + e.Message);
+            }
+
+        */
 
         /*     Produto p = new Produto("tv", 500.00, 10);
 

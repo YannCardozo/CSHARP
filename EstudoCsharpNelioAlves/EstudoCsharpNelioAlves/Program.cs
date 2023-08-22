@@ -66,24 +66,33 @@ class Program : Estudo
         Console.WriteLine(sum);
 
 
+
         
 
-        Reservas TestandoReservas = new Reservas();
+
 
         Console.WriteLine("Preencha o numero do quarto:");
-        TestandoReservas.Numero_UH = int.Parse(Console.ReadLine());
+        int numero_do_quarto= int.Parse(Console.ReadLine());
         Console.WriteLine("Informe a entrada e depois saida");
-        TestandoReservas.checkin = DateTime.Parse(Console.ReadLine());
-        TestandoReservas.checkout = DateTime.Parse(Console.ReadLine());
+        DateTime checkin = DateTime.Parse(Console.ReadLine());
+        DateTime checkout = DateTime.Parse(Console.ReadLine());
+        DateTime now = DateTime.Now;
 
-        if (TestandoReservas.checkout <= TestandoReservas.checkin)
+
+        if (checkin <= now || checkout <= now)
         {
-            Console.WriteLine("Checkout precisa ser efetuado depois do check-in, preencha de novo.");
+            Console.WriteLine("Check-in precisa ser depois de agora e o checkout precisa ser feito antes de agora");
 
+        }
+        else if(checkout <= checkin)
+        {
+            Console.WriteLine("Checkout precisa ser depois do checkin");
         }
         else
         {
-            Console.WriteLine(TestandoReservas);
+            Reservas TestandoReservas = new Reservas(numero_do_quarto, checkin,checkout);
+            TestandoReservas.AtualizaData(checkin, checkout);
+            Console.WriteLine("Reserva efetuada: " + TestandoReservas);
         }
 
 

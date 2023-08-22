@@ -30,6 +30,11 @@ namespace EstudoCsharpNelioAlves.Models
             return (int)duracao.TotalDays;
 
         }
+        public void AtualizaData(DateTime Checkin , DateTime Checkout)
+        {
+            checkin = Checkin;
+            checkout = Checkout;
+        }
         public override string ToString()
         {
             return "Quarto " + Numero_UH + ", entrada de : " + checkin.ToString("dd/mm/yy") + ", saida de: " + checkout.ToString("dd/mm/yy") + ", sua estadia foi de: " + Duracao() + " noites"  ;

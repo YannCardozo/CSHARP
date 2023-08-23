@@ -76,24 +76,23 @@ class Program : Estudo
         Console.WriteLine("Informe a entrada e depois saida");
         DateTime checkin = DateTime.Parse(Console.ReadLine());
         DateTime checkout = DateTime.Parse(Console.ReadLine());
-        DateTime now = DateTime.Now;
+
+        Reservas TestandoReservas = new Reservas(numero_do_quarto, checkin, checkout);
 
 
-        if (checkin <= now || checkout <= now)
+        string erro = TestandoReservas.AtualizaData(checkin, checkout);
+        if(erro != null)
         {
-            Console.WriteLine("Check-in precisa ser depois de agora e o checkout precisa ser feito antes de agora");
 
-        }
-        else if(checkout <= checkin)
-        {
-            Console.WriteLine("Checkout precisa ser depois do checkin");
         }
         else
         {
-            Reservas TestandoReservas = new Reservas(numero_do_quarto, checkin,checkout);
-            TestandoReservas.AtualizaData(checkin, checkout);
             Console.WriteLine("Reserva efetuada: " + TestandoReservas);
         }
+
+
+
+
 
 
         //TestandoReservas(405, DateTime.Now(),)

@@ -30,10 +30,26 @@ namespace EstudoCsharpNelioAlves.Models
             return (int)duracao.TotalDays;
 
         }
-        public void AtualizaData(DateTime Checkin , DateTime Checkout)
+        public string AtualizaData(DateTime Checkin , DateTime Checkout)
         {
+            DateTime now = DateTime.Now;
+
+
+            if (Checkin <= now || Checkout <= now)
+            {
+                Console.WriteLine("Check-in precisa ser data futura e checkout tb");
+                return "erro";
+
+            }
+            else if (Checkout <= Checkin)
+            {
+                Console.WriteLine("Checkout precisa ser depois do checkin");
+                return "erro";
+            }
             checkin = Checkin;
             checkout = Checkout;
+
+            return null;
         }
         public override string ToString()
         {

@@ -19,6 +19,11 @@ namespace EstudoCsharpNelioAlves.Models
 
         public Reservas(int numero, DateTime chegada, DateTime saida)
         {
+            if (saida <= chegada)
+            {
+                throw new Exception("Checkout precisa ser depois do checkin");
+                //return "erro";
+            }
             Numero_UH = numero;
             checkin = chegada;
             checkout = saida;
@@ -30,26 +35,27 @@ namespace EstudoCsharpNelioAlves.Models
             return (int)duracao.TotalDays;
 
         }
-        public string AtualizaData(DateTime Checkin , DateTime Checkout)
+        public void AtualizaData(DateTime Checkin , DateTime Checkout)
         {
             DateTime now = DateTime.Now;
 
 
             if (Checkin <= now || Checkout <= now)
             {
-                Console.WriteLine("Check-in precisa ser data futura e checkout tb");
-                return "erro";
+
+                throw new Exception("Check-in precisa ser data futura e checkout tb");
+               // return "erro";
 
             }
             else if (Checkout <= Checkin)
             {
-                Console.WriteLine("Checkout precisa ser depois do checkin");
-                return "erro";
+                throw new Exception("Checkout precisa ser depois do checkin");
+                //return "erro";
             }
             checkin = Checkin;
             checkout = Checkout;
 
-            return null;
+           // return null;
         }
         public override string ToString()
         {

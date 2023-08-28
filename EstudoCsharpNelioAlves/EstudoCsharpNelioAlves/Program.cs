@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using EstudoCsharpNelioAlves.Models.Enums;
 using EstudoCsharpNelioAlves.Models.Exceptions;
 using System;
+using System.IO;
 
 class Program : Estudo
 {
@@ -99,9 +100,65 @@ class Program : Estudo
         //mexendo com arquivos
 
 
-        string caminhodoarquivo = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivoteste.txt";
+        //diretorio origem para o teste 
+        //@"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
+
+        string pathfilestream = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
+
+        string CaminhoOrigem = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
+        string CaminhoDestino = @"C:\Users\Yann S.O\Desktop\temp\arquivoteste.txt";
+
+        //tente
+        try
+        {
+            string[] linha = File.ReadAllLines(CaminhoOrigem);
+            using(StreamReader sr = File.OpenText(pathfilestream))
+            {
+                while(!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+                    Console.WriteLine(line);
+                }
+            }
+        }
+        //tratamento de erros
+        catch(IOException e)
+        {
+            Console.WriteLine("Erro encontrado: ");
+            Console.WriteLine(e.Message);
+        }
+
+       /*
+
+       StreamReader sr = null;
+        try
+        {
+            //fs = new FileStream(pathfilestream, FileMode.Open);
+            //sr = new StreamReader(fs);
 
 
+            sr = File.OpenText(pathfilestream);
+
+            //fazer toda a varredura do arquivo , Ler ele inteiro.
+            while(!sr.EndOfStream)
+            {
+                string line = sr.ReadLine();
+                Console.WriteLine(line);
+
+            }
+        }
+        catch(IOException e)
+        {
+            Console.WriteLine("ocorreu um erro " + e.Message);
+        }
+        finally
+        {
+            if(sr != null)
+            {
+                sr.Close();
+            }
+
+        }
         //assim também funcionará : 
         //string destinodoarquivo = @"C:\Users\Yann S.O\Desktop\temp\arquivoteste.txt";
 
@@ -110,11 +167,11 @@ class Program : Estudo
         try
         {
             //instancia o objeto responsável por receber o arquivo associado ao endereço , no caso a variavel com o endereço dele "caminhodoarquivo"
-            FileInfo fileinfo = new FileInfo(caminhodoarquivo);
+            //FileInfo fileinfo = new FileInfo(caminhodoarquivo);
             //usa o método copyto, copiando o arquivo instanciado para a string da variavel que está sendo passada, no caso destinodoarquivo
 
             //o método copy to, precisa do nome do destino
-            fileinfo.CopyTo(destinodoarquivo + "\\" + fileinfo.Name, true);
+            //fileinfo.CopyTo(destinodoarquivo + "\\" + fileinfo.Name, true);
         }
         catch(IOException e)
         {
@@ -122,7 +179,7 @@ class Program : Estudo
         }
 
 
-
+       */
 
 
 

@@ -102,85 +102,143 @@ class Program : Estudo
 
         //diretorio origem para o teste 
         //@"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
+        /*
+                string pathfilestream = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
 
-        string pathfilestream = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
 
-        string CaminhoOrigem = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
-        string CaminhoDestino = @"C:\Users\Yann S.O\Desktop\temp\arquivoteste.txt";
+                string CaminhoOrigem = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivo_filestream.txt";
+                string EscreveNoArquivo = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\EscreveNoArquivo.txt";
 
-        //tente
-        try
-        {
-            string[] linha = File.ReadAllLines(CaminhoOrigem);
-            using(StreamReader sr = File.OpenText(pathfilestream))
-            {
-                while(!sr.EndOfStream)
+                string CaminhoDestino = @"C:\Users\Yann S.O\Desktop\temp\arquivoteste.txt";
+
+                //tente
+                try
                 {
-                    string line = sr.ReadLine();
-                    Console.WriteLine(line);
+                    string[] linha = File.ReadAllLines(CaminhoOrigem);
+                    using(StreamReader sr = File.OpenText(CaminhoOrigem))
+                    {
+                        while(!sr.EndOfStream)
+                        {
+                            string line = sr.ReadLine();
+                            Console.WriteLine(line);
+                        }
+
+                    }
+                    //assim apaga todas as linhas:
+                    //File.WriteAllLines(CaminhoOrigem, new string[] { });
                 }
-            }
-        }
-        //tratamento de erros
-        catch(IOException e)
-        {
-            Console.WriteLine("Erro encontrado: ");
-            Console.WriteLine(e.Message);
-        }
+                //tratamento de erros
+                catch (IOException e)
+                {
+                    Console.WriteLine("Erro encontrado: ");
+                    Console.WriteLine(e.Message);
+                }
 
-       /*
+                try
+                {
+                    string[] escrevenoarquivo = File.ReadAllLines(CaminhoOrigem);
+                    using (StreamWriter escrevendo = File.AppendText(EscreveNoArquivo))
+                    {
+                        foreach (string linea in escrevenoarquivo)
+                            escrevendo.WriteLine(linea.ToUpper());
+                    }
+                }
+                catch(IOException e)
+                {
+                    Console.WriteLine("erro " + e.Message);
+                }
 
-       StreamReader sr = null;
+                //ESCREVENDO NO ARQUIVO AGORA
+
+
+
+               StreamReader sr = null;
+                try
+                {
+                    //fs = new FileStream(pathfilestream, FileMode.Open);
+                    //sr = new StreamReader(fs);
+
+
+                    sr = File.OpenText(pathfilestream);
+
+                    //fazer toda a varredura do arquivo , Ler ele inteiro.
+                    while(!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        Console.WriteLine(line);
+
+                    }
+                }
+                catch(IOException e)
+                {
+                    Console.WriteLine("ocorreu um erro " + e.Message);
+                }
+                finally
+                {
+                    if(sr != null)
+                    {
+                        sr.Close();
+                    }
+
+                }
+                //assim também funcionará : 
+                //string destinodoarquivo = @"C:\Users\Yann S.O\Desktop\temp\arquivoteste.txt";
+
+                string destinodoarquivo = @"C:\Users\Yann S.O\Desktop\temp\";
+
+                try
+                {
+                    //instancia o objeto responsável por receber o arquivo associado ao endereço , no caso a variavel com o endereço dele "caminhodoarquivo"
+                    //FileInfo fileinfo = new FileInfo(caminhodoarquivo);
+                    //usa o método copyto, copiando o arquivo instanciado para a string da variavel que está sendo passada, no caso destinodoarquivo
+
+                    //o método copy to, precisa do nome do destino
+                    //fileinfo.CopyTo(destinodoarquivo + "\\" + fileinfo.Name, true);
+                }
+                catch(IOException e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+
+
+               */
+
+
+
+        //Criando Pastas agora:
+
+        string caminhopasta = @"C:\Users\Yann S.O\Desktop\temp";
         try
         {
-            //fs = new FileStream(pathfilestream, FileMode.Open);
-            //sr = new StreamReader(fs);
-
-
-            sr = File.OpenText(pathfilestream);
-
-            //fazer toda a varredura do arquivo , Ler ele inteiro.
-            while(!sr.EndOfStream)
+            //cria coleção genérica para retornar TODAS AS SUBPASTAS de uma pasta original
+            IEnumerable<string> ListaDePastas =  Directory.EnumerateDirectories(caminhopasta, "*.*", SearchOption.AllDirectories);
+            Console.WriteLine("Folders: ");
+            foreach(string s in ListaDePastas)
             {
-                string line = sr.ReadLine();
-                Console.WriteLine(line);
-
-            }
-        }
-        catch(IOException e)
-        {
-            Console.WriteLine("ocorreu um erro " + e.Message);
-        }
-        finally
-        {
-            if(sr != null)
-            {
-                sr.Close();
+                Console.WriteLine(s);
             }
 
+            //cria coleção genérica para retornar TODOS OS ARQUIVOS de uma pasta original
+            IEnumerable<string> ListaDeArquivos = Directory.EnumerateFiles(caminhopasta, "*.*", SearchOption.AllDirectories);
+            Console.WriteLine("Arquivos: ");
+            foreach (string s in ListaDeArquivos)
+            {
+                Console.WriteLine(s);
+            }
+
+            //Cria a pasta no directory
+            Directory.CreateDirectory(caminhopasta + "\\nova pasta");
+
+            Console.WriteLine("O diretorio do arquivo é: " + Path.GetDirectoryName(caminhopasta));
+            Console.WriteLine("O arquivo é: " + Path.GetFileName(caminhopasta));
+            Console.WriteLine("a extensão do arquivo é: " + Path.GetExtension(caminhopasta));
+            Console.WriteLine("O caminho completo do arquivo é: " + Path.GetFullPath(caminhopasta));
+
         }
-        //assim também funcionará : 
-        //string destinodoarquivo = @"C:\Users\Yann S.O\Desktop\temp\arquivoteste.txt";
-
-        string destinodoarquivo = @"C:\Users\Yann S.O\Desktop\temp\";
-
-        try
+        catch(Exception e)
         {
-            //instancia o objeto responsável por receber o arquivo associado ao endereço , no caso a variavel com o endereço dele "caminhodoarquivo"
-            //FileInfo fileinfo = new FileInfo(caminhodoarquivo);
-            //usa o método copyto, copiando o arquivo instanciado para a string da variavel que está sendo passada, no caso destinodoarquivo
-
-            //o método copy to, precisa do nome do destino
-            //fileinfo.CopyTo(destinodoarquivo + "\\" + fileinfo.Name, true);
+            Console.WriteLine("erro " + e.Message);
         }
-        catch(IOException e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-
-
-       */
-
 
 
 

@@ -201,7 +201,7 @@ class Program : Estudo
                 }
 
 
-               */
+
 
 
 
@@ -240,7 +240,23 @@ class Program : Estudo
             Console.WriteLine("erro " + e.Message);
         }
 
+                       */
 
+        //
+        string path3 = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos";
+
+        try
+        {
+            using(StreamReader arquivo = File.OpenText(path3))
+            {
+                List<string> list = new List<string>();
+                while(!arquivo.EndOfStream)
+                { 
+                    list.Add(arquivo.ReadLine());
+                }
+            
+            }
+        }
 
         /* 
             try

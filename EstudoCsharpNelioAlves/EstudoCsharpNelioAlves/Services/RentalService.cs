@@ -20,10 +20,10 @@ namespace EstudoCsharpNelioAlves.Services
             Diaria = diaria;
             _taxService = tax;
         }
-        public void ProcessInvoice(AluguelCarro aluguel)
-        {
-            TimeSpan duration = AluguelCarro.Finish.Subtract(aluguel.start);
-            if(duration.)
-        }
+   //     public void ProcessInvoice(AluguelCarro aluguel)
+    //    {
+    //        TimeSpan duration = AluguelCarro.Finish.Subtract(aluguel.start);
+   //         if(duration.)
+    //    }
     }
 }

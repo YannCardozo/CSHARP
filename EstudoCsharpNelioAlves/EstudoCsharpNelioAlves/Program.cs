@@ -243,19 +243,30 @@ class Program : Estudo
                        */
 
         //
-        string path3 = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos";
+        string path3 = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivoteste.txt";
 
         try
         {
             using(StreamReader arquivo = File.OpenText(path3))
             {
-                List<string> list = new List<string>();
+                List<Employee> empregado = new List<Employee>();
                 while(!arquivo.EndOfStream)
-                { 
-                    list.Add(arquivo.ReadLine());
+                {
+                    empregado.Add(arquivo.ReadLine());
+                }
+                //list.Sort();
+                empregado.CompareTo
+                foreach(Employee emp in empregado)
+                {
+                    Console.WriteLine(emp);
                 }
             
             }
+        }
+        catch(IOException e)
+        {
+            Console.WriteLine("Um erro aconteceu");
+            Console.WriteLine(e.Message);
         }
 
         /* 

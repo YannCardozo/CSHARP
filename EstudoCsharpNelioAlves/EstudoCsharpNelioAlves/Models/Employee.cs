@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace EstudoCsharpNelioAlves.Models
 {
@@ -12,14 +7,12 @@ namespace EstudoCsharpNelioAlves.Models
         public string Nome { get; set; }
         public double Salario { get; set; }
 
-
-        public Employee(string csvemployee) {
+        public Employee(string csvemployee)
+        {
             string[] vect = csvemployee.Split(',');
             Nome = vect[0];
-            Salario = double.Parse(vect[1],CultureInfo.InvariantCulture);        
+            Salario = double.Parse(vect[1], CultureInfo.InvariantCulture);
         }
-
-
 
         public override string ToString()
         {
@@ -28,7 +21,15 @@ namespace EstudoCsharpNelioAlves.Models
 
         public int CompareTo(object? obj)
         {
-            throw new NotImplementedException();
+            // Valida se o objeto é do tipo Employee
+            if (!(obj is Employee))
+            {
+                throw new ArgumentException("Erro de comparação: obj não é do tipo Employee");
+            }
+            Employee other = (Employee)obj;
+
+            // Compare os objetos com base nos nomes
+            return Nome.CompareTo(other.Nome);
         }
     }
 }

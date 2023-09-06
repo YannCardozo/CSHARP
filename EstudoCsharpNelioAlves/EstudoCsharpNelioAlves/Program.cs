@@ -243,27 +243,29 @@ class Program : Estudo
                        */
 
         //
+        //string path3 = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivoteste.txt";
+
         string path3 = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivoteste.txt";
 
         try
         {
-            using(StreamReader arquivo = File.OpenText(path3))
+            using (StreamReader arquivo = File.OpenText(path3))
             {
                 List<Employee> empregado = new List<Employee>();
-                while(!arquivo.EndOfStream)
+                // Enquanto o arquivo não chegar ao fim
+                while (!arquivo.EndOfStream)
                 {
-                    empregado.Add(arquivo.ReadLine());
+                    // Adiciona na lista de objetos tipo Employee 
+                    empregado.Add(new Employee(arquivo.ReadLine()));
                 }
-                //list.Sort();
-                empregado.CompareTo
-                foreach(Employee emp in empregado)
+                empregado.Sort(); // Ordena a lista de funcionários pelo nome
+                foreach (Employee emp in empregado)
                 {
                     Console.WriteLine(emp);
                 }
-            
             }
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             Console.WriteLine("Um erro aconteceu");
             Console.WriteLine(e.Message);

@@ -243,9 +243,40 @@ class Program : Estudo
                        */
 
         //
+
+        //PrintService printservice = new PrintService();
+
+        PrintService<int> printservice = new PrintService<int>();
+
+        Console.WriteLine("Quantos valores?");
+        int n = int.Parse(Console.ReadLine());
+
+
+        //repetição que vai digitar o valor de vezes que vc digitou em n
+        for(int i = 0; i < n; i++)
+        {
+            int x = int.Parse(Console.ReadLine());
+            //vai adicionando dentro de _values que e um vetor de inteiro com o _count que parará quando for = 10, pelo incremento dentro do metodo AddValue
+            printservice.AddValue(x);
+        }
+
+        printservice.Print();
+        Console.WriteLine("First: " + printservice.FirtValue());
+
+
+
+
+
+
+
+
+        /*
+
+         
+
         //string path3 = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivoteste.txt";
 
-        string path3 = @"C:\Users\Yann S.O\Desktop\REPOSITORIO YANN\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivoteste.txt";
+        string path3 = @"C:\Users\yann_\REPO\Projetos\CSHARP\EstudoCsharpNelioAlves\EstudoCsharpNelioAlves\arquivos\arquivoteste.txt";
 
         try
         {
@@ -271,7 +302,11 @@ class Program : Estudo
             Console.WriteLine(e.Message);
         }
 
-        /* 
+        /*
+
+
+
+
             try
             {
                 Console.WriteLine("preencha 2 numeros para prosseguir:");
@@ -288,8 +323,28 @@ class Program : Estudo
             {
                 Console.WriteLine("Format error! " + e.Message);
             }
-
         */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /*     Produto p = new Produto("tv", 500.00, 10);
 

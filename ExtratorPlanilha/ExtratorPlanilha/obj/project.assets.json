@@ -4551,11 +4551,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
+      "projectUniqueName": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
       "projectName": "ExtratorPlanilha",
-      "projectPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
+      "projectPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
       "packagesPath": "C:\\Users\\Yann S.O\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\obj\\",
+      "outputPath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\ExtratorPlanilha\\ExtratorPlanilha\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

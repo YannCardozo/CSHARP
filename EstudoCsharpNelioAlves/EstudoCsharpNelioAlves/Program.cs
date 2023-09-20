@@ -7,6 +7,8 @@ using EstudoCsharpNelioAlves.Models.Enums;
 using EstudoCsharpNelioAlves.Models.Exceptions;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Linq;
 
 class Program : Estudo
 {
@@ -240,7 +242,7 @@ class Program : Estudo
             Console.WriteLine("erro " + e.Message);
         }
 
-                       */
+
 
         //
 
@@ -301,12 +303,51 @@ class Program : Estudo
             Console.WriteLine("Um erro aconteceu");
             Console.WriteLine(e.Message);
         }
-
         /*
 
 
+        HashSet<string> set = new HashSet<string>();
+
+        set.Add("Maria");
+        set.Add("Joao");
+                               */
 
 
+
+        Dictionary<string, string> cookies = new Dictionary<string, string>();
+
+
+        cookies["user"] = "Maria";
+
+        cookies["email"] = "maria@gmail.com";
+
+        cookies["password"] = "969553127";
+
+        cookies["phone"] = "37018392";
+
+        //remove chave tipo email do dictionary
+        cookies.Remove("email");
+
+        //faz verificação para saber se existe chave email no dictionary
+        if(cookies.ContainsKey("email"))
+        {
+            Console.WriteLine(cookies["email"]);
+        }
+        else
+        {
+            Console.WriteLine("Não existe chave de tipo email.");
+        }
+
+        // printa todas as chaves do dictionary
+        foreach (var dictionarydado in cookies)
+        {
+            Console.WriteLine($"chave: {dictionarydado.Key} valor: {dictionarydado.Value}");
+        }
+
+
+
+        /* 
+>>>>>>> 88d66ae (Estudo de dictionary e apis via cep)
             try
             {
                 Console.WriteLine("preencha 2 numeros para prosseguir:");

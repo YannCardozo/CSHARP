@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "hYf7bULB6OCnDa58p0OA++/5iPpvQjy3KxlR+i9/2D9CghX41mHXW5YYj7ROy1OizH+DpgeAvgAnZovJrAbm+g==",
+  "dgSpecHash": "fSmzjSp8EweJxaBEBRj9rMjcWw+b1kTkJ7zql/l53VuouQRjMWyi7FhlUyyf6li51VNQVl6aR2GQDqjwC6+/0A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\Excel-Console-App\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
+  "projectFilePath": "C:\\Users\\Yann S.O\\Desktop\\REPOSITORIO YANN\\CSHARP\\ExtratorPlanilha\\ExtratorPlanilha\\ExtratorPlanilha.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Yann S.O\\.nuget\\packages\\aspose.cells\\23.6.0\\aspose.cells.23.6.0.nupkg.sha512",
     "C:\\Users\\Yann S.O\\.nuget\\packages\\auth0.core\\7.20.0\\auth0.core.7.20.0.nupkg.sha512",

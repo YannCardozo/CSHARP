@@ -13,6 +13,11 @@ namespace EstudoCsharpNelioAlves.Models
             Nome = vect[0];
             Salario = double.Parse(vect[1], CultureInfo.InvariantCulture);
         }
+        public Employee(string nome, double salario)
+        {
+            Salario = salario;
+            Nome = nome;
+        }
 
         public override string ToString()
         {

@@ -1,0 +1,75 @@
+﻿@using BlazorApp1.Pages.Model;
+@using Newtonsoft;
+@page "/"
+
+<h3>Consulta de CEP</h3>
+
+<div>
+    <label for="cepInput">Digite o CEP:</label>
+    <input type="text" id="cepInput" @bind="cep" />
+    <button @onclick="ConsultarCep">Consultar</button>
+</div>
+<br />
+@if (viaCepData != null)
+{
+    <div>
+        <h4>Detalhes do CEP @cep:</h4>
+        <p>CEP: @viaCepData.Cep</p>
+        <p>Logradouro: @viaCepData.Logradouro</p>
+        <p>Bairro: @viaCepData.Bairro</p>
+        <p>Cidade: @viaCepData.Localidade</p>
+        <p>Estado: @viaCepData.Uf</p>
+    </div>
+}
+else
+{
+    @if (flaginicio > 0 || httpStatusCode >= 400)
+    {
+        <div>
+            <h4>Não encontrado o CEP.</h4>
+        </div>
+    }
+
+
+}
+@code {
+    private string cep = "";
+    private ViaCepResponse viaCepData;
+    private int flaginicio = 0;
+    private int httpStatusCode = 0;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
+    private async Task ConsultarCep()
+    {
+        try
+        {
+
+            string url = $"https://viacep.com.br/ws/{cep}/json/";
+
+            using HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                viaCepData = Newtonsoft.Json.JsonConvert.DeserializeObject<ViaCepResponse>(await response.Content.ReadAsStringAsync());
+                //string jsonResponse = Newtonsoft.Json.JsonConvert.SerializeObject(viaCepData);
+                httpStatusCode = (int)response.StatusCode;
+                //JSRuntime.InvokeVoidAsync("alert", "positivo: " + httpStatusCode.ToString());
+            }
+            else
+            {
+                viaCepData = null;
+                Console.WriteLine($"Erro na solicitação HTTP: {response.StatusCode}");
+                //JSRuntime.InvokeVoidAsync("alert", "negativo: " + response.ToString());
+            }
+            flaginicio++;
+        }
+        catch (Exception ex)
+        {
+            viaCepData = null;
+            Console.WriteLine($"Erro: {ex.Message}");
+        }
+    }
+}

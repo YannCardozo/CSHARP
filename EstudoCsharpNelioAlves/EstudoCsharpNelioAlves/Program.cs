@@ -312,8 +312,61 @@ class Program : Estudo
         set.Add("Joao");
                                */
 
+        List<Product> ProductsLista = new List<Product>();
+
+        
+
+        ProductsLista.Add(new Product("TV",900.00));
+        ProductsLista.Add(new Product("Notebook", 1200.00));
+        ProductsLista.Add(new Product("Tablet", 450.00));
+        ProductsLista.Add(new Product("Mouse", 7.00));
+        ProductsLista.Add(new Product("Teclado", 95.00));
+        ProductsLista.Add(new Product("Mousepad", 30.00));
+        ProductsLista.Add(new Product("Headset", 250.00));
+        ProductsLista.Add(new Product("Dispositivo de Áudio", 25.00));
 
 
+        //Comparison<Product> TesteDelegate = CompareProducts();
+
+        //Comparison<Product> TesteDelegate = (p1, p2) => p1.Name.ToUpper().CompareTo(p2.Name.ToUpper()) ;
+
+        //ProductsLista.Sort(TesteDelegate);
+        ProductsLista.Sort((p1,p2) => p1.Name.ToUpper().CompareTo(p2.Name.ToUpper()));  
+
+        //ProductsLista.Sort(CompareProducts);
+
+        foreach (Product produtos in ProductsLista)
+        {
+            Console.WriteLine(produtos);
+        }
+
+
+
+
+        //static int CompareProducts(Product product1, Product product2)
+        //{
+        //    return product1.Name.ToUpper().CompareTo(product2.Name.ToUpper());
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Product ProdutoUm = new Product("Alfa", 5.50);
+
+
+        /* 
         Dictionary<string, string> cookies = new Dictionary<string, string>();
 
 
@@ -346,8 +399,8 @@ class Program : Estudo
 
 
 
-        /* 
->>>>>>> 88d66ae (Estudo de dictionary e apis via cep)
+
+
             try
             {
                 Console.WriteLine("preencha 2 numeros para prosseguir:");

@@ -1,4 +1,5 @@
 ﻿using EstudoCsharpNelioAlves.Models;
+using EstudoCsharpNelioAlves.Models.DelegateMaisLinq;
 using EstudoCsharpNelioAlves;
 using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
@@ -9,9 +10,19 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
+using EstudoCsharpNelioAlves.Models.DelegateMaisLinq;
 
 class Program : Estudo
 {
+
+    static void print<T>(string message, IEnumerable<T> collection)
+    {
+        Console.WriteLine(message);
+        foreach(var objeto in collection)
+        {
+            Console.WriteLine(objeto);
+        }
+    }
 
     static void Main(String[] args)
     {
@@ -312,112 +323,159 @@ class Program : Estudo
         set.Add("Joao");
                                */
 
-        List<Product> ProductsLista = new List<Product>();
+        //OPERAÇÕES COM LINQ
 
-        
+        Category c1 = new Category() { Id = 1, Name = "Tools", Tier = 2 };
+        Category c2 = new Category() { Id = 2, Name = "Computers", Tier = 1 };
+        Category c3 = new Category() { Id = 3, Name = "Electronics", Tier = 1 };
 
-        ProductsLista.Add(new Product("TV",900.00));
-        ProductsLista.Add(new Product("Notebook", 1200.00));
-        ProductsLista.Add(new Product("Tablet", 450.00));
-        ProductsLista.Add(new Product("Mouse", 7.00));
-        ProductsLista.Add(new Product("Teclado", 95.00));
-        ProductsLista.Add(new Product("Mousepad", 30.00));
-        ProductsLista.Add(new Product("Headset", 250.00));
-        ProductsLista.Add(new Product("Dispositivo de Áudio", 25.00));
+        List<Produtosss> products = new List<Produtosss>() {
+                new Produtosss() { Id = 1, Name = "Computer", Price = 1100.0, Category = c2 },
+                new Produtosss() { Id = 2, Name = "Hammer", Price = 90.0, Category = c1 },
+                new Produtosss() { Id = 3, Name = "TV", Price = 1700.0, Category = c3 },
+                new Produtosss() { Id = 4, Name = "Notebook", Price = 1300.0, Category = c2 },
+                new Produtosss() { Id = 5, Name = "Saw", Price = 80.0, Category = c1 },
+                new Produtosss() { Id = 6, Name = "Tablet", Price = 700.0, Category = c2 },
+                new Produtosss() { Id = 7, Name = "Camera", Price = 700.0, Category = c3 },
+                new Produtosss() { Id = 8, Name = "Printer", Price = 350.0, Category = c3 },
+                new Produtosss() { Id = 9, Name = "MacBook", Price = 1800.0, Category = c2 },
+                new Produtosss() { Id = 10, Name = "Sound Bar", Price = 700.0, Category = c3 },
+                new Produtosss() { Id = 11, Name = "Level", Price = 70.0, Category = c1 }
+            };
 
+        var r1 = products.Where(p => p.Category.Tier == 1 && p.Price > 900.00 );
 
-        //Comparison<Product> TesteDelegate = CompareProducts();
+        var r2 = products.Where(p => p.Category.Name == "Tools").Select(p => p.Name);
 
-        //Comparison<Product> TesteDelegate = (p1, p2) => p1.Name.ToUpper().CompareTo(p2.Name.ToUpper()) ;
-
-        //ProductsLista.Sort(TesteDelegate);
-        ProductsLista.Sort((p1,p2) => p1.Name.ToUpper().CompareTo(p2.Name.ToUpper()));  
-
-        //ProductsLista.Sort(CompareProducts);
-
-        foreach (Product produtos in ProductsLista)
-        {
-            Console.WriteLine(produtos);
-        }
-
-
-
-
-        //static int CompareProducts(Product product1, Product product2)
-        //{
-        //    return product1.Name.ToUpper().CompareTo(product2.Name.ToUpper());
-        //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //Product ProdutoUm = new Product("Alfa", 5.50);
-
+        print("objeto a imprimir: ", r1);
+        print("Nome das TOOLS: ", r2);
 
         /* 
-        Dictionary<string, string> cookies = new Dictionary<string, string>();
-
-
-        cookies["user"] = "Maria";
-
-        cookies["email"] = "maria@gmail.com";
-
-        cookies["password"] = "969553127";
-
-        cookies["phone"] = "37018392";
-
-        //remove chave tipo email do dictionary
-        cookies.Remove("email");
-
-        //faz verificação para saber se existe chave email no dictionary
-        if(cookies.ContainsKey("email"))
-        {
-            Console.WriteLine(cookies["email"]);
-        }
-        else
-        {
-            Console.WriteLine("Não existe chave de tipo email.");
-        }
-
-        // printa todas as chaves do dictionary
-        foreach (var dictionarydado in cookies)
-        {
-            Console.WriteLine($"chave: {dictionarydado.Key} valor: {dictionarydado.Value}");
-        }
+foreach(var produto in r1)
+{
+    Console.WriteLine(produto);
+}
 
 
 
+int[] numeros = { 2, 3, 4, 5 };
+
+IEnumerable<int> result = numeros
+    .Where(x => x % 2 == 0)
+    .Select(x => x * 10);
+
+foreach(int numero in result)
+{
+    Console.WriteLine(numero);
+}
 
 
-            try
-            {
-                Console.WriteLine("preencha 2 numeros para prosseguir:");
-                int n1 = int.Parse(Console.ReadLine());
-                int n2 = int.Parse(Console.ReadLine());
-                int result = n1 / n2;
-                Console.WriteLine(result);
-            }
-            catch (DivideByZeroException)
-            {
-                Console.WriteLine("Division by zero is not allowed");
-            }
-            catch (FormatException e)
-            {
-                Console.WriteLine("Format error! " + e.Message);
-            }
-        */
+List<Product> ProductsLista = new List<Product>();
+
+
+
+ProductsLista.Add(new Product("TV",900.00));
+ProductsLista.Add(new Product("Notebook", 1200.00));
+ProductsLista.Add(new Product("Tablet", 450.00));
+ProductsLista.Add(new Product("Mouse", 7.00));
+ProductsLista.Add(new Product("Teclado", 95.00));
+ProductsLista.Add(new Product("Mousepad", 30.00));
+ProductsLista.Add(new Product("Headset", 250.00));
+ProductsLista.Add(new Product("Dispositivo de Áudio", 25.00));
+
+
+//Comparison<Product> TesteDelegate = CompareProducts();
+
+//Comparison<Product> TesteDelegate = (p1, p2) => p1.Name.ToUpper().CompareTo(p2.Name.ToUpper()) ;
+
+//ProductsLista.Sort(TesteDelegate);
+ProductsLista.Sort((p1,p2) => p1.Name.ToUpper().CompareTo(p2.Name.ToUpper()));  
+
+//ProductsLista.Sort(CompareProducts);
+
+foreach (Product produtos in ProductsLista)
+{
+Console.WriteLine(produtos);
+}
+
+
+
+
+//static int CompareProducts(Product product1, Product product2)
+//{
+//    return product1.Name.ToUpper().CompareTo(product2.Name.ToUpper());
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Product ProdutoUm = new Product("Alfa", 5.50);
+
+
+
+Dictionary<string, string> cookies = new Dictionary<string, string>();
+
+
+cookies["user"] = "Maria";
+
+cookies["email"] = "maria@gmail.com";
+
+cookies["password"] = "969553127";
+
+cookies["phone"] = "37018392";
+
+//remove chave tipo email do dictionary
+cookies.Remove("email");
+
+//faz verificação para saber se existe chave email no dictionary
+if(cookies.ContainsKey("email"))
+{
+Console.WriteLine(cookies["email"]);
+}
+else
+{
+Console.WriteLine("Não existe chave de tipo email.");
+}
+
+// printa todas as chaves do dictionary
+foreach (var dictionarydado in cookies)
+{
+Console.WriteLine($"chave: {dictionarydado.Key} valor: {dictionarydado.Value}");
+}
+
+
+
+
+
+try
+{
+Console.WriteLine("preencha 2 numeros para prosseguir:");
+int n1 = int.Parse(Console.ReadLine());
+int n2 = int.Parse(Console.ReadLine());
+int result = n1 / n2;
+Console.WriteLine(result);
+}
+catch (DivideByZeroException)
+{
+Console.WriteLine("Division by zero is not allowed");
+}
+catch (FormatException e)
+{
+Console.WriteLine("Format error! " + e.Message);
+}
+*/
 
 
 

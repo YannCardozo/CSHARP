@@ -1,0 +1,67 @@
+criar o projeto: dotnet new razor -o "C:\Users\yann_\REPO\Projetos\CSHARP\CrudTeste" --auth Individual
+
+instalar pacote para gerar paginas no asp net: dotnet tool install -g dotnet-aspnet-codegenerator
+
+instalar pacote para design dos codigos: dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+
+
+Quando for mudar o tipo de banco de dados , apague toda a pasta migrations e começe do zero com esse comando:
+ 
+(certifique-se de ter alterado em program.cs o tipo de banco novo junto com a string de conexao em appsettings)
+Add-Migration InitialCreate
+
+
+ENtity framework core banco de dados migrations:
+
+add migration: dotnet ef migrations add nomedamigration
+
+update migration: dotnet ef database update
+
+
+( são 5 templates: Create, Update, Delete, List e Details )
+
+sendo o primeiro nome o nome do arquivo e o seguindo nome
+
+ENTIDADE STUDENT:
+
+Create:
+criar uma razorpage: dotnet aspnet-codegenerator razorpage Create Create -m Student -dc ApplicationDbContext -sqlite -udl -outDir Pages/Students
+
+Edit:
+dotnet aspnet-codegenerator razorpage Edit Edit -m Student -dc ApplicationDbContext -sqlite -udl -outDir Pages/Students
+
+Delete:
+dotnet aspnet-codegenerator razorpage Delete Delete -m Student -dc ApplicationDbContext -sqlite -udl -outDir Pages/Students
+
+Details:
+dotnet aspnet-codegenerator razorpage Details Details -m Student -dc ApplicationDbContext -sqlite -udl -outDir Pages/Students
+
+List:
+dotnet aspnet-codegenerator razorpage Index List -m Student -dc ApplicationDbContext -sqlite -udl -outDir Pages/Students
+
+
+ENTIDADE PREMIUM:
+
+Create:
+dotnet aspnet-codegenerator razorpage Create Create -m Premium -dc ApplicationDbContext -sqlite -udl -outDir Pages/Premiums
+
+Edit:
+dotnet aspnet-codegenerator razorpage Edit Edit -m Premium -dc ApplicationDbContext -sqlite -udl -outDir Pages/Premiums
+
+Delete:
+dotnet aspnet-codegenerator razorpage Delete Delete -m Premium -dc ApplicationDbContext -sqlite -udl -outDir Pages/Premiums
+
+Details:
+dotnet aspnet-codegenerator razorpage Details Details -m Premium -dc ApplicationDbContext -sqlite -udl -outDir Pages/Premiums
+
+List:
+dotnet aspnet-codegenerator razorpage Index List -m Premium -dc ApplicationDbContext -sqlite -udl -outDir Pages/Premiums
+
+
+
+
+  "ConnectionStrings": {
+    //"DefaultConnection": "DataSource=app.db;Cache=Shared"
+    //"DefaultConnection": "Server=TesteCrud.mssql.somee.com;Database=TesteCrud;User=Chaons_SQLLogin_1;Password=yp1d8gz3os;TrustServerCertificate=True"
+    "DefaultConnection": "Server=sql.bsite.net\\MSSQL2016;Database=testecrud_SampleDB;User=testecrud_SampleDB;Password=Chaons26196460;TrustServerCertificate=True"
+  },

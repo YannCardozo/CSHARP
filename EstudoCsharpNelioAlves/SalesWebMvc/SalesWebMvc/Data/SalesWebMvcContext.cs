@@ -12,6 +12,8 @@ namespace SalesWebMvc.Data
         public SalesWebMvcContext (DbContextOptions<SalesWebMvcContext> options)
             : base(options)
         {
+            //var connectionString = "server=localhost;user=root;password=26196460;database=saleswebmvcappdp";
+            //var serverVersion = new MySqlServerVersion(new Version(10, 4, 27));
         }
 
         public DbSet<SalesWebMvc.Models.Department> Department { get; set; } = default!;

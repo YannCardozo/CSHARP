@@ -4,6 +4,10 @@ using SalesWebMvc.Data;
 using System.Configuration;
 using Microsoft.EntityFrameworkCore.Sqlite;
 using Pomelo.EntityFrameworkCore.MySql;
+using Org.BouncyCastle.Crypto.Engines;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +29,11 @@ var connectionString = builder.Configuration.GetConnectionString("SalesWebMvcCon
 builder.Services.AddDbContext<SalesWebMvcContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+
+
 });
+
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

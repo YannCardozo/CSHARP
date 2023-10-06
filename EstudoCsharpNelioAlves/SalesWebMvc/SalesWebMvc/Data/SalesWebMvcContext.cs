@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SalesWebMvc.Migrations;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.Enums;
 
@@ -30,12 +29,117 @@ namespace SalesWebMvc.Data
             modelBuilder.Entity<Department>()
                 .Property(d => d.Id)
                 .ValueGeneratedOnAdd();
+            modelBuilder.Entity<SalesRecord>()
+                .Property(d => d.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Seller>()
+                .Property(d => d.Id)
+                .ValueGeneratedOnAdd();
+
 
             modelBuilder.Entity<Department>().HasData(
                 new Department
                 {
                     Id = 1,
                     Name = "Computers"
+                },
+                new Department
+                {
+                    Id = 2,
+                    Name = "Electronics"
+                },
+                new Department
+                {
+                    Id = 3,
+                    Name = "Fashion"
+                },
+                new Department
+                {
+                    Id = 4,
+                    Name = "Books"
+                }
+            );
+
+            modelBuilder.Entity<SalesRecord>().HasData(
+                new SalesRecord
+                {
+                    Id = 1,
+                    Date = new DateTime(2018, 09, 25),
+                    Amount = 11000.0,
+                    Status = SaleStatus.Pending,
+                    Seller = 1
+                },
+                new SalesRecord
+                {
+                    Id = 2,
+                    Date = new DateTime(2018, 09, 26),
+                    Amount = 12000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 3,
+                    Date = new DateTime(2018, 09, 27),
+                    Amount = 13000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 4,
+                    Date = new DateTime(2018, 09, 28),
+                    Amount = 14000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 5,
+                    Date = new DateTime(2018, 09, 29),
+                    Amount = 15000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 6,
+                    Date = new DateTime(2018, 09, 30),
+                    Amount = 16000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 7,
+                    Date = new DateTime(2018, 10, 1),
+                    Amount = 17000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 8,
+                    Date = new DateTime(2018, 10, 2),
+                    Amount = 18000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 9,
+                    Date = new DateTime(2018, 10, 3),
+                    Amount = 19000.0,
+                    Status = new Random().Next(0, 3),
+                    Sellerdid = 1
+                },
+                new SalesRecord
+                {
+                    Id = 10,
+                    Date = new DateTime(2018, 10, 4),
+                    Amount = 20000.0,
+                    Status = new Random().Next(0, 3),
+                    Seller = 1
                 }
             );
         }
@@ -49,10 +153,10 @@ namespace SalesWebMvc.Data
         //        //return;
         //    }
 
-        //    Department d1 = new Department(1, "Computers");
-        //    Department d2 = new Department(2, "Electronics");
-        //    Department d3 = new Department(3, "Fashion");
-        //    Department d4 = new Department(4, "Books");
+        //Department d1 = new Department(1, "Computers");
+        //Department d2 = new Department(2, "");
+        //Department d3 = new Department(3, "");
+        //Department d4 = new Department(4, "");
 
         //    Seller s1 = new Seller(1, "Bob Brown", "bob@gmail.com", new DateTime(1998, 4, 21), 1000.0, d1);
         //    Seller s2 = new Seller(2, "Mateus Santos", "mateus@gmail.com", new DateTime(1990, 7, 15), 1500.0, d2);

@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace SalesWebMvc.Migrations
 {
     /// <inheritdoc />
-    public partial class topzeraa : Migration
+    public partial class TestandoNovaIntegracaoModelCreatinga : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -78,6 +80,17 @@ namespace SalesWebMvc.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Department",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Computers" },
+                    { 2, "Electronics" },
+                    { 3, "Fashion" },
+                    { 4, "Books" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SalesRecord_SellerId",

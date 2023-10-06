@@ -31,6 +31,28 @@ namespace SalesWebMvc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Department");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Computers"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Electronics"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Fashion"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Books"
+                        });
                 });
 
             modelBuilder.Entity("SalesWebMvc.Models.SalesRecord", b =>

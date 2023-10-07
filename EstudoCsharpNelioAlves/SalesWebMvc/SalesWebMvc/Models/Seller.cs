@@ -40,5 +40,6 @@ namespace SalesWebMvc.Models
             //retorna o somatório de todas as vendas realizadas por um vendedor em um determinado período de tempo
             return Sales.Where(sr => sr.Date >= initial && sr.Date <= final).Sum(sr => sr.Amount);
         }
+
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SalesWebMvc.Migrations
 {
     /// <inheritdoc />
-    public partial class TestandoNovaIntegracaoModelCreatinga : Migration
+    public partial class TesteMigrationAddTiloioopla : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

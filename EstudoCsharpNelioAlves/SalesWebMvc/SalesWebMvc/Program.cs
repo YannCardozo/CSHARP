@@ -5,7 +5,7 @@ using System.Configuration;
 using Microsoft.EntityFrameworkCore.Sqlite;
 using Pomelo.EntityFrameworkCore.MySql;
 using Org.BouncyCastle.Crypto.Engines;
-
+using SalesWebMvc.Services;
 
 
 
@@ -37,6 +37,8 @@ builder.Services.AddDbContext<SalesWebMvcContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<SellerService>();
 
 var app = builder.Build();
 

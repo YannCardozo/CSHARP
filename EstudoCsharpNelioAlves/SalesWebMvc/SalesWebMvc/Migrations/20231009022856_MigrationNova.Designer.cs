@@ -11,8 +11,8 @@ using SalesWebMvc.Data;
 namespace SalesWebMvc.Migrations
 {
     [DbContext(typeof(SalesWebMvcContext))]
-    [Migration("20231008042922_TesteMigrationAddTiloioopla")]
-    partial class TesteMigrationAddTiloioopla
+    [Migration("20231009022856_MigrationNova")]
+    partial class MigrationNova
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

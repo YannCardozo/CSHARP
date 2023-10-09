@@ -26,6 +26,7 @@ namespace SalesWebMvc.Controllers
 
         public IActionResult Create()
         {
+            //var sellertres = _sellerService.FindallDepartmentName();
             var seller = new Seller();
             return View(seller);
         }

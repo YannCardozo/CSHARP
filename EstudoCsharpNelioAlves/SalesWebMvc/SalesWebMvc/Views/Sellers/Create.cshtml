@@ -1,7 +1,7 @@
 ﻿@model SalesWebMvc.Models.Seller
 @{
     ViewData["Title"] = "Create";
-    List<Department> testando = new List<Department>(); // Certifique-se de substituir isso pela sua lista de departamentos
+    List<Seller> testando = new List<Seller>(); // Certifique-se de substituir isso pela sua lista de departamentos
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -27,18 +27,20 @@
                 <label asp-for="BaseSalary" class="control-label"></label>
                 <input asp-for="BaseSalary" class="form-control" />
             </div>
-            <div class="form-group">
+@*            <div class="form-group">
                 <label asp-for="Department.Id" class="control-label"></label>
                 <input asp-for="Department.Id" class="form-control" />
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Department.Id" class="control-label"></label>
-                <select asp-for="Department.Id" class="form-control">
-                    @foreach (var item in testando)
-                    {
-                        <option value="@item.Id">@item.Name</option>
-                    }
+                <select asp-for="Department.Id" class="form-select" aria-label="Default select example">
+                    <option selected disabled>Selecione</option>
+                    <option value="1">Computers</option>
+                    <option value="2">Electronics</option>
+                    <option value="3">Fashion</option>
+                    <option value="4">Books</option>
                 </select>
+
             </div>
             <div class="form-group">
                 <input class="btn btn-secondary mt-3" type="submit" value="Create" />

@@ -16,6 +16,10 @@ namespace SalesWebMvc.Services
         {
             return _context.Seller.ToList();
         }
+        public List<Department> FindallDepartmentName()
+        {
+            return _context.Department.ToList();
+        }
 
         public void Insert(Seller obj)
         {

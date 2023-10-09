@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+
 namespace SalesWebMvc.Models
 {
     public class Seller
@@ -10,38 +12,45 @@ namespace SalesWebMvc.Models
         public string Email { get; set; }
         public DateTime Birthday { get; set; }
         public double BaseSalary { get; set; }
+        public int DepartmentId { get; set; } // Adicione esta propriedade para armazenar o ID do departamento
         public Department Department { get; set; }
         public ICollection<SalesRecord> Sales { get; set; } = new List<SalesRecord>();
 
-        //esse método serve para transformar o salário em reais
+        // Este método não precisa ser alterado
+
         public string FormattedBaseSalary => BaseSalary.ToString("C2", CultureInfo.CreateSpecificCulture("pt-BR"));
+
+        // Construtor sem o departamento
 
         public Seller()
         {
 
         }
 
-        public Seller(int id, string name, string email, DateTime birthday, double baseSalary, Department department)
+        // Construtor com o departamento
+
+        public Seller(int id, string name, string email, DateTime birthday, double baseSalary, int departmentId)
         {
             Id = id;
             Name = name;
             Email = email;
             Birthday = birthday;
             BaseSalary = baseSalary;
-            Department = department;
+            DepartmentId = departmentId;
         }
 
-        public void AddSales(SalesRecord sr) 
+        public void AddSales(SalesRecord sr)
         {
             Sales.Add(sr);
         }
+
         public void RemoveSales(SalesRecord sr)
         {
             Sales.Remove(sr);
         }
-        public double TotalSales(DateTime initial,DateTime final)
+
+        public double TotalSales(DateTime initial, DateTime final)
         {
-            //retorna o somatório de todas as vendas realizadas por um vendedor em um determinado período de tempo
             return Sales.Where(sr => sr.Date >= initial && sr.Date <= final).Sum(sr => sr.Amount);
         }
     }

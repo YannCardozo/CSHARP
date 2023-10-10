@@ -12,8 +12,8 @@ namespace SalesWebMvc.Models
         public string Email { get; set; }
         public DateTime Birthday { get; set; }
         public double BaseSalary { get; set; }
-        public int DepartmentId { get; set; } // Adicione esta propriedade para armazenar o ID do departamento
         public Department Department { get; set; }
+        public int DepartmentId { get; set; } // Adicione esta propriedade para armazenar o ID do departamento
         public ICollection<SalesRecord> Sales { get; set; } = new List<SalesRecord>();
 
         // Este método não precisa ser alterado

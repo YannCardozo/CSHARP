@@ -35,23 +35,34 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Seller seller)
         {
-            if (ModelState.IsValid)
-            {
-                var department = _context.Department.Find(seller.Department.Id);
-
-                if (department != null)
-                {
-                    seller.Department = department;
-                    _sellerService.Insert(seller);
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    // O Department não existe (você pode lidar com isso de acordo com sua lógica)
-                    ModelState.AddModelError(string.Empty, "Department not found");
-                }
-            }
-            return View(seller);
+            _sellerService.Insert(seller);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
+
+
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public IActionResult Create(Seller seller)
+//        {
+//            if (ModelState.IsValid)
+//            {
+//                var department = _context.Department.Find(seller.Department.Id);
+
+//                if (department != null)
+//                {
+//                    seller.Department = department;
+//                    _sellerService.Insert(seller);
+//                    return RedirectToAction(nameof(Index));
+//                }
+//                else
+//                {
+//                    // O Department não existe (você pode lidar com isso de acordo com sua lógica)
+//                    ModelState.AddModelError(string.Empty, "Department not found");
+//                }
+//            }
+//            return View(seller);
+//        }
+//    }
+//}

@@ -4,18 +4,19 @@ using SalesWebMvc.Services;
 using SalesWebMvc.Data; // Importe o namespace do seu contexto de dados
 using Microsoft.EntityFrameworkCore; // Importe este namespace para usar o método ToListAsync
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SalesWebMvc.Models.ViewModels;
 
 namespace SalesWebMvc.Controllers
 {
     public class SellersController : Controller
     {
         private readonly SellerService _sellerService;
-        private readonly SalesWebMvcContext _context;
+        private readonly DepartmentService _departmentService;
 
-        public SellersController(SellerService sellerService, SalesWebMvcContext context)
+        public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
-            _context = context;
+            _departmentService = departmentService;
         }
 
         public IActionResult Index()
@@ -26,9 +27,10 @@ namespace SalesWebMvc.Controllers
 
         public IActionResult Create()
         {
-            //var sellertres = _sellerService.FindallDepartmentName();
-            var seller = new Seller();
-            return View(seller);
+
+            var departments = _departmentService.FindAll();
+            var ViewModel = new SellerFormViewModel { Departments = departments };;
+            return View(ViewModel);
         }
 
         [HttpPost]

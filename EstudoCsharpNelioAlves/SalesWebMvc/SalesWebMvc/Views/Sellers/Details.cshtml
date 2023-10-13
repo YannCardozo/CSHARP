@@ -1,0 +1,47 @@
+﻿@model SalesWebMvc.Models.Seller
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h4>Vendedor:</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Nome:
+        </dt>
+        <dd>
+            @Model.Name
+        </dd>
+        <dt>
+            Email:
+        </dt>
+        <dd>
+            @Model.Email
+        </dd>
+        <dt>
+            Data de Nascimento:
+        </dt>
+        <dd>
+            @Model.Birthday
+        </dd>
+        <dt>
+            Salário Base:
+        </dt>
+        <dd>
+            @Model.FormattedBaseSalary
+        </dd>
+        <dt>
+            Departamento:
+        </dt>
+        <dd>
+            @Model.Department.Name
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">Editar</a>
+    <a asp-action="Index"class="btn btn-primary">Voltar</a>
+</div>

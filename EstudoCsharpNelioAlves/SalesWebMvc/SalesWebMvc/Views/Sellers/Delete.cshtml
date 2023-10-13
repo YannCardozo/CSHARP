@@ -1,0 +1,51 @@
+﻿@model SalesWebMvc.Models.Seller
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Certeza que quer deletar o vendedor?</h3>
+
+<div>
+    <h4>Vendedor:</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Nome:
+        </dt>
+        <dd>
+            @Model.Name
+        </dd>
+        <dt>
+            Email:
+        </dt>
+        <dd>
+            @Model.Email
+        </dd>
+        <dt>
+            Data de Nascimento:
+        </dt>
+        <dd>
+            @Model.Birthday
+        </dd>
+        <dt>
+            Salário Base:
+        </dt>
+        <dd>
+            @Model.FormattedBaseSalary
+        </dd>
+        <dt>
+            Departamento:
+        </dt>
+        <dd>
+            @Model.Department.Name
+        </dd>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id"/>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a asp-action="Index">Voltar</a>
+    </form>
+</div>

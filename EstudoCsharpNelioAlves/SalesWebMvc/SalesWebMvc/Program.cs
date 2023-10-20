@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Sqlite;
 using Pomelo.EntityFrameworkCore.MySql;
 using Org.BouncyCastle.Crypto.Engines;
 using SalesWebMvc.Services;
-
+using System.Globalization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,13 +34,23 @@ builder.Services.AddDbContext<SalesWebMvcContext>(options =>
 });
 
 
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<SellerService>();
 builder.Services.AddScoped<DepartmentService>();
 var app = builder.Build();
+
+
+
+var ptbr = new CultureInfo("pt-br");
+var LocalizationOption = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(ptbr),
+    SupportedCultures = new List<CultureInfo> { ptbr },
+    SupportedUICultures = new List<CultureInfo> { ptbr },
+};
+app.UseRequestLocalization(LocalizationOption);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

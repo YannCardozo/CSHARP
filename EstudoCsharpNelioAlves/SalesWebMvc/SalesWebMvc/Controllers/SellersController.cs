@@ -41,7 +41,7 @@ namespace SalesWebMvc.Controllers
         public IActionResult Create(Seller seller)
         {
             //permitir que so seja criado apos dados validados do formulario
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var departments = _departmentService.FindAll();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
@@ -110,7 +110,7 @@ namespace SalesWebMvc.Controllers
         public IActionResult Edit(int? id , Seller seller)
         {
             //permitir que so seja criado apos dados validados do formulario
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var departments = _departmentService.FindAll();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments= departments };  

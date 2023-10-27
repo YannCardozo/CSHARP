@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wattpad.Nodes;
 using Wattpad.logindetails;
+using Wattpad.PJE.LoginDetails;
 
 public class Program
 {
@@ -14,7 +15,8 @@ public class Program
         //Nodes.NodeV3();
 
 
-        await LoginAction.ExecuteLogin();
+        //await LoginAction.ExecuteLogin();
+        await LoginActionPje.ExecuteLogin();
     }
 
 

@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,18 @@ namespace Pje_WebScrapping.Actions
     {
         private static IWebDriver driver;  // Declara uma variável de classe para o driver
 
-        public static void Initialize(string url)
+
+        //MÉTODOS DE ACESSO AO PJE
+
+        public static void IniciarPJE(string url)
         {
             
             driver = new ChromeDriver();
             driver.Navigate().GoToUrl(url);
+            Console.WriteLine("url aberta");
         }
 
-        public static IWebElement GetWebElement(string tagdoelemento)
+        public static IWebElement LoginPJE(string tagdoelemento)
         {
             // Certifique-se de que o driver tenha sido inicializado antes de usá-lo
             if (driver == null)
@@ -33,9 +38,50 @@ namespace Pje_WebScrapping.Actions
             return elemento;
         }
 
-        public static void CleanUp()
+        public static void EncerrarPJE()
         {
             driver.Close();
+            Console.WriteLine("url fechada");
+        }
+
+
+        //MÉTODOS DE MANIPULAÇÃO DE ELEMENTOS AO SITE PJE
+
+        public static void EnviarTexto(IWebDriver driver,string elemento, string value, string tipoelemento)
+        {
+            if(tipoelemento == "id")
+            {
+                driver.FindElement(By.Id(elemento)).SendKeys(value);
+            }
+            if(tipoelemento == "Name")
+            {
+                driver.FindElement(By.Name(elemento)).SendKeys(value);
+            }
+        }
+
+        //funciona em botoes, checkbox, options e etc.
+        public static void Clicar(IWebDriver driver, string elemento,string tipoelemento)
+        {
+            if (tipoelemento == "id")
+            {
+                driver.FindElement(By.Id(elemento)).Click();
+            }
+            if (tipoelemento == "Name")
+            {
+                driver.FindElement(By.Name(elemento)).Click();
+            }
+        }
+
+        public static void SelecionarDropDown(IWebDriver driver, string elemento, string value, string tipoelemento)
+        {
+            if (tipoelemento == "id")
+            {
+                new SelectElement(driver.FindElement(By.Id(elemento))).SelectByText(value);
+            }
+            if (tipoelemento == "Name")
+            {
+                new SelectElement(driver.FindElement(By.Id(elemento))).SelectByText(value);
+            }
         }
 
     }

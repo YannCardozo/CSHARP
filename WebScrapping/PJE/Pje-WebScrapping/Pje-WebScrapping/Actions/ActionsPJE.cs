@@ -33,9 +33,24 @@ namespace Pje_WebScrapping.Actions
             }
 
             // Use o driver para encontrar o elemento desejado
-            IWebElement elemento = driver.FindElement(By.Name(tagdoelemento));
+            //IWebElement elemento = driver.FindElement(By.Name(tagdoelemento));
 
-            return elemento;
+            IWebElement revealed = driver.FindElement(By.Id("revealed"));
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(2))
+            {
+                PollingInterval = TimeSpan.FromMilliseconds(300),
+            };
+            wait.IgnoreExceptionTypes(typeof(ElementNotInteractableException));
+
+            driver.FindElement(By.Id("reveal")).Click();
+            wait.Until(d => {
+                revealed.SendKeys("Displayed");
+                return true;
+            });
+
+            IWebElement added = driver.FindElement(By.Id("box0"));
+
+            return revealed;
         }
 
         public static void EncerrarPJE()

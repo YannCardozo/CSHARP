@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,44 @@ using System.Threading.Tasks;
 
 namespace Pje_WebScrapping.Actions
 {
-    public class ActionsPJE
+    public static class ActionsPJE
     {
         private static IWebDriver driver;  // Declara uma variável de classe para o driver
 
 
         //MÉTODOS DE ACESSO AO PJE
 
-        public static void IniciarPJE(string url)
+        public static IWebDriver IniciarPJE(string url)
         {
-            
-            driver = new ChromeDriver();
+            IWebDriver driver = new ChromeDriver();
             driver.Navigate().GoToUrl(url);
-            Console.WriteLine("url aberta");
+
+            LoginModel LoginPJE = new LoginModel("15248945755", "Gabiroba22@", url);
+            Thread.Sleep(4000);
+
+            driver.SwitchTo().Frame(0);
+            IWebElement usernameInput = driver.FindElement(By.Id("username"));
+            IWebElement passwordInput = driver.FindElement(By.Id("password"));
+            IWebElement loginButton = driver.FindElement(By.Name("login"));
+
+            usernameInput.SendKeys(LoginPJE.Username);
+            passwordInput.SendKeys(LoginPJE.Password);
+
+            loginButton.Click();
+
+            Thread.Sleep(2000);
+            //esse comando SAI DO IFRAME.
+            driver.SwitchTo().DefaultContent();
+            return driver;
         }
+
+        public static void EncerrarPJE()
+        {
+            driver.Close();
+            Console.WriteLine("url fechada");
+        }
+
+
 
         public static IWebElement LoginPJE(string tagdoelemento)
         {
@@ -53,11 +78,7 @@ namespace Pje_WebScrapping.Actions
             return revealed;
         }
 
-        public static void EncerrarPJE()
-        {
-            driver.Close();
-            Console.WriteLine("url fechada");
-        }
+
 
 
         //MÉTODOS DE MANIPULAÇÃO DE ELEMENTOS AO SITE PJE

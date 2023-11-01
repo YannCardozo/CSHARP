@@ -29,6 +29,12 @@ namespace Pje_WebScrapping.Selenium
             //viii.XPath – driver.findElement(By.xpath("XPath"))
 
 
+            //IFRAME : 
+
+
+            //driver.SwitchTo().Frame(0);  <- Esse comando entra para o IFRAME desejado na pagina html.
+            //driver.SwitchTo().DefaultContent(); <- Sai do Iframe e volta ao navegador normal.
+
             //IWEBDRIVER
 
             //instanciar objeto do navegador, abrindo o navegador

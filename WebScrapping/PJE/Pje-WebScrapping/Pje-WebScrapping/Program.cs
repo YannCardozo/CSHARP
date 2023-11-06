@@ -5,11 +5,12 @@ using OpenQA.Selenium.DevTools.V116.SystemInfo;
 using OpenQA.Selenium.Support.UI;
 using Pje_WebScrapping;
 using Pje_WebScrapping.Actions;
+using Pje_WebScrapping.Actions.Login;
+using Pje_WebScrapping.Actions.NavBarMenu;
 using Pje_WebScrapping.Models;
 using System;
 using System.Diagnostics;
 using System.Xml.Linq;
-using static System.Net.WebRequestMethods;
 
 public class Program
 {
@@ -17,7 +18,7 @@ public class Program
     {
         //string url_PJE = "https://tjrj.pje.jus.br/1g/login.seam";
 
-        IWebDriver Driver =  ActionsPJE.IniciarPJE("https://tjrj.pje.jus.br/1g/login.seam");
+        IWebDriver Driver =  Login_PJE.IniciarPJE("https://tjrj.pje.jus.br/1g/login.seam");
 
 
 
@@ -26,7 +27,14 @@ public class Program
         //VERIFICAR SE VAI PRECISAR SAIR DO FRAME OU NAO AO CONSEGUIR LOGAR.
 
         Thread.Sleep(4000);
-        ActionsPJE.EncerrarPJE();
+
+       // ActionsPJE.RetornarIndexPJE(Driver);
+        //Thread.Sleep(1000);
+        NavBarActions.AcessarMenuNavPJE(Driver);
+        Thread.Sleep(1000);
+        NavBarActions.ListaMenuOpcoesNavBar(Driver,"PAINEL");
+        Thread.Sleep(1000);
+        //ActionsPJE.EncerrarPJE(Driver);
 
     }
 }

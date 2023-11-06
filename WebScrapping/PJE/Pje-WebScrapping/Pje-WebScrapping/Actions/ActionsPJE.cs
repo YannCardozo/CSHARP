@@ -5,8 +5,10 @@ using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Pje_WebScrapping.Actions
 {
@@ -14,34 +16,22 @@ namespace Pje_WebScrapping.Actions
     {
         private static IWebDriver driver;  // Declara uma variável de classe para o driver
 
-
+        //SEPARAR EM NOVAS CAMADAS DENTRO DE ACTIONS POR FUNÇÕES, EX: METODOS RELACIONADOS AO NAVBAR, CRIAR A CAMADA ACTIONS NAVBAR
         //MÉTODOS DE ACESSO AO PJE
 
-        public static IWebDriver IniciarPJE(string url)
+
+
+
+        public static void RetornarIndexPJE(IWebDriver driver)
         {
-            IWebDriver driver = new ChromeDriver();
-            driver.Navigate().GoToUrl(url);
-
-            LoginModel LoginPJE = new LoginModel("15248945755", "Gabiroba22@", url);
-            Thread.Sleep(4000);
-
-            driver.SwitchTo().Frame(0);
-            IWebElement usernameInput = driver.FindElement(By.Id("username"));
-            IWebElement passwordInput = driver.FindElement(By.Id("password"));
-            IWebElement loginButton = driver.FindElement(By.Name("login"));
-
-            usernameInput.SendKeys(LoginPJE.Username);
-            passwordInput.SendKeys(LoginPJE.Password);
-
-            loginButton.Click();
-
-            Thread.Sleep(2000);
-            //esse comando SAI DO IFRAME.
-            driver.SwitchTo().DefaultContent();
-            return driver;
+            //instancia o elemento para receber o botão de redirecionar para a home, no navmenu
+            IWebElement ImgPJEHome = driver.FindElement(By.XPath("//*[@id=\"home\"]"));
+            Thread.Sleep(1000);
+            ImgPJEHome.Click();
+            Console.WriteLine("Retornei para a home!");
         }
 
-        public static void EncerrarPJE()
+        public static void EncerrarPJE(IWebDriver driver)
         {
             driver.Close();
             Console.WriteLine("url fechada");
@@ -49,38 +39,29 @@ namespace Pje_WebScrapping.Actions
 
 
 
-        public static IWebElement LoginPJE(string tagdoelemento)
-        {
-            // Certifique-se de que o driver tenha sido inicializado antes de usá-lo
-            if (driver == null)
-            {
-                throw new InvalidOperationException("O driver não foi inicializado. Chame Initialize antes de usar GetWebElement.");
-            }
 
-            // Use o driver para encontrar o elemento desejado
-            //IWebElement elemento = driver.FindElement(By.Name(tagdoelemento));
-
-            IWebElement revealed = driver.FindElement(By.Id("revealed"));
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(2))
-            {
-                PollingInterval = TimeSpan.FromMilliseconds(300),
-            };
-            wait.IgnoreExceptionTypes(typeof(ElementNotInteractableException));
-
-            driver.FindElement(By.Id("reveal")).Click();
-            wait.Until(d => {
-                revealed.SendKeys("Displayed");
-                return true;
-            });
-
-            IWebElement added = driver.FindElement(By.Id("box0"));
-
-            return revealed;
-        }
-
-
-
-
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         //MÉTODOS DE MANIPULAÇÃO DE ELEMENTOS AO SITE PJE
 
         public static void EnviarTexto(IWebDriver driver,string elemento, string value, string tipoelemento)

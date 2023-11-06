@@ -112,13 +112,61 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
                         registro.Click();
                         Thread.Sleep(1000);
 
-                        //criar um for de indice j e tentar receber uma lista com elementos pais e tentar fazer um for que acesse o proximo elemento de alguma forma.
 
 
-                        IWebElement nometarefa = contadorderegistrosrepresentanteprocessual[i];
-                        Thread.Sleep(1000);
-                        nometarefa.Click();
-                        Console.WriteLine(nometarefa.Text);
+
+
+                        IWebElement elementoEncontrado = null;
+                        for (int j = 0; j < i; j++)
+                        {
+                            if(elementoEncontrado == null && i < contadorderegistrosrepresentanteprocessual.Count)
+                            {
+                                IWebElement nometarefa = contadorderegistrosrepresentanteprocessual[i];
+                                string titleAttribute = nometarefa.GetAttribute("title");
+
+                                if (titleAttribute != null && titleAttribute.Equals("Clique para abrir este agrupador"))
+                                {
+                                    elementoEncontrado = nometarefa;
+                                    Console.WriteLine(elementoEncontrado + "  " + elementoEncontrado.Text);
+
+
+
+                                    Thread.Sleep(2000);
+                                }
+                            }
+                        }
+                        
+                        Thread.Sleep(2000);
+
+
+
+                        //SIMULE NOVAMENTE E OBSERVE EM INSPECIONAR ELEMENTO, E TENTE PUXAR PELA PROPRIEDADE TITLE,
+                        //title="Clique para abrir este agrupador"
+
+
+                        Thread.Sleep(2000);
+                            //submenucomnotificacao.Click();
+                            Thread.Sleep(2000);
+                            break;
+                            //IWebElement nometarefadois = contadorderegistrosrepresentanteprocessual[i];
+                            //IWebElement nometarefa = contadorderegistrosrepresentanteprocessual[j];
+
+                            //Console.WriteLine(nometarefa.Text);
+                            //Console.WriteLine(nometarefa.TagName);
+                            //Thread.Sleep(2000);
+
+                            //Console.WriteLine(nometarefa.Text);
+                            //Console.WriteLine(nometarefa.TagName);
+                        
+
+
+
+                        //IWebElement teste = contadorderegistrosrepresentanteprocessual[i + 1];
+                        //Console.WriteLine(teste.Text);
+                        //Console.WriteLine(teste.TagName);
+                        //Thread.Sleep(1000);
+                        //nometarefa.Click();
+
                     }
                     else
                     {

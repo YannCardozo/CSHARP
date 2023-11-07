@@ -1,10 +1,17 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Pje_WebScrapping.Actions.NavBarMenu
 {
@@ -86,97 +93,50 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
 
             IList<IWebElement> contadorderegistrosrepresentanteprocessual = menupainelrepresentanteprocessual.FindElements(By.TagName("span"));
 
-            for (int i = 0; i < contadorderegistrosrepresentanteprocessual.Count; i++)
+
+            IList<IWebElement> linkscomnotificacao = menupainelrepresentanteprocessual.FindElements(By.TagName("a"));
+
+            for (int i = 0; i < linkscomnotificacao.Count; i++)
             {
-                if (i % 2 == 1)
+
+                Console.WriteLine("texto: " +linkscomnotificacao[i].Text);
+                Console.WriteLine("Nome da Tag: " + linkscomnotificacao[i].TagName);
+                //aqui clica nos links tag <a> com notificação.
+                linkscomnotificacao[i].Click();
+                Thread.Sleep(3500);
+                Console.WriteLine("cliquei");
+
+
+                //IWebElement elementoComXmlns = driver.FindElement(By.XPath("//*[@xmlns='http://www.w3.org/1999/xhtml']"));
+                IWebElement elementoComXmlns = driver.FindElement(By.ClassName("rich-tree-node"));
+                IList<IWebElement> verificando = elementoComXmlns.FindElements(By.TagName("td"));
+
+                int count = verificando.Count;
+                for (int j = 0; j < count; j++)
                 {
-                    IWebElement registro = contadorderegistrosrepresentanteprocessual[i];
-                    string registroText = registro.Text;
-                    Console.WriteLine("Valor numérico do registro: " + registroText);
-                    Thread.Sleep(1000);
+                    IWebElement testea = verificando[j];
+                    Console.WriteLine("Aqui está o elemento tagname TD: " + testea.Text);
 
-                    //convertendo o valor da string em registrotext em numero inteiro , CASO VALIDO.
-                    var numero = int.TryParse(registroText, out int temnotificacao);
-
-                    //verificando se o numero convertido é maior que zero, ou seja, se existe notificação no span ou não.
-                    if (temnotificacao > 0)
+                    if (!string.IsNullOrEmpty(testea.Text))
                     {
-
-                        //verificar como criar um for de maneira generica que acesse todos os processos que sejam > 0 , e retorne todos eles como dados para enfim , preenchimento no banco.
-                        //talvez criar um novo método e chamar aqui seja o ideal.
-                        // Agora você pode usar 'numero' como um valor inteiro
-                        //Console.WriteLine("Número como inteiro: " + numero);
-                        //PAINELACTIONPROCESSOS(driver, contadorderegistrosrepresentanteprocessual);
-
-                        Thread.Sleep(1000);
-                        registro.Click();
-                        Thread.Sleep(1000);
+                        Console.WriteLine("Não sou null e tenho o valor de: " + testea.Text);
 
 
-
-
-
-                        IWebElement elementoEncontrado = null;
-                        for (int j = 0; j < i; j++)
+                        // Verificar se é o último elemento
+                        if (j == count - 1)
                         {
-                            if(elementoEncontrado == null && i < contadorderegistrosrepresentanteprocessual.Count)
-                            {
-                                IWebElement nometarefa = contadorderegistrosrepresentanteprocessual[i];
-                                string titleAttribute = nometarefa.GetAttribute("title");
-
-                                if (titleAttribute != null && titleAttribute.Equals("Clique para abrir este agrupador"))
-                                {
-                                    elementoEncontrado = nometarefa;
-                                    Console.WriteLine(elementoEncontrado + "  " + elementoEncontrado.Text);
-
-
-
-                                    Thread.Sleep(2000);
-                                }
-                            }
-                        }
-                        
-                        Thread.Sleep(2000);
-
-
-
-                        //SIMULE NOVAMENTE E OBSERVE EM INSPECIONAR ELEMENTO, E TENTE PUXAR PELA PROPRIEDADE TITLE,
-                        //title="Clique para abrir este agrupador"
-
-
-                        Thread.Sleep(2000);
-                            //submenucomnotificacao.Click();
+                            Console.WriteLine("Este é o último elemento TD.");
+                            testea.Click();
                             Thread.Sleep(2000);
-                            break;
-                            //IWebElement nometarefadois = contadorderegistrosrepresentanteprocessual[i];
-                            //IWebElement nometarefa = contadorderegistrosrepresentanteprocessual[j];
-
-                            //Console.WriteLine(nometarefa.Text);
-                            //Console.WriteLine(nometarefa.TagName);
-                            //Thread.Sleep(2000);
-
-                            //Console.WriteLine(nometarefa.Text);
-                            //Console.WriteLine(nometarefa.TagName);
-                        
-
-
-
-                        //IWebElement teste = contadorderegistrosrepresentanteprocessual[i + 1];
-                        //Console.WriteLine(teste.Text);
-                        //Console.WriteLine(teste.TagName);
-                        //Thread.Sleep(1000);
-                        //nometarefa.Click();
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("Não tem notificação em: " + registro.TagName + " com: " + registroText);
+                            Console.WriteLine("Cliquei no TD");
+                        }
                     }
                 }
+
+
+
             }
-
         }
-
 
 
         //public static void PAINELACTIONPROCESSOS(IWebDriver driver, IList<IWebElement> spanscomnotificacao)
@@ -188,5 +148,5 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
 
         //}
 
-    }
+        }
 }

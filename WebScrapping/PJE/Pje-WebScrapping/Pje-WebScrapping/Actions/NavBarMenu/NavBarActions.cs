@@ -96,46 +96,71 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
 
             IList<IWebElement> linkscomnotificacao = menupainelrepresentanteprocessual.FindElements(By.TagName("a"));
 
-            for (int i = 0; i < linkscomnotificacao.Count; i++)
+            if(linkscomnotificacao.Count > 0)
             {
-
-                Console.WriteLine("texto: " +linkscomnotificacao[i].Text);
-                Console.WriteLine("Nome da Tag: " + linkscomnotificacao[i].TagName);
-                //aqui clica nos links tag <a> com notificação.
-                linkscomnotificacao[i].Click();
-                Thread.Sleep(3500);
-                Console.WriteLine("cliquei");
-
-
-                //IWebElement elementoComXmlns = driver.FindElement(By.XPath("//*[@xmlns='http://www.w3.org/1999/xhtml']"));
-                IWebElement elementoComXmlns = driver.FindElement(By.ClassName("rich-tree-node"));
-                IList<IWebElement> verificando = elementoComXmlns.FindElements(By.TagName("td"));
-
-                int count = verificando.Count;
-                for (int j = 0; j < count; j++)
+                for (int i = 0; i < linkscomnotificacao.Count; i++)
                 {
-                    IWebElement testea = verificando[j];
-                    Console.WriteLine("Aqui está o elemento tagname TD: " + testea.Text);
 
-                    if (!string.IsNullOrEmpty(testea.Text))
+                    Console.WriteLine("texto: " +linkscomnotificacao[i].Text);
+                    Console.WriteLine("Nome da Tag: " + linkscomnotificacao[i].TagName);
+                    //aqui clica nos links tag <a> com notificação.
+                    linkscomnotificacao[i].Click();
+                    Thread.Sleep(3500);
+                    Console.WriteLine("cliquei");
+
+
+                    //IWebElement elementoComXmlns = driver.FindElement(By.XPath("//*[@xmlns='http://www.w3.org/1999/xhtml']"));
+                    IWebElement elementoComXmlns = driver.FindElement(By.ClassName("rich-tree-node"));
+
+                    //recebe a lista de todos os elementos <td> de dentro da table ( menu lateral, apos apertado o click do linkscomnotificacao )
+                    IList<IWebElement> verificando = elementoComXmlns.FindElements(By.TagName("td"));
+
+                    //instanciando o objeto que receberá TODAS AS TABELAS E TRANSPORTARÁ OS DADOS:
+                    List<IWebElement> listaDeTabelas = new List<IWebElement>();
+
+                    //cria outro for para percorrer todos os elementos selecionados de acordo com a notificação
+                    for (int j = 0; j < verificando.Count; j++)
                     {
-                        Console.WriteLine("Não sou null e tenho o valor de: " + testea.Text);
+                        IWebElement testea = verificando[j];
+                        Console.WriteLine("Aqui está o elemento tagname TD: " + testea.Text);
 
-
-                        // Verificar se é o último elemento
-                        if (j == count - 1)
+                        if (!string.IsNullOrEmpty(testea.Text))
                         {
-                            Console.WriteLine("Este é o último elemento TD.");
-                            testea.Click();
-                            Thread.Sleep(2000);
-                            Console.WriteLine("Cliquei no TD");
+                            Console.WriteLine("Não sou null e tenho o valor de: " + testea.Text);
+
+
+                            // Verificar se é o último elemento
+                            if (j == verificando.Count - 1)
+                            {
+                                Console.WriteLine("Este é o último elemento TD, sendo: " + testea.Text);
+                                testea.Click();
+                                Thread.Sleep(2000);
+                                //retorna toda a tabela desejada para cá:
+                                IList<IWebElement> Tabela = driver.FindElements(By.Id("divListaExpedientes"));
+                                listaDeTabelas.AddRange(Tabela);
+                                foreach (var tabela in listaDeTabelas)
+                                {
+                                    Console.WriteLine(tabela.Text);
+                                    Console.WriteLine(tabela.ToString());
+                                    Console.WriteLine("Tabela é uma: " + tabela.TagName);
+                                    Console.WriteLine(tabela.GetCssValue);
+                                }
+
+                            }
                         }
                     }
                 }
-
-
-
+            }else
+            {
+                Console.WriteLine("Não há atualizações no painel de representante processual.");
             }
+
+
+
+
+
+
+
         }
 
 

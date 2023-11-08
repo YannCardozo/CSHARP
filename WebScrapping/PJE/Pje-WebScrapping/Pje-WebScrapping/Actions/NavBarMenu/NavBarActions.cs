@@ -4,14 +4,17 @@ using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Pje_WebScrapping.Actions.NavBarMenu
 {
@@ -145,6 +148,57 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
                                     Console.WriteLine("Tabela é uma: " + tabela.TagName);
                                     Console.WriteLine(tabela.GetCssValue);
                                 }
+                                //instancia a lista que receberá todos os links <a> dos processos dentro da 
+                                //divListExpedientes, ( que abre uma nova janela )
+                                IList<IWebElement> linkmovimentacaoprocessual = driver.FindElements(By.ClassName("numero-processo-expediente"));
+
+                                //recebe o link da pagina, antes de abrir outra janela
+                                string Janela_Principal = RetornarParaJanelaPrincipal(driver);
+
+                                foreach (var linkprocesso in linkmovimentacaoprocessual)
+                                {
+                                    Console.WriteLine(linkprocesso.Text);
+                                    Console.WriteLine(linkprocesso.TagName);
+                                    linkprocesso.Click();
+                                    Thread.Sleep(2000);
+                                    Console.WriteLine(Janela_Principal);
+
+                                    //driver.windowhandles é a propriedade em lista que faz a verificação de janelas
+                                    //abertas
+                                    foreach (var handle in driver.WindowHandles)
+                                    {
+                                        //janela principal é o link do navegador antes dele abrir o link ( entrar no foreach )
+                                        if (handle != Janela_Principal)
+                                        {
+                                            driver.SwitchTo().Window(handle);
+
+                                            // Verifique se a URL da nova janela corresponde à URL desejada
+                                            if (driver.Url.Contains("https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam"))
+                                            {
+                                                // Você está na janela desejada, execute ações necessárias aqui
+                                                Console.WriteLine("Estou na janela desejada.");
+
+                                                //continuar a desenvolver aqui e melhorar os métodos
+                                                driver.Close();
+                                            }
+                                        }
+                                    }
+                                    //https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam
+                                    //linkprocesso.Click() abrirá uma nova janela no navegador
+
+
+                                    //url principal https://tjrj.pje.jus.br/1g/Painel/painel_usuario/advogado.seam
+                                    //url nova janela https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam
+
+
+
+
+
+                                    //agora abrindo o link e armazenando toda a MOVIMENTAÇÃO PROCESSUAL
+
+
+                                    //puxar desse ID a movimentacao processual do link aberto : divTimeLine:eventosTimeLineElement
+                                }
 
                             }
                         }
@@ -173,5 +227,18 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
 
         //}
 
+
+        public static string RetornarParaJanelaPrincipal(IWebDriver driver)
+        {
+            string endereço_do_navegador = driver.CurrentWindowHandle;
+            return endereço_do_navegador;
         }
+
+
+
+
+
+
+    }
+
 }

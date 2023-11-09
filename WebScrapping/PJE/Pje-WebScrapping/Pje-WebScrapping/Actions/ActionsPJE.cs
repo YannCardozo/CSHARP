@@ -37,31 +37,61 @@ namespace Pje_WebScrapping.Actions
             Console.WriteLine("url fechada");
         }
 
+        //estipula um valor em milisecundos de forma randomica, para a thread com mínimo e máximo, algo em torno
+        //os extremos.
+        public static Thread AguardarPje(string tempodeespera)
+        {
+            int tempoDeEsperaDaThread = 0;
+
+
+            if (tempodeespera == "Baixo")
+            {
+                tempoDeEsperaDaThread = GerarNumeroAleatorio(1000, 2000);
+            }
+            else if(tempodeespera == "Medio")
+            {
+                tempoDeEsperaDaThread = GerarNumeroAleatorio(2000, 3000);
+            }
+            else
+            {
+                tempoDeEsperaDaThread = GerarNumeroAleatorio(3000, 4000);
+            }
+
+            return new Thread(() => { Thread.Sleep(tempoDeEsperaDaThread); });
+        }
+
+        //gera um valor ( em milisecundos ) , para implementar como tempo de espera da thread em AguardarPje
+        public static int GerarNumeroAleatorio(int minValue, int maxValue)
+        {
+            Random random = new Random();
+            return random.Next(minValue, maxValue);
+        }
+
+        //Em ActionsPJE criar um metodo para estabelecer um tempo numerico para metodos de thread.sleep
+        //para FACILITAR  a manuntenção
+        //enumerar os tipos de thread.sleep, rapida, media e longa , com numeros randomicos. 1~2 , 2~3 e 3~4
 
 
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         //MÉTODOS DE MANIPULAÇÃO DE ELEMENTOS AO SITE PJE
 
         public static void EnviarTexto(IWebDriver driver,string elemento, string value, string tipoelemento)

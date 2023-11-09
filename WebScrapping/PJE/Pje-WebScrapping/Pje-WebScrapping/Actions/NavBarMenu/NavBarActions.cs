@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
+using Pje_WebScrapping.DataStorage;
 using System.Reflection.Metadata;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Intrinsics.X86;
@@ -40,11 +41,17 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
             Console.WriteLine("Temos " + ListaDosLi.Count + " elementos LI");
 
             //opções dentro do menu navbar:
-            //PAINEL
-            //PROCESSOS
-            //ATIVIDADES
-            //AUDIÊNCIAS E SESSÕES
-            //CONFIGURAÇÃO
+
+            //Em ActionsPJE criar um metodo para estabelecer um tempo numerico para metodos de thread.sleep
+            //para FACILITAR  a manuntenção
+            //enumerar os tipos de thread.sleep, rapida, media e longa , com numeros randomicos. 1~2 , 2~3 e 3~4
+
+            //PAINEL                            <- quase finalizado , precisa testar
+            //PROCESSOS                         <- não começado
+            //ATIVIDADES                        <- não começado
+            //AUDIÊNCIAS E SESSÕES              <- não começado
+            //CONFIGURAÇÃO                      <- não começado
+
             string MetodoFormado = "";
 
             foreach (var elementoLi in ListaDosLi)
@@ -183,12 +190,12 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
                                                 Thread.Sleep(2000);
 
                                                 IList<IWebElement> movimentacaoprocessual = driver.FindElements(By.Id("divTimeLine:eventosTimeLineElement"));
+                                                SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual,driver);
+                                                //foreach (var registro in movimentacaoprocessual)
+                                                //{
+                                                //    Console.WriteLine(registro.Text);
 
-                                                foreach (var registro in movimentacaoprocessual)
-                                                {
-                                                    Console.WriteLine(registro.Text);
-
-                                                }
+                                                //}
 
 
 
@@ -228,24 +235,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
             {
                 Console.WriteLine("Não há atualizações no painel de representante processual.");
             }
-
-
-
-
-
-
-
         }
-
-
-        //public static void PAINELACTIONPROCESSOS(IWebDriver driver, IList<IWebElement> spanscomnotificacao)
-        //{
-        //    foreach (var iten in spanscomnotificacao)
-        //    {
-
-        //    }
-
-        //}
 
 
         public static string RetornarParaJanelaPrincipal(IWebDriver driver)

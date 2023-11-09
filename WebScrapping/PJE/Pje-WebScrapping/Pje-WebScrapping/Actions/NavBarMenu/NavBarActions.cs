@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AngleSharp.Css.Dom;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
@@ -140,13 +141,14 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
                                 Thread.Sleep(2000);
                                 //retorna toda a tabela desejada para cá:
                                 IList<IWebElement> Tabela = driver.FindElements(By.Id("divListaExpedientes"));
+
+                                //insere novos elementos na lista ListaDeTabelas ( tables de registros que encontre )
                                 listaDeTabelas.AddRange(Tabela);
                                 foreach (var tabela in listaDeTabelas)
                                 {
                                     Console.WriteLine(tabela.Text);
                                     Console.WriteLine(tabela.ToString());
                                     Console.WriteLine("Tabela é uma: " + tabela.TagName);
-                                    Console.WriteLine(tabela.GetCssValue);
                                 }
                                 //instancia a lista que receberá todos os links <a> dos processos dentro da 
                                 //divListExpedientes, ( que abre uma nova janela )
@@ -165,21 +167,39 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
 
                                     //driver.windowhandles é a propriedade em lista que faz a verificação de janelas
                                     //abertas
-                                    foreach (var handle in driver.WindowHandles)
+                                    foreach (var NOVA_JANELA in driver.WindowHandles)
                                     {
                                         //janela principal é o link do navegador antes dele abrir o link ( entrar no foreach )
-                                        if (handle != Janela_Principal)
+                                        if (NOVA_JANELA != Janela_Principal)
                                         {
-                                            driver.SwitchTo().Window(handle);
+                                            //você muda o ponteiro do objeto driver para a nova_janela
+                                            driver.SwitchTo().Window(NOVA_JANELA);
 
-                                            // Verifique se a URL da nova janela corresponde à URL desejada
+                                            // Verifique se a URL da nova janela corresponde à URL desejada, essa url é a da NOVA JANELA
                                             if (driver.Url.Contains("https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam"))
                                             {
                                                 // Você está na janela desejada, execute ações necessárias aqui
-                                                Console.WriteLine("Estou na janela desejada.");
+                                                Console.WriteLine("Mudei para: " + driver.Title);
+                                                Thread.Sleep(2000);
+
+                                                IList<IWebElement> movimentacaoprocessual = driver.FindElements(By.Id("divTimeLine:eventosTimeLineElement"));
+
+                                                foreach (var registro in movimentacaoprocessual)
+                                                {
+                                                    Console.WriteLine(registro.Text);
+
+                                                }
+
+
+
 
                                                 //continuar a desenvolver aqui e melhorar os métodos
                                                 driver.Close();
+                                                Console.WriteLine("Fechei a janela nova.");
+                                                driver.SwitchTo().Window(Janela_Principal);
+                                                Console.WriteLine("Mudei para: " + driver.Title);
+
+                                                
                                             }
                                         }
                                     }

@@ -19,9 +19,6 @@ namespace Pje_WebScrapping.Actions
         //SEPARAR EM NOVAS CAMADAS DENTRO DE ACTIONS POR FUNÇÕES, EX: METODOS RELACIONADOS AO NAVBAR, CRIAR A CAMADA ACTIONS NAVBAR
         //MÉTODOS DE ACESSO AO PJE
 
-
-
-
         public static void RetornarIndexPJE(IWebDriver driver)
         {
             //instancia o elemento para receber o botão de redirecionar para a home, no navmenu
@@ -37,27 +34,33 @@ namespace Pje_WebScrapping.Actions
             Console.WriteLine("url fechada");
         }
 
+        public static string RetornarParaJanelaPrincipal(IWebDriver driver)
+        {
+            string endereço_do_navegador = driver.CurrentWindowHandle;
+            return endereço_do_navegador;
+        }
+
         //estipula um valor em milisecundos de forma randomica, para a thread com mínimo e máximo, algo em torno
         //os extremos.
-        public static Thread AguardarPje(string tempodeespera)
+        public static void AguardarPje(string tempodeespera)
         {
             int tempoDeEsperaDaThread = 0;
 
 
             if (tempodeespera == "Baixo")
             {
-                tempoDeEsperaDaThread = GerarNumeroAleatorio(1000, 2000);
+                tempoDeEsperaDaThread = GerarNumeroAleatorio(2000, 3000);
             }
             else if(tempodeespera == "Medio")
             {
-                tempoDeEsperaDaThread = GerarNumeroAleatorio(2000, 3000);
+                tempoDeEsperaDaThread = GerarNumeroAleatorio(3000, 4000);
             }
             else
             {
-                tempoDeEsperaDaThread = GerarNumeroAleatorio(3000, 4000);
+                tempoDeEsperaDaThread = GerarNumeroAleatorio(4000, 5000);
             }
 
-            return new Thread(() => { Thread.Sleep(tempoDeEsperaDaThread); });
+            Thread.Sleep(tempoDeEsperaDaThread);
         }
 
         //gera um valor ( em milisecundos ) , para implementar como tempo de espera da thread em AguardarPje

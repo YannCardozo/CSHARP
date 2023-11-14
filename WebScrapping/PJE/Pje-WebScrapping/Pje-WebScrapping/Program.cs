@@ -26,15 +26,21 @@ public class Program
 
         //VERIFICAR SE VAI PRECISAR SAIR DO FRAME OU NAO AO CONSEGUIR LOGAR.
 
-        Thread.Sleep(4000);
+        ActionsPJE.AguardarPje("Alto");
+        //Thread.Sleep(4000);
 
-       // ActionsPJE.RetornarIndexPJE(Driver);
+        // ActionsPJE.RetornarIndexPJE(Driver);
         //Thread.Sleep(1000);
         NavBarActions.AcessarMenuNavPJE(Driver);
-        Thread.Sleep(1000);
+        ActionsPJE.AguardarPje("Baixo");
+        //Thread.Sleep(1000);
+
+        //acessa o menu que contem value PAINEL , INDO PARA PAINELACTION DPS.
         NavBarActions.ListaMenuOpcoesNavBar(Driver,"PAINEL");
-        Thread.Sleep(1000);
+        ActionsPJE.AguardarPje("Baixo");
+        //Thread.Sleep(1000);
         //ActionsPJE.EncerrarPJE(Driver);
 
+        
     }
 }

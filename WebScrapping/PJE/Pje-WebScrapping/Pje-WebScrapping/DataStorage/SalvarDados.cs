@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using Pje_WebScrapping.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Pje_WebScrapping.DataStorage
             foreach (var iten in HistoricoDeProcessos)
             {
                 Console.WriteLine("Começando a imprimir o que tem na movimentação processual");
-                Thread.Sleep(2000);
+                ActionsPJE.AguardarPje("Baixo");
                 Console.WriteLine("SalvarMovimentacaoProcessual, iten: " + ponto_de_parada + "  " + iten.Text);
                 if(HistoricoDeProcessos.Count - 1 == ponto_de_parada)
                 {

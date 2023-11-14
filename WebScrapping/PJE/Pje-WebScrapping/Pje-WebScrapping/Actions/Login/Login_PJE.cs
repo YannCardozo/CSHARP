@@ -20,7 +20,7 @@ namespace Pje_WebScrapping.Actions.Login
             LoginModel LoginPJE = new LoginModel("15248945755", "Gabiroba22@", url);
             Thread.Sleep(4000);
 
-            //esse comando ACESSSA o IFRAME dentro do html
+            //esse comando ACESSSA o IFRAME dentro do html, que é um elemento dentro da tela de login que precisa ser acessado dessa forma.
             driver.SwitchTo().Frame(0);
             IWebElement usernameInput = driver.FindElement(By.Id("username"));
             IWebElement passwordInput = driver.FindElement(By.Id("password"));
@@ -32,7 +32,7 @@ namespace Pje_WebScrapping.Actions.Login
             Thread.Sleep(1000);
             loginButton.Click();
 
-            //esse comando SAI DO IFRAME.
+            //esse comando SAI DO IFRAME e retorna para a tela normal do pje.
             driver.SwitchTo().DefaultContent();
             Console.WriteLine("Loguei no PJE");
             return driver;

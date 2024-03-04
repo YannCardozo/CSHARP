@@ -106,9 +106,6 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                 //col-md-4 e col-md-8 dentro de TD no cabecalho
                                 IList<IWebElement> ConteudoProcessoAberto = driver.FindElements(By.ClassName("informacoes-linha-expedientes"));
 
-                                SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, driver);
-
-
                                 //recebe o link da pagina, antes de abrir outra janela
                                 string Janela_Principal = ActionsPJE.RetornarParaJanelaPrincipal(driver);
 
@@ -174,8 +171,10 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                     //puxar desse ID a movimentacao processual do link aberto : divTimeLine:eventosTimeLineElement
                                 }
+                                SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, linkmovimentacaoprocessual, driver);
 
                             }
+
                         }
                     }
                 }

@@ -18,8 +18,6 @@ namespace Pje_WebScrapping.DataStorage
             {
                 if(CabecalhoProcesso.Count > 0) 
                 {
-
-
                     IList<IWebElement> ConteudoDasDivsProcessoAberto = new List<IWebElement>();
                     foreach (var elemento in CabecalhoProcesso)
                     {
@@ -38,20 +36,10 @@ namespace Pje_WebScrapping.DataStorage
                     }
                     Console.WriteLine("\n\n\n\n\n\n\n\n\n\n");
                 }
+                return "Salvei no banco com sucesso!";
             }
             return "Erro em SalvarDadosProcesso";
         }
-
-
-
-
-
-        //public static string SalvarNumeroProcesso(string NumeroProcesso, IWebDriver driver)
-        //{
-        //    Console.WriteLine("\n\n\n\n\n\n");
-        //    Console.WriteLine("Nº do processo salvo: " + NumeroProcesso);
-        //    return "";
-        //}
 
         public static void SalvarMovimentacaoProcessual(IList<IWebElement> ListaDeMovimentacaoProcessual,
             IWebDriver driver)

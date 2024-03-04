@@ -96,13 +96,26 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                 //divListExpedientes, ( que abre uma nova janela )
                                 IList<IWebElement> linkmovimentacaoprocessual = driver.FindElements(By.ClassName("numero-processo-expediente"));
 
+                                //testando dados do processo
+
+                                Console.WriteLine("testando valor de conteudo processo aberto: ");
+                                Console.WriteLine("\n\n\n\n\n\n\n\n\n\n");
+
+                                
+
+                                //col-md-4 e col-md-8 dentro de TD no cabecalho
+                                IList<IWebElement> ConteudoProcessoAberto = driver.FindElements(By.ClassName("informacoes-linha-expedientes"));
+
+                                SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, driver);
+
+
                                 //recebe o link da pagina, antes de abrir outra janela
                                 string Janela_Principal = ActionsPJE.RetornarParaJanelaPrincipal(driver);
 
                                 foreach (var linkprocesso in linkmovimentacaoprocessual)
                                 {
-                                    Console.WriteLine(linkprocesso.Text);
-                                    Console.WriteLine(linkprocesso.TagName);
+                                    Console.WriteLine("LinkProcesso: " + linkprocesso.Text);
+                                    Console.WriteLine("LinkPRocesso TAG: " + linkprocesso.TagName);
                                     linkprocesso.Click();
                                     ActionsPJE.AguardarPje("Baixo");
                                     Console.WriteLine(Janela_Principal);
@@ -167,19 +180,20 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                     }
                 }
                 Console.WriteLine("Finalizado Painel do Advogado, redirecionando agora para a index.");
-                
+
                 //retomando para a INDEX agora
+
                 ActionsPJE.RetornarIndexPJE(driver);
             }
             else
             {
                 Console.WriteLine("Não há atualizações no painel de representante processual.");
             }
+
+
+
+
         }
-
-
-
-
 
         //proximas "ACTIONS"
     }

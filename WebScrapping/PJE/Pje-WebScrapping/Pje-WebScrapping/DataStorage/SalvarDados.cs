@@ -12,6 +12,46 @@ namespace Pje_WebScrapping.DataStorage
     {
         //classe destinada a fazer a inserção no banco 
 
+        public static string SalvarDadosProcesso(IList<IWebElement> CabecalhoProcesso, IWebDriver driver)
+        {
+            if(driver != null)
+            {
+                if(CabecalhoProcesso.Count > 0) 
+                {
+
+
+                    IList<IWebElement> ConteudoDasDivsProcessoAberto = new List<IWebElement>();
+                    foreach (var elemento in CabecalhoProcesso)
+                    {
+                        // Encontra todas as divs dentro do elemento atual e adiciona à lista ConteudoDasDivsProcessoAberto
+                        IList<IWebElement> divsInternas = elemento.FindElements(By.TagName("div"));
+                        foreach (var div in divsInternas)
+                        {
+                            //insere todas as divs dentro do elemento TD referente ao processo
+                            ConteudoDasDivsProcessoAberto.Add(div);
+                        }
+                    }
+                    Console.WriteLine("\n\n\n\n\n\n\n\n\n\n Testando SALVARDADOSPROCESSOAGORA");
+                    foreach (var ConteudoDivDoProcesso in ConteudoDasDivsProcessoAberto)
+                    {
+                        Console.WriteLine(ConteudoDivDoProcesso.Text);
+                    }
+                    Console.WriteLine("\n\n\n\n\n\n\n\n\n\n");
+                }
+            }
+            return "Erro em SalvarDadosProcesso";
+        }
+
+
+
+
+
+        //public static string SalvarNumeroProcesso(string NumeroProcesso, IWebDriver driver)
+        //{
+        //    Console.WriteLine("\n\n\n\n\n\n");
+        //    Console.WriteLine("Nº do processo salvo: " + NumeroProcesso);
+        //    return "";
+        //}
 
         public static void SalvarMovimentacaoProcessual(IList<IWebElement> ListaDeMovimentacaoProcessual,
             IWebDriver driver)
@@ -40,40 +80,56 @@ namespace Pje_WebScrapping.DataStorage
             //fazer lista com media interno tipo ( que são as divs com todas as descrições da movimentação )
             //fazer lista com media data para puxar as datas da movimentação que ficam acima das divs.
 
-            foreach (var iten in HistoricoDeProcessos)
-            {
-                Console.WriteLine("Começando a imprimir o que tem na movimentação processual");
-                ActionsPJE.AguardarPje("Baixo");
-                Console.WriteLine("SalvarMovimentacaoProcessual, iten: " + ponto_de_parada + "  " + iten.Text);
-                if(HistoricoDeProcessos.Count - 1 == ponto_de_parada)
-                {
-                    Console.WriteLine("Finalizei a lista");
-                }
+            int roda = 0;
 
-                ponto_de_parada++;
+            Console.WriteLine("\n\n\n\n\n\n");
+            foreach (var stringonamovimentacao in HistoricoDeProcessos)
+            {
+                string texto = stringonamovimentacao.Text.ToString();
+                int comprimentoTotal = texto.Length;
+
+                // Calcula o tamanho de cada parte
+                int tamanhoParte = comprimentoTotal / 3;
+
+                // Divide a string em três partes
+                string parte1 = texto.Substring(0, tamanhoParte);
+                string parte2 = texto.Substring(tamanhoParte, tamanhoParte);
+                string parte3 = texto.Substring(2 * tamanhoParte, tamanhoParte);
+
+                // Imprime as partes
+                Console.WriteLine("Parte 1: " + parte1);
+                Console.WriteLine("\n\n\n");
+                Console.WriteLine("Parte 2: " + parte2);
+                Console.WriteLine("\n\n\n");
+                Console.WriteLine("Parte 3: " + parte3);
+                Console.WriteLine("\n\n\n");
+
+
+
+                //roda++;
+                //Console.WriteLine("Começando a imprimir o que tem na movimentação processual");
+                //ActionsPJE.AguardarPje("Baixo");
+                ////imprime TODA A MOVIMENTAÇÃO PROCESSUAL
+                //Console.WriteLine("\n +++ "  + stringonamovimentacao.TagName);
+                //Console.WriteLine("SalvarMovimentacaoProcessual, iten: " + ponto_de_parada + "  " + stringonamovimentacao.Text);
+                //Console.WriteLine("Total : " + stringonamovimentacao.ToString().Length);
+                //foreach (var teste in stringonamovimentacao.Text)
+                //{
+
+                //}
+
+
+                //if(HistoricoDeProcessos.Count - 1 == ponto_de_parada)
+                //{
+                //    Console.WriteLine("Finalizei a lista");
+                //}
+                //ponto_de_parada++;
 
             }
             ponto_de_parada = 0;
-            //foreach (var iten in QuadradoDaMovimentacao)
-            //{
-                
-            //    Console.WriteLine("Item: " + ponto_de_parada + " " + iten.Text);
-
-            //    ponto_de_parada++;
-            //}
-
-
-
-            //ponto_de_parada = 0;
-            //foreach (var iten in DatasDaMovimentacao)
-            //{
-            //    Console.WriteLine("Item: " + ponto_de_parada + " " + iten.Text);
-
-            //    ponto_de_parada++;
-
-            //}
 
             Console.WriteLine("lista finalizada com um total de: " + HistoricoDeProcessos.Count + " registros");
+            Console.WriteLine("Roda rodou: " + roda);
             //Console.WriteLine("lista finalizada com um total de: " + QuadradoDaMovimentacao.Count + " registros");
             //Console.WriteLine("lista finalizada com um total de: " + DatasDaMovimentacao.Count + " registros");
         }

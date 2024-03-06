@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Microsoft.Win32;
+using OpenQA.Selenium;
 using Pje_WebScrapping.Actions.NavBarMenu;
 using Pje_WebScrapping.DataStorage;
 using System;
@@ -128,6 +129,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                             driver.SwitchTo().Window(NOVA_JANELA);
 
                                             // Verifique se a URL da nova janela corresponde à URL desejada, essa url é a da NOVA JANELA
+                                            //aqui abrirá para a janela do processo aberto
                                             if (driver.Url.Contains("https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam"))
                                             {
                                                 // Você está na janela desejada, execute ações necessárias aqui
@@ -135,12 +137,21 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                                 ActionsPJE.AguardarPje("Baixo");
 
                                                 IList<IWebElement> movimentacaoprocessual = driver.FindElements(By.Id("divTimeLine:eventosTimeLineElement"));
+                                                
                                                 SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver);
-                                                //foreach (var registro in movimentacaoprocessual)
-                                                //{
-                                                //    Console.WriteLine(registro.Text);
+                                                Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
 
-                                                //}
+                                                //salvar processo inicial
+                                                SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, linkmovimentacaoprocessual, driver);
+
+                                                //tentando entender o que é movimentacaoprocessual
+
+                                                foreach (var registro in movimentacaoprocessual)
+                                                {
+                                                    Console.WriteLine(registro.Text);
+
+                                                }
+                                                Console.WriteLine("\n\n\n");
 
 
 
@@ -171,7 +182,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                     //puxar desse ID a movimentacao processual do link aberto : divTimeLine:eventosTimeLineElement
                                 }
-                                SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, linkmovimentacaoprocessual, driver);
+
 
                             }
 

@@ -17,6 +17,7 @@ namespace Pje_WebScrapping.Models
         
         }
 
+        public string TituloPjeMovimentacaoProcessual { get; set; }
         public string MovimentacaoProcessual { get; set; }
         public string JulgamentoStatus { get; set; }
         public DateTime DataVencimentoProcessual { get; set; }

@@ -27,11 +27,20 @@ namespace Pje_WebScrapping.Actions
             ImgPJEHome.Click();
             Console.WriteLine("Retornei para a home!");
         }
+        public static void EncerrarConsole()
+        {
+            //encerra o programa TOTALMENTE
+            Console.WriteLine("Estou terminando a aplicação agora.");
+            Environment.Exit(0);
 
+        }
         public static void EncerrarPJE(IWebDriver driver)
         {
+            //fecha a url atual
             driver.Close();
-            Console.WriteLine("url fechada");
+            Console.WriteLine("url fechada.");
+            Environment.Exit(0);
+
         }
 
         public static string RetornarParaJanelaPrincipal(IWebDriver driver)

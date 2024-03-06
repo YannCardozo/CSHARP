@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Pje_WebScrapping.DataStorage
 {
@@ -112,11 +113,108 @@ namespace Pje_WebScrapping.DataStorage
             //instanciar um novo perfil de advogado e salvar usando o perfil dele no banco?
 
 
-            //objeto instanciado da div BRUTA da movimentaão processual, TODOS OS ELEMENTOS AQUI:
-            IList<IWebElement> HistoricoDeProcessos = ListaDeMovimentacaoProcessual;
 
-            //IList<IWebElement> QuadradoDaMovimentacao = driver.FindElements(By.ClassName("media-body.box"));
-            //IList<IWebElement> DatasDaMovimentacao = driver.FindElements(By.ClassName("mediadata"));
+            //instancia a lista de mediabodybox ( boxes dentro da movimentação processual contendo as atualizações )
+            IList<IWebElement> MediaBodyBoxHistoricoProcessual = new List<IWebElement>();
+            MediaBodyBoxHistoricoProcessual = driver.FindElements(By.ClassName("media-body"));
+
+
+            //instancia a lista de iwebelements contendo a tag <SPAN> que tem os titulos de cada atualizacao dentro da classe mediabodybox
+            IList<IWebElement> TituloMovimentacaoProcessual = new List<IWebElement>();
+            TituloMovimentacaoProcessual = driver.FindElements(By.ClassName("texto-movimento"));
+
+            IList<IWebElement> TestandoANEXOS = new List<IWebElement>();
+            TestandoANEXOS = driver.FindElements(By.ClassName("anexos"));
+
+
+
+
+
+
+
+            Console.WriteLine("\n o que é MEDIABODYBOX??? SalvarMovimentacaoProcessual?\n\n");
+
+            //colocando ela de forma CRONOLÓGICA ( desde o início até o presente momento da movimentação processual .Reverse() )
+            //MediaBodyBoxHistoricoProcessual é o título de cada atualização de processo
+
+
+            //vou fazer um foreach para verificar cada mediabodybox e acessar cada vetor do array para poder retornar ao usuario
+            //os elementos contidos na bodybox
+            //criar uma lista de processoatualizacao para inserir dentro do objeto cada value pertinente
+
+
+            List<ProcessoAtualizacao> ProcessosAtualizacoes = new List<ProcessoAtualizacao>();
+
+
+
+
+            //testar para ver se altera a ordem de forma correta
+            //foreach (var teste in TituloMovimentacaoProcessual.Reverse())
+            //{
+            //    Console.WriteLine("TESTE PARA TITULOS DAS ATUALIZAÇÕES: " + teste.Text);
+            //}
+
+            //Console.WriteLine("\n\n\n\n\n");
+
+            ////será o CONTEUDO DA ATUALIZACAO PROCESSOS
+            //foreach (var teste in TestandoANEXOS.Reverse())
+            //{
+            //    if (!string.IsNullOrEmpty(teste.Text))
+            //    {
+            //        Console.WriteLine("TESTE PARA ANEXOS: " + teste.Text);
+            //    }
+            //}
+
+
+            for(int i = 0; i <= MediaBodyBoxHistoricoProcessual.Count; i++)
+            {
+
+                if (!string.IsNullOrEmpty(MediaBodyBoxHistoricoProcessual[i].Text))
+                {
+                    if(!string.IsNullOrEmpty())
+                }
+
+            }
+
+            foreach (var teste in MediaBodyBoxHistoricoProcessual)
+            { 
+                if(!string.IsNullOrEmpty(teste.Text))
+                {
+                    
+                }
+                    Console.WriteLine("TESTE PARA ANEXOS: " + teste.Text + "Sou uma Tag: " + teste.TagName);
+
+            }
+
+
+
+
+
+
+
+                //foreach (var verificabodybox in MediaBodyBoxHistoricoProcessual.Reverse())
+                //{
+
+                //    ProcessoAtualizacao processoAtualizacao = new ProcessoAtualizacao(); // Criar um novo objeto a cada iteração
+                //    processoAtualizacao.TituloPjeMovimentacaoProcessual = verificabodybox.Text.ToString();
+                //    if (verificabodybox.Text != "")
+
+                //        Console.WriteLine("meu valor da bodybox é de: " + verificabodybox.Text);
+                //    ProcessosAtualizacoes.Add(processoAtualizacao);
+                //}
+
+                // Verificar lista sendo preenchida para inserirmos no banco
+                foreach (var listadosprocessosatualizados in ProcessosAtualizacoes)
+            {
+                Console.WriteLine("Lista processo atualizado: " + listadosprocessosatualizados.TituloPjeMovimentacaoProcessual);
+            }
+
+
+
+
+
+            //agilizando testes
+            ActionsPJE.EncerrarConsole();
 
 
 
@@ -134,61 +232,85 @@ namespace Pje_WebScrapping.DataStorage
 
             int roda = 0;
 
-            Console.WriteLine("\n\n\n\n\n\n");
-            foreach (var stringonamovimentacao in HistoricoDeProcessos)
-            {
-                string texto = stringonamovimentacao.Text.ToString();
-                int comprimentoTotal = texto.Length;
-
-                // Calcula o tamanho de cada parte
-                int tamanhoParte = comprimentoTotal / 3;
-
-                // Divide a string em três partes
-                string parte1 = texto.Substring(0, tamanhoParte);
-                string parte2 = texto.Substring(tamanhoParte, tamanhoParte);
-                string parte3 = texto.Substring(2 * tamanhoParte, tamanhoParte);
-
-                // Imprime as partes
-                Console.WriteLine("Parte 1: " + parte1);
-                Console.WriteLine("\n\n\n");
-                Console.WriteLine("Parte 2: " + parte2);
-                Console.WriteLine("\n\n\n");
-                Console.WriteLine("Parte 3: " + parte3);
-                Console.WriteLine("\n\n\n");
 
 
 
-                //roda++;
-                //Console.WriteLine("Começando a imprimir o que tem na movimentação processual");
-                //ActionsPJE.AguardarPje("Baixo");
-                ////imprime TODA A MOVIMENTAÇÃO PROCESSUAL
-                //Console.WriteLine("\n +++ "  + stringonamovimentacao.TagName);
-                //Console.WriteLine("SalvarMovimentacaoProcessual, iten: " + ponto_de_parada + "  " + stringonamovimentacao.Text);
-                //Console.WriteLine("Total : " + stringonamovimentacao.ToString().Length);
-                //foreach (var teste in stringonamovimentacao.Text)
-                //{
-
-                //}
 
 
-                //if(HistoricoDeProcessos.Count - 1 == ponto_de_parada)
-                //{
-                //    Console.WriteLine("Finalizei a lista");
-                //}
-                //ponto_de_parada++;
 
-            }
+
+
+
+
+
+
+            //VERIFICAR DPS ISSO DAQUI PARAMETRO DE SALVARMOVIMENTACAOPROCESSUAL INSTANCIADA AQUI
+
+
+
+
+            ////objeto instanciado da div BRUTA da movimentaão processual, TODOS OS ELEMENTOS AQUI:
+            //IList<IWebElement> HistoricoDeProcessos = ListaDeMovimentacaoProcessual;
+
+            ////IList<IWebElement> QuadradoDaMovimentacao = driver.FindElements(By.ClassName("media-body.box"));
+            ////IList<IWebElement> DatasDaMovimentacao = driver.FindElements(By.ClassName("mediadata"));
+
+            //Console.WriteLine("\n o que é historicoDeProcessos dentro de SalvarMovimentacaoProcessual?\n\n");
+            //foreach (var testando in HistoricoDeProcessos)
+            //{
+            //    Console.WriteLine("historico de processos: " + testando.Text);
+            //}
+
+            //Console.WriteLine("\n\n\n\n\n\n");
+            //foreach (var stringonamovimentacao in HistoricoDeProcessos)
+            //{
+            //    string texto = stringonamovimentacao.Text.ToString();
+            //    int comprimentoTotal = texto.Length;
+
+            //    // Calcula o tamanho de cada parte
+            //    int tamanhoParte = comprimentoTotal / 3;
+
+            //    // Divide a string em três partes
+            //    string parte1 = texto.Substring(0, tamanhoParte);
+            //    string parte2 = texto.Substring(tamanhoParte, tamanhoParte);
+            //    string parte3 = texto.Substring(2 * tamanhoParte, tamanhoParte);
+
+            //    // Imprime as partes
+            //    Console.WriteLine("Parte 1: " + parte1);
+            //    Console.WriteLine("\n\n\n");
+            //    Console.WriteLine("Parte 2: " + parte2);
+            //    Console.WriteLine("\n\n\n");
+            //    Console.WriteLine("Parte 3: " + parte3);
+            //    Console.WriteLine("\n\n\n");
+
+
+
+            //    //roda++;
+            //    //Console.WriteLine("Começando a imprimir o que tem na movimentação processual");
+            //    //ActionsPJE.AguardarPje("Baixo");
+            //    ////imprime TODA A MOVIMENTAÇÃO PROCESSUAL
+            //    //Console.WriteLine("\n +++ "  + stringonamovimentacao.TagName);
+            //    //Console.WriteLine("SalvarMovimentacaoProcessual, iten: " + ponto_de_parada + "  " + stringonamovimentacao.Text);
+            //    //Console.WriteLine("Total : " + stringonamovimentacao.ToString().Length);
+            //    //foreach (var teste in stringonamovimentacao.Text)
+            //    //{
+
+            //    //}
+
+
+            //    //if(HistoricoDeProcessos.Count - 1 == ponto_de_parada)
+            //    //{
+            //    //    Console.WriteLine("Finalizei a lista");
+            //    //}
+            //    //ponto_de_parada++;
+
+            //}
             ponto_de_parada = 0;
 
-            Console.WriteLine("lista finalizada com um total de: " + HistoricoDeProcessos.Count + " registros");
-            Console.WriteLine("Roda rodou: " + roda);
+            //Console.WriteLine("lista finalizada com um total de: " + HistoricoDeProcessos.Count + " registros");
+            //Console.WriteLine("Roda rodou: " + roda);
             //Console.WriteLine("lista finalizada com um total de: " + QuadradoDaMovimentacao.Count + " registros");
             //Console.WriteLine("lista finalizada com um total de: " + DatasDaMovimentacao.Count + " registros");
-        }
-        public static string SalvarNumeroProcesso(IList<IWebElement> Nprocesso, IWebDriver driver)
-        {
-            string FormulaNumProcesso = Nprocesso[0].Text.ToString();
-            return FormulaNumProcesso;
         }
 
 

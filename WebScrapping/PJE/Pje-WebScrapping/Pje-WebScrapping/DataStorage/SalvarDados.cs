@@ -152,6 +152,27 @@ namespace Pje_WebScrapping.DataStorage
             // Armazenar os elementos filhos em uma lista
             List<IWebElement> listaDeElementosFilhos = new List<IWebElement>(filhos);
 
+            Console.WriteLine("\n\n\n\n");
+
+
+
+            //esta lendo do sentido correto agora
+            listaDeElementosFilhos.Reverse();
+
+
+
+
+                                    LER ISSO:
+
+
+            //preciso fazer agora com que identifique o tipo de objeto da lista
+            //sendo: media interno tipo-M , media interno tipo-D ou media data
+            
+            OBS:
+            //classe media interno tipo-M será para as divs que contém APENAS titulos de movimentação processual sem ATUALIZAÇÕES
+            //classe media interno tipo-D será para as divs que contenham anexos e informações alem dos titulos
+            //media data é a data
+
             // Exemplo de como iterar sobre a lista de elementos filhos
             foreach (var filho in listaDeElementosFilhos)
             {
@@ -160,6 +181,7 @@ namespace Pje_WebScrapping.DataStorage
                 Console.WriteLine("nome do filho: " + filho.Text);
             }
 
+            Console.WriteLine("\n\n\n\n");
 
 
 

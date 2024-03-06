@@ -123,8 +123,43 @@ namespace Pje_WebScrapping.DataStorage
             IList<IWebElement> TituloMovimentacaoProcessual = new List<IWebElement>();
             TituloMovimentacaoProcessual = driver.FindElements(By.ClassName("texto-movimento"));
 
+
+
+
+
+
+
             IList<IWebElement> TestandoANEXOS = new List<IWebElement>();
             TestandoANEXOS = driver.FindElements(By.ClassName("anexos"));
+
+
+            //Objeto contando todos os elementos da tela de movimentação processual
+            //irei UTILIZAR ESTE
+            IWebElement PaginaMovimentacaoProcessual = driver.FindElement(By.Id("divTimeLine:eventosTimeLineElement"));
+
+
+            //começo a buscar novos elementos pelo objeto instanciado que já está com os dados da pagina que eu quero
+
+            //IList<IWebElement> webElements = new List<IWebElement>();
+            //webElements = PaginaMovimentacaoProcessual.FindElements(By.ClassName(""));
+
+
+
+
+            // Encontrar todos os elementos filhos do elemento pai
+            IList<IWebElement> filhos = PaginaMovimentacaoProcessual.FindElements(By.XPath(".//*"));
+
+            // Armazenar os elementos filhos em uma lista
+            List<IWebElement> listaDeElementosFilhos = new List<IWebElement>(filhos);
+
+            // Exemplo de como iterar sobre a lista de elementos filhos
+            foreach (var filho in listaDeElementosFilhos)
+            {
+                //dar continuidade mais tarde para verificar se é  CLASSE OU NAO DO ELEMETNOS
+                Console.WriteLine("atributo filho " + filho.GetAttribute("class"));
+                Console.WriteLine("nome do filho: " + filho.Text);
+            }
+
 
 
 
@@ -166,15 +201,29 @@ namespace Pje_WebScrapping.DataStorage
             //}
 
 
-            for(int i = 0; i <= MediaBodyBoxHistoricoProcessual.Count; i++)
-            {
+            //for(int i = 0; i <= MediaBodyBoxHistoricoProcessual.Count; i++)
+            //{
 
-                if (!string.IsNullOrEmpty(MediaBodyBoxHistoricoProcessual[i].Text))
-                {
-                    if(!string.IsNullOrEmpty())
-                }
+            //    if (!string.IsNullOrEmpty(MediaBodyBoxHistoricoProcessual[i].Text))
+            //    {
+            //        if(!string.IsNullOrEmpty())
+            //    }
 
-            }
+            //}
+
+
+            Console.WriteLine("Testando: \n\n " + PaginaMovimentacaoProcessual.Text);
+
+
+
+
+            //for(int i = 0; i< PaginaMovimentacaoProcessual.Text.Length;i++)
+            //{
+            //    //vamos verificar o tipo de tag que está dentro de paginamovimentacaoprocessual
+            //    //IWebElement Teste = PaginaMovimentacaoProcessual.GetAttribute
+
+                
+            //}
 
             foreach (var teste in MediaBodyBoxHistoricoProcessual)
             { 

@@ -1,10 +1,13 @@
-﻿using OpenQA.Selenium;
+﻿using AngleSharp.Dom;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using Pje_WebScrapping.Actions;
 using Pje_WebScrapping.Models;
 using Pje_WebScrapping.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -109,6 +112,7 @@ namespace Pje_WebScrapping.DataStorage
         public static void SalvarMovimentacaoProcessual(IList<IWebElement> ListaDeMovimentacaoProcessual,
             IWebDriver driver)
         {
+
             int ponto_de_parada = 0;
             //instanciar um novo perfil de advogado e salvar usando o perfil dele no banco?
 
@@ -129,14 +133,55 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-            IList<IWebElement> TestandoANEXOS = new List<IWebElement>();
-            TestandoANEXOS = driver.FindElements(By.ClassName("anexos"));
+            //LER ISSO:
+
+
+            //preciso fazer agora com que identifique o tipo de objeto da lista
+            //sendo: media interno tipo-M , media interno tipo-D ou media data
+
+            //OBS:
+            //classe media interno tipo-M será para as divs que contém APENAS titulos de movimentação processual sem ATUALIZAÇÕES
+            //classe media interno tipo-D será para as divs que contenham anexos e informações alem dos titulos
+            //media data é a data
+
+            // Exemplo de como iterar sobre a lista de elementos filhos
+
+            int contatipod = 0;
+            int contaanexos = 0;
+            //foreach (var filho in listaDeElementosFilhos)
+            //{
+            //    //dar continuidade mais tarde para verificar se é  CLASSE OU NAO DO ELEMETNOS
+            //    //Console.WriteLine("atributo filho " + filho.GetAttribute("class"));
+            //    //Console.WriteLine("nome do filho: " + filho.Text);
+            //    if(filho.GetAttribute("class") == "media interno tipo-D")
+            //    {
+            //        IList<IWebElement> AnexosDentroDeFilho = new List<IWebElement>();
+            //        AnexosDentroDeFilho = filho.FindElements(By.ClassName("anexos"));
+            //        if (AnexosDentroDeFilho.Count > 0)
+            //        {
+            //            Console.WriteLine("Encontrei o atributo 'anexos' com valor: " + AnexosDentroDeFilho);
+            //            contaanexos++;
+            //            Console.WriteLine("Anexo: " + contaanexos + " " + AnexosDentroDeFilho.ToString());
+            //        }
+            //        contatipod++;
+            //    }
+
+
+            //}
+
+
+            ActionsPJE.AguardarPje("Medio");
+
+            //descer barra de rolagem para puxar todas as informações
+            ActionsPJE.DescerBarraDeRolagem(driver, "divTimeLine:divEventosTimeLine");
+
+
+
 
 
             //Objeto contando todos os elementos da tela de movimentação processual
             //irei UTILIZAR ESTE
             IWebElement PaginaMovimentacaoProcessual = driver.FindElement(By.Id("divTimeLine:eventosTimeLineElement"));
-
 
             //começo a buscar novos elementos pelo objeto instanciado que já está com os dados da pagina que eu quero
 
@@ -159,28 +204,73 @@ namespace Pje_WebScrapping.DataStorage
             //esta lendo do sentido correto agora
             listaDeElementosFilhos.Reverse();
 
-
-
-
-                                    LER ISSO:
-
-
-            //preciso fazer agora com que identifique o tipo de objeto da lista
-            //sendo: media interno tipo-M , media interno tipo-D ou media data
             
-            OBS:
-            //classe media interno tipo-M será para as divs que contém APENAS titulos de movimentação processual sem ATUALIZAÇÕES
-            //classe media interno tipo-D será para as divs que contenham anexos e informações alem dos titulos
-            //media data é a data
-
-            // Exemplo de como iterar sobre a lista de elementos filhos
-            foreach (var filho in listaDeElementosFilhos)
+                
+            for (int i = 0; i < listaDeElementosFilhos.Count; i++)
             {
-                //dar continuidade mais tarde para verificar se é  CLASSE OU NAO DO ELEMETNOS
-                Console.WriteLine("atributo filho " + filho.GetAttribute("class"));
-                Console.WriteLine("nome do filho: " + filho.Text);
+                //se for o media box com ANEXOS ( caixa da movimentação processual de cada link de processo )
+
+
+                if (listaDeElementosFilhos[i].GetAttribute("class") == "media interno tipo-D")
+                {
+                    try
+                    {
+                        //instancia uma lista de objetos chamado anexos, para conter cada atualização de anexos
+                        IList<IWebElement> AnexosDentroDeFilho = listaDeElementosFilhos[i].FindElements(By.ClassName("anexos"));
+                        if (AnexosDentroDeFilho.Count > 0)
+                        {
+                           // Console.WriteLine("Encontrei o atributo 'anexos' com valor:");
+                            contaanexos++;
+
+                            // Itera sobre os elementos da lista e imprime os textos individualmente
+                            foreach (var anexo in AnexosDentroDeFilho.Reverse())
+                            {
+                                //instanciar a lista de objetos de tag <a>
+                                if (anexo != null)
+                                {
+                                    IList<IWebElement> LinksTagADeAnexo = anexo.FindElements(By.TagName("a"));
+                                    IList<IWebElement> ThreeClassUL = anexo.FindElements(By.ClassName("tree"));
+                                    
+                                    CONTINUAR DAQUI, ESTA ACHANDO O UL CORRETAMENTE JÁ.
+                                    foreach(var ClasseUlArvore in ThreeClassUL)
+                                    {
+                                        Console.WriteLine("Achei o ul: " + ClasseUlArvore.Text);
+                                    }
+
+                                    //foreach(var TagA in LinksTagADeAnexo.Reverse())
+                                    //{
+                                    //    if (!string.IsNullOrEmpty(TagA.Text))
+                                    //    {
+                                    //        Console.WriteLine("TAG A: " + TagA.Text);
+
+                                    //    }
+                                    //}
+
+                                    //Console.WriteLine("Anexo: " + contaanexos + " " + anexo.Text);
+
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Anexos null");
+                                }
+                            }
+                        }
+                        contatipod++;
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString() + " erro em media interno tipo D: " + listaDeElementosFilhos[i].Text + " Contador : " + contaanexos);
+                    }
+                }
             }
 
+
+
+
+
+            Console.WriteLine("achei " + contatipod + " TIPO-D");
+            Console.WriteLine("achei " + contaanexos + " anexos");
             Console.WriteLine("\n\n\n\n");
 
 
@@ -234,7 +324,7 @@ namespace Pje_WebScrapping.DataStorage
             //}
 
 
-            Console.WriteLine("Testando: \n\n " + PaginaMovimentacaoProcessual.Text);
+            //Console.WriteLine("Testando: \n\n " + PaginaMovimentacaoProcessual.Text);
 
 
 
@@ -247,38 +337,38 @@ namespace Pje_WebScrapping.DataStorage
                 
             //}
 
-            foreach (var teste in MediaBodyBoxHistoricoProcessual)
-            { 
-                if(!string.IsNullOrEmpty(teste.Text))
-                {
+            //foreach (var teste in MediaBodyBoxHistoricoProcessual)
+            //{ 
+            //    if(!string.IsNullOrEmpty(teste.Text))
+            //    {
                     
-                }
-                    Console.WriteLine("TESTE PARA ANEXOS: " + teste.Text + "Sou uma Tag: " + teste.TagName);
+            //    }
+            //        Console.WriteLine("TESTE PARA ANEXOS: " + teste.Text + "Sou uma Tag: " + teste.TagName);
 
-            }
-
-
+            //}
 
 
 
 
 
-                //foreach (var verificabodybox in MediaBodyBoxHistoricoProcessual.Reverse())
-                //{
 
-                //    ProcessoAtualizacao processoAtualizacao = new ProcessoAtualizacao(); // Criar um novo objeto a cada iteração
-                //    processoAtualizacao.TituloPjeMovimentacaoProcessual = verificabodybox.Text.ToString();
-                //    if (verificabodybox.Text != "")
 
-                //        Console.WriteLine("meu valor da bodybox é de: " + verificabodybox.Text);
-                //    ProcessosAtualizacoes.Add(processoAtualizacao);
-                //}
+            //    //foreach (var verificabodybox in MediaBodyBoxHistoricoProcessual.Reverse())
+            //    //{
 
-                // Verificar lista sendo preenchida para inserirmos no banco
-                foreach (var listadosprocessosatualizados in ProcessosAtualizacoes)
-            {
-                Console.WriteLine("Lista processo atualizado: " + listadosprocessosatualizados.TituloPjeMovimentacaoProcessual);
-            }
+            //    //    ProcessoAtualizacao processoAtualizacao = new ProcessoAtualizacao(); // Criar um novo objeto a cada iteração
+            //    //    processoAtualizacao.TituloPjeMovimentacaoProcessual = verificabodybox.Text.ToString();
+            //    //    if (verificabodybox.Text != "")
+
+            //    //        Console.WriteLine("meu valor da bodybox é de: " + verificabodybox.Text);
+            //    //    ProcessosAtualizacoes.Add(processoAtualizacao);
+            //    //}
+
+            //    // Verificar lista sendo preenchida para inserirmos no banco
+            //    foreach (var listadosprocessosatualizados in ProcessosAtualizacoes)
+            //{
+            //    Console.WriteLine("Lista processo atualizado: " + listadosprocessosatualizados.TituloPjeMovimentacaoProcessual);
+            //}
 
 
 

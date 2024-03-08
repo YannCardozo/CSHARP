@@ -86,6 +86,39 @@ namespace Pje_WebScrapping.Actions
 
 
 
+         
+        //objetivo desse método é descer a barra de rolagem de movimentação processual
+        //para que carregue os eventos e faça renderizar o resto do processo que falta carregar
+        //para permitir o webscrapping raspar as informações corretas
+        public static void DescerBarraDeRolagem(IWebDriver driver, string elementId)
+        {
+            try
+            {
+                // Executar JavaScript para rolar a barra de rolagem para o máximo inferior possível
+                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine("Descendo a barra de rolagem: " + i + " aguardando agora");
+                    AguardarPje("Baixo");
+                    IWebElement element = driver.FindElement(By.Id(elementId)); // Encontrar o elemento pelo ID
+                    if(element != null)
+                    {
+                        js.ExecuteScript("arguments[0].scrollTop = arguments[0].scrollHeight - arguments[0].clientHeight;", element);
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro em descer barra e rolagem " + ex.Message);
+            }
+        }
+
 
 
 

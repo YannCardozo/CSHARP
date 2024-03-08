@@ -202,100 +202,123 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
+
+
+
+
+
+
+
+
             //esta lendo do sentido correto agora
             listaDeElementosFilhos.Reverse();
 
-            
-                
+
+
+
+            Vou precisar criar um FOR e acessar indice por indice para fazer a distinção de quem e media data e de quem nao e
+
+            //IList<IWebElement> paiElementos = driver.FindElements(By.Id("divTimeLine:eventosTimeLineElement"));
+            //List<IWebElement> elementossss = new List<IWebElement>();
+
+            //foreach (var paiElemento in paiElementos)
+            //{
+            //    // Encontrar todos os elementos com a classe "media data" dentro do pai atual
+            //    IList<IWebElement> elementosMediaData = paiElemento.FindElements(By.CssSelector(".media.data"));
+
+            //    // Adicionar todos os elementos encontrados à lista elementossss
+            //    elementossss.AddRange(elementosMediaData);
+
+            //    // Para cada elemento "media data", encontrar seus irmãos imediatamente abaixo dele
+            //    foreach (var elementoMediaData in elementosMediaData)
+            //    {
+            //        // Encontrar todos os irmãos imediatamente abaixo do elemento "media data"
+            //        IList<IWebElement> irmãos = elementoMediaData.FindElements(By.XPath("following-sibling::*"));
+
+            //        // Adicionar todos os irmãos à lista elementossss
+            //        elementossss.AddRange(irmãos);
+            //    }
+            //}
+
+            //// Imprimir os textos dos elementos coletados
+            //foreach (var elemento in elementossss)
+            //{
+            //    Console.WriteLine("Testando Data: " + elemento.Text);
+            //}
+
+            ActionsPJE.EncerrarConsole();
+
             for (int i = 0; i < listaDeElementosFilhos.Count; i++)
             {
                 //se for o media box com ANEXOS ( caixa da movimentação processual de cada link de processo )
 
                 //necessário colocar um if aqui dentro para verificar onde a div da data vai aparecer
-                IList<IWebElement> elementoComClassesA = listaDeElementosFilhos[i].FindElements(By.ClassName("data-interna"));
-                
-                for (int z = 0; z < elementoComClassesA.Count; z++)
-                {
-                    if (!String.IsNullOrEmpty(elementoComClassesA[z].Text))
-                    {
-                        Console.WriteLine("Testando Datas: " + elementoComClassesA[z].Text);
-                        Console.WriteLine("\n");
-                    }
-                }
 
-                verificar esse código para dar continuação
+                //IList<IWebElement> elementoComClassesA = listaDeElementosFilhos[i].FindElements(By.ClassName("data-interna"));
                 
-                //// Lista para armazenar os elementos que correspondem aos critérios específicos
-                //List<IWebElement> elementosPreDeterminados = new List<IWebElement>();
-
-                //// Iterar sobre os elementos na página
-                //foreach (IWebElement elemento in listaDeElementosFilhos)
+                //for (int z = 0; z < elementoComClassesA.Count; z++)
                 //{
-                //    // Verificar se o elemento possui a classe "data-interna"
-                //    if (elemento.GetAttribute("class").Contains("data-interna"))
+                //    if (!String.IsNullOrEmpty(elementoComClassesA[z].Text))
                 //    {
-                //        // Encontrar todos os elementos filhos que correspondem aos critérios pré-determinados
-                //        IList<IWebElement> elementosFiltrados = elemento.FindElements(By.XPath(".//*")); // Você pode usar qualquer seletor que desejar aqui
-
-                //        // Adicionar os elementos filtrados à lista principal
-                //        elementosPreDeterminados.AddRange(elementosFiltrados);
+                //        Console.WriteLine("Testando Datas: " + elementoComClassesA[z].Text);
+                //        Console.WriteLine("\n");
                 //    }
                 //}
 
 
 
-                if (listaDeElementosFilhos[i].GetAttribute("class") == "media interno tipo-D")
-                {
-                    try
+                    if (listaDeElementosFilhos[i].GetAttribute("class") == "media interno tipo-D")
                     {
-                        //instancia uma lista de objetos chamado anexos, para conter cada atualização de anexos
-                        IList<IWebElement> AnexosDentroDeFilho = listaDeElementosFilhos[i].FindElements(By.ClassName("anexos"));
-                        if (AnexosDentroDeFilho.Count > 0)
+                        try
                         {
-                           // Console.WriteLine("Encontrei o atributo 'anexos' com valor:");
-                            contaanexos++;
-
-                            // Itera sobre os elementos da lista e imprime os textos individualmente
-                            foreach (var anexo in AnexosDentroDeFilho.Reverse())
+                            //instancia uma lista de objetos chamado anexos, para conter cada atualização de anexos
+                            IList<IWebElement> AnexosDentroDeFilho = listaDeElementosFilhos[i].FindElements(By.ClassName("anexos"));
+                            if (AnexosDentroDeFilho.Count > 0)
                             {
-                                //instanciar a lista de objetos de tag <a>
-                                if (anexo != null)
+                               // Console.WriteLine("Encontrei o atributo 'anexos' com valor:");
+                                contaanexos++;
+
+                                // Itera sobre os elementos da lista e imprime os textos individualmente
+                                foreach (var anexo in AnexosDentroDeFilho.Reverse())
                                 {
-                                    IList<IWebElement> LinksTagADeAnexo = anexo.FindElements(By.TagName("a"));
-                                    IList<IWebElement> ThreeClassUL = anexo.FindElements(By.ClassName("tree"));
-                                    
-                                    //CONTINUAR DAQUI, ESTA ACHANDO O UL CORRETAMENTE JÁ.
-                                    foreach(var ClasseUlArvore in ThreeClassUL)
+                                    //instanciar a lista de objetos de tag <a>
+                                    if (anexo != null)
                                     {
-                                        Console.WriteLine("Achei o ul: " + ClasseUlArvore.Text);
+                                        IList<IWebElement> LinksTagADeAnexo = anexo.FindElements(By.TagName("a"));
+                                        IList<IWebElement> ThreeClassUL = anexo.FindElements(By.ClassName("tree"));
+                                    
+                                        //CONTINUAR DAQUI, ESTA ACHANDO O UL CORRETAMENTE JÁ.
+                                        foreach(var ClasseUlArvore in ThreeClassUL)
+                                        {
+                                            Console.WriteLine("Achei o ul: " + ClasseUlArvore.Text);
+                                        }
+
+                                        //foreach(var TagA in LinksTagADeAnexo.Reverse())
+                                        //{
+                                        //    if (!string.IsNullOrEmpty(TagA.Text))
+                                        //    {
+                                        //        Console.WriteLine("TAG A: " + TagA.Text);
+
+                                        //    }
+                                        //}
+
+                                        //Console.WriteLine("Anexo: " + contaanexos + " " + anexo.Text);
+
+
                                     }
-
-                                    //foreach(var TagA in LinksTagADeAnexo.Reverse())
-                                    //{
-                                    //    if (!string.IsNullOrEmpty(TagA.Text))
-                                    //    {
-                                    //        Console.WriteLine("TAG A: " + TagA.Text);
-
-                                    //    }
-                                    //}
-
-                                    //Console.WriteLine("Anexo: " + contaanexos + " " + anexo.Text);
-
-
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Anexos null");
+                                    else
+                                    {
+                                        Console.WriteLine("Anexos null");
+                                    }
                                 }
                             }
+                            contatipod++;
                         }
-                        contatipod++;
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString() + " erro em media interno tipo D: " + listaDeElementosFilhos[i].Text + " Contador : " + contaanexos);
+                        }
                     }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString() + " erro em media interno tipo D: " + listaDeElementosFilhos[i].Text + " Contador : " + contaanexos);
-                    }
-                }
 
                 else if(listaDeElementosFilhos[i].GetAttribute("class") == "media interno tipo-M")
                 {

@@ -97,7 +97,7 @@ namespace Pje_WebScrapping.Actions
                 // Executar JavaScript para rolar a barra de rolagem para o máximo inferior possível
                 IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     Console.WriteLine("Descendo a barra de rolagem: " + i + " aguardando agora");
                     AguardarPje("Baixo");

@@ -148,6 +148,7 @@ namespace Pje_WebScrapping.DataStorage
 
             int contatipod = 0;
             int contaanexos = 0;
+            int ContaTextoTipoM = 0;
             //foreach (var filho in listaDeElementosFilhos)
             //{
             //    //dar continuidade mais tarde para verificar se é  CLASSE OU NAO DO ELEMETNOS
@@ -210,6 +211,38 @@ namespace Pje_WebScrapping.DataStorage
             {
                 //se for o media box com ANEXOS ( caixa da movimentação processual de cada link de processo )
 
+                //necessário colocar um if aqui dentro para verificar onde a div da data vai aparecer
+                IList<IWebElement> elementoComClassesA = listaDeElementosFilhos[i].FindElements(By.ClassName("data-interna"));
+                
+                for (int z = 0; z < elementoComClassesA.Count; z++)
+                {
+                    if (!String.IsNullOrEmpty(elementoComClassesA[z].Text))
+                    {
+                        Console.WriteLine("Testando Datas: " + elementoComClassesA[z].Text);
+                        Console.WriteLine("\n");
+                    }
+                }
+
+                verificar esse código para dar continuação
+                
+                //// Lista para armazenar os elementos que correspondem aos critérios específicos
+                //List<IWebElement> elementosPreDeterminados = new List<IWebElement>();
+
+                //// Iterar sobre os elementos na página
+                //foreach (IWebElement elemento in listaDeElementosFilhos)
+                //{
+                //    // Verificar se o elemento possui a classe "data-interna"
+                //    if (elemento.GetAttribute("class").Contains("data-interna"))
+                //    {
+                //        // Encontrar todos os elementos filhos que correspondem aos critérios pré-determinados
+                //        IList<IWebElement> elementosFiltrados = elemento.FindElements(By.XPath(".//*")); // Você pode usar qualquer seletor que desejar aqui
+
+                //        // Adicionar os elementos filtrados à lista principal
+                //        elementosPreDeterminados.AddRange(elementosFiltrados);
+                //    }
+                //}
+
+
 
                 if (listaDeElementosFilhos[i].GetAttribute("class") == "media interno tipo-D")
                 {
@@ -231,7 +264,7 @@ namespace Pje_WebScrapping.DataStorage
                                     IList<IWebElement> LinksTagADeAnexo = anexo.FindElements(By.TagName("a"));
                                     IList<IWebElement> ThreeClassUL = anexo.FindElements(By.ClassName("tree"));
                                     
-                                    CONTINUAR DAQUI, ESTA ACHANDO O UL CORRETAMENTE JÁ.
+                                    //CONTINUAR DAQUI, ESTA ACHANDO O UL CORRETAMENTE JÁ.
                                     foreach(var ClasseUlArvore in ThreeClassUL)
                                     {
                                         Console.WriteLine("Achei o ul: " + ClasseUlArvore.Text);
@@ -263,6 +296,25 @@ namespace Pje_WebScrapping.DataStorage
                         Console.WriteLine(ex.ToString() + " erro em media interno tipo D: " + listaDeElementosFilhos[i].Text + " Contador : " + contaanexos);
                     }
                 }
+
+                else if(listaDeElementosFilhos[i].GetAttribute("class") == "media interno tipo-M")
+                {
+                    IList<IWebElement> TextoDentroTipoM = listaDeElementosFilhos[i].FindElements(By.ClassName("texto-movimento"));
+
+                    try
+                    {
+                        foreach(var TextoAtual in TextoDentroTipoM)
+                        {
+                            ContaTextoTipoM++;
+                            Console.WriteLine("texto: " + TextoAtual.Text);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine("Erro em media interno tipo M: obter dados " + ex.Message);
+                    
+                    }
+                }
             }
 
 
@@ -271,6 +323,7 @@ namespace Pje_WebScrapping.DataStorage
 
             Console.WriteLine("achei " + contatipod + " TIPO-D");
             Console.WriteLine("achei " + contaanexos + " anexos");
+            Console.WriteLine("achei " + ContaTextoTipoM + " textos do tipo-m");
             Console.WriteLine("\n\n\n\n");
 
 

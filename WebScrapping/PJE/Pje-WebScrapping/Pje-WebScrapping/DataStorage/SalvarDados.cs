@@ -173,7 +173,7 @@ namespace Pje_WebScrapping.DataStorage
             //}
 
 
-            ActionsPJE.AguardarPje("Medio");
+            //ActionsPJE.AguardarPje("Medio");
 
             //descer barra de rolagem para puxar todas as informações
             ActionsPJE.DescerBarraDeRolagem(driver, "divTimeLine:divEventosTimeLine");
@@ -236,35 +236,82 @@ namespace Pje_WebScrapping.DataStorage
 
             IList<IWebElement> ElementosDentroDeMovimentacaoProcessual = PaginaMovimentacaoProcessual.FindElements(By.XPath("./*"));
 
+            //removendo o elemento div-data-rolagem
+            ElementosDentroDeMovimentacaoProcessual = ElementosDentroDeMovimentacaoProcessual.Where(elemento => !elemento.GetAttribute("class").Contains("div-data-rolagem")).ToList();
             // Itere sobre os elementos filhos
 
-            //colocando em ordem CRONOLÓGICA ( do mais recente para o mais tardio )
+
+
+
+            int posicao = 0;
+            int controle_inicio_for_elementos = 0;
+
+            // Lista para armazenar os elementos irmãos antes de cada "media data"
+            List<List<IWebElement>> ElementosAnteriores = new List<List<IWebElement>>();
+
+            // Iterar sobre os elementos, em ordem reversa
             foreach (IWebElement Elemento in ElementosDentroDeMovimentacaoProcessual.Reverse())
             {
-                // Verifique se o elemento filho possui a classe "media data"
+                // Verificar se o elemento é o ponto de parada (div-data-rolagem)
+                if (Elemento.GetAttribute("class").Contains("div-data-rolagem"))
+                {
+                    break;
+                }
+
+                // Verificar se o elemento filho possui a classe "media data" e não possui a classe "div-data-rolagem"
                 if (Elemento.GetAttribute("class").Contains("media data") && !Elemento.GetAttribute("class").Contains("div-data-rolagem"))
                 {
                     //capturou com sucesso
-                    Console.WriteLine("Data: " + Elemento.Text + " sou um: " + Elemento.TagName);
+                    Console.WriteLine("Data: " + Elemento.Text + " sou um: " + Elemento.TagName + " estou na posição: " + posicao);
 
-                    // Se a lista de elementos do grupo temporário não estiver vazia, adicione-a à lista de grupos
-                    if (string.IsNullOrEmpty(Elemento.Text))
+                    // Lista para armazenar os elementos irmãos antes deste "media data"
+                    List<IWebElement> ElementosAnterioresDoMediaData = new List<IWebElement>();
+
+                    // Iterar sobre os elementos irmãos antes do "media data"
+                    for (int i = controle_inicio_for_elementos; i < posicao; i++)
                     {
-                        Console.WriteLine("Entrei");
-                        Console.WriteLine("Data: " + Elemento.Text + " sou um: " + Elemento.TagName);
-
-                        //gruposElementos.Add(elementosGrupo);
-                        //elementosGrupo = new List<IWebElement>();
+                        // Adicionar o elemento irmão à lista de elementos irmãos antes do "media data"
+                        ElementosAnterioresDoMediaData.Add(ElementosDentroDeMovimentacaoProcessual[i]);
                     }
+
+                    // Adicionar a lista de elementos irmãos antes deste "media data" à lista principal
+                    ElementosAnteriores.Add(ElementosAnterioresDoMediaData);
+
+                    // Atualizar o controle_inicio_for_elementos para a próxima iteração
+                    controle_inicio_for_elementos = posicao + 1; // Correção aqui
+
                 }
-                else
+
+                // Incrementar a posição
+                posicao++;
+            }
+
+            // Imprimir os elementos irmãos capturados antes de cada "media data"
+            Console.WriteLine("\n\n listando resultado: \n\n");
+
+            foreach (var elementosAnterioresDoMediaData in ElementosAnteriores)
+            {
+                Console.WriteLine("\n\nElementos antes do media data: ");
+                foreach (var elementoAnterior in elementosAnterioresDoMediaData)
                 {
-                    //Adicione o elemento ao grupo temporário
-                    //elementosGrupo.Add(elementoFilho);
+                    Console.WriteLine("elemento: " + elementoAnterior.Text);
                 }
             }
 
 
+
+
+            //verificar essa lista o que está acontecendo e ver se de repente póde ser o reverse talvez
+            Console.WriteLine("\n\nChecando os elementos que estão dentro da lista: ");
+
+            foreach (IWebElement Elemento in ElementosDentroDeMovimentacaoProcessual.Reverse())
+            {
+                Console.WriteLine("Teste Elemento Conteudo: " + Elemento.Text + " nome da classe: " + Elemento.GetAttribute("class"));
+            }
+
+
+
+            ActionsPJE.EncerrarConsole();
 
 
 
@@ -314,7 +361,7 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-            ActionsPJE.EncerrarConsole();
+
 
             for (int i = 0; i < listaDeElementosFilhos.Count; i++)
             {

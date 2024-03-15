@@ -79,14 +79,11 @@ namespace Pje_WebScrapping.Actions
             return random.Next(minValue, maxValue);
         }
 
-        //Em ActionsPJE criar um metodo para estabelecer um tempo numerico para metodos de thread.sleep
-        //para FACILITAR  a manuntenção
-        //enumerar os tipos de thread.sleep, rapida, media e longa , com numeros randomicos. 1~2 , 2~3 e 3~4
 
 
 
 
-         
+
         //objetivo desse método é descer a barra de rolagem de movimentação processual
         //para que carregue os eventos e faça renderizar o resto do processo que falta carregar
         //para permitir o webscrapping raspar as informações corretas
@@ -97,28 +94,32 @@ namespace Pje_WebScrapping.Actions
                 // Executar JavaScript para rolar a barra de rolagem para o máximo inferior possível
                 IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
-                for (int i = 0; i < 6; i++)
-                {
-                    Console.WriteLine("Descendo a barra de rolagem: " + i + " aguardando agora");
-                    AguardarPje("Baixo");
-                    IWebElement element = driver.FindElement(By.Id(elementId)); // Encontrar o elemento pelo ID
-                    if(element != null)
-                    {
-                        js.ExecuteScript("arguments[0].scrollTop = arguments[0].scrollHeight - arguments[0].clientHeight;", element);
+                // Obter o elemento pelo ID
+                IWebElement element = driver.FindElement(By.Id(elementId));
 
-                    }
-                    else
-                    {
-                        break;
-                    }
+                // Altura inicial da barra de rolagem
+                long scrollTop = 0;
+
+                // Altura total da barra de rolagem
+                long scrollHeight = (long)js.ExecuteScript("return arguments[0].scrollHeight;", element);
+
+                // Altura visível do elemento
+                long clientHeight = (long)js.ExecuteScript("return arguments[0].clientHeight;", element);
+
+                // Loop até que a barra de rolagem atinja o final
+                while (scrollTop + clientHeight < scrollHeight)
+                {
+                    Console.WriteLine("Descendo a barra de rolagem...");
+                    //AguardarPje("Baixo");
+                    scrollTop = (long)js.ExecuteScript("return arguments[0].scrollTop;", element);
+                    js.ExecuteScript("arguments[0].scrollTop = arguments[0].scrollTop + arguments[0].clientHeight;", element);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro em descer barra e rolagem " + ex.Message);
+                Console.WriteLine("Erro em descer barra de rolagem: " + ex.Message);
             }
         }
-
 
 
 

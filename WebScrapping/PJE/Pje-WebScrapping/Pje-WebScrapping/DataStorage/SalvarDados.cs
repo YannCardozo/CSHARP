@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+using Microsoft.Win32;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Pje_WebScrapping.Actions;
@@ -6,6 +7,7 @@ using Pje_WebScrapping.Models;
 using Pje_WebScrapping.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -216,9 +218,68 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-            Vou precisar criar um FOR e acessar indice por indice para fazer a distinção de quem e media data e de quem nao e
+            // Vou precisar criar um FOR e acessar indice por indice para fazer a distinção de quem e media data e de quem nao e
 
+
+
+
+
+
+
+            //elemento div menu lateral contendo toda a movimentação processual
             //IList<IWebElement> paiElementos = driver.FindElements(By.Id("divTimeLine:eventosTimeLineElement"));
+
+
+
+            // elemento da div totalmente carregada apos descer rolagem
+            // PaginaMovimentacaoProcessual
+
+            IList<IWebElement> ElementosDentroDeMovimentacaoProcessual = PaginaMovimentacaoProcessual.FindElements(By.XPath("./*"));
+
+            // Itere sobre os elementos filhos
+
+            //colocando em ordem CRONOLÓGICA ( do mais recente para o mais tardio )
+            foreach (IWebElement Elemento in ElementosDentroDeMovimentacaoProcessual.Reverse())
+            {
+                // Verifique se o elemento filho possui a classe "media data"
+                if (Elemento.GetAttribute("class").Contains("media data") && !Elemento.GetAttribute("class").Contains("div-data-rolagem"))
+                {
+                    //capturou com sucesso
+                    Console.WriteLine("Data: " + Elemento.Text + " sou um: " + Elemento.TagName);
+
+                    // Se a lista de elementos do grupo temporário não estiver vazia, adicione-a à lista de grupos
+                    if (string.IsNullOrEmpty(Elemento.Text))
+                    {
+                        Console.WriteLine("Entrei");
+                        Console.WriteLine("Data: " + Elemento.Text + " sou um: " + Elemento.TagName);
+
+                        //gruposElementos.Add(elementosGrupo);
+                        //elementosGrupo = new List<IWebElement>();
+                    }
+                }
+                else
+                {
+                    //Adicione o elemento ao grupo temporário
+                    //elementosGrupo.Add(elementoFilho);
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             //List<IWebElement> elementossss = new List<IWebElement>();
 
             //foreach (var paiElemento in paiElementos)
@@ -245,6 +306,13 @@ namespace Pje_WebScrapping.DataStorage
             //{
             //    Console.WriteLine("Testando Data: " + elemento.Text);
             //}
+
+
+
+
+
+
+
 
             ActionsPJE.EncerrarConsole();
 

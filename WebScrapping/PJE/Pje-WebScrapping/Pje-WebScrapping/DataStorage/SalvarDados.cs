@@ -7,11 +7,13 @@ using Pje_WebScrapping.Models;
 using Pje_WebScrapping.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Pje_WebScrapping.DataStorage
@@ -244,10 +246,85 @@ namespace Pje_WebScrapping.DataStorage
 
 
             int posicao = 0;
+
+            int controle_elementos_anteriores_data = 0;
+            int posicao_data = 0;
+
             int controle_inicio_for_elementos = 0;
 
             // Lista para armazenar os elementos irmãos antes de cada "media data"
             List<List<IWebElement>> ElementosAnteriores = new List<List<IWebElement>>();
+
+
+            //controle_elementos_anteriores_data
+
+
+
+
+
+            Console.WriteLine("revertendo com o vetor agora: ");
+            for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1; i >= 0; i--)
+            {
+                if (ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("div-data-rolagem"))
+                {
+                    //recebe o index da data atual para não se perder
+                    posicao_data = i;
+                    Console.WriteLine("antes de: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
+
+
+
+
+
+
+
+
+                    // Iterar sobre os elementos anteriores
+                    for (int j = posicao_data; j >= posicao; j++)
+                    {
+                        Console.WriteLine("posicao_data: " + posicao_data + "posicao: " + posicao + "\n");
+                        Console.WriteLine("Pos: " + j + "Sou: " + ElementosDentroDeMovimentacaoProcessual[j].Text);
+                        //// Verificar se o elemento atual é "media data"
+                        //if (ElementosDentroDeMovimentacaoProcessual[j].GetAttribute("class").Contains("media data"))
+                        //{
+                        //    break; // Sai do loop interno se encontrar um elemento "media data"
+                        //}
+
+                        //// Imprimir o elemento anterior
+                        //Console.WriteLine("temos: " + ElementosDentroDeMovimentacaoProcessual[j].Text + " na pos de j: " + j + " e de i: " + i);
+
+                        //for (int z = posicao; z < i; z++)
+                        //{
+                        //    Console.WriteLine("sou o elemento: " + ElementosDentroDeMovimentacaoProcessual[z].Text);
+                        //}
+                    }
+                }
+                else
+                {
+                    //Console.WriteLine("Não sou uma data! e sou: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
+                }
+
+
+                // Incrementar a posição apenas se o elemento atual não for uma data
+                if (!ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data"))
+                {
+                    posicao++;
+                }
+            }
+
+
+
+
+
+
+
+            ActionsPJE.EncerrarConsole();
+
+            //ElementosDentroDeMovimentacaoProcessual.Reverse();
+            //foreach (var teste in ElementosDentroDeMovimentacaoProcessual)
+            //{
+            //    Console.WriteLine("atestando: " + teste.Text);
+            //}
+
 
             // Iterar sobre os elementos, em ordem reversa
             foreach (IWebElement Elemento in ElementosDentroDeMovimentacaoProcessual.Reverse())
@@ -255,6 +332,7 @@ namespace Pje_WebScrapping.DataStorage
                 // Verificar se o elemento é o ponto de parada (div-data-rolagem)
                 if (Elemento.GetAttribute("class").Contains("div-data-rolagem"))
                 {
+                    //irá sair da lista de elementos pois será a condição de parada, a data no topo
                     break;
                 }
 
@@ -270,8 +348,16 @@ namespace Pje_WebScrapping.DataStorage
                     // Iterar sobre os elementos irmãos antes do "media data"
                     for (int i = controle_inicio_for_elementos; i < posicao; i++)
                     {
-                        // Adicionar o elemento irmão à lista de elementos irmãos antes do "media data"
-                        ElementosAnterioresDoMediaData.Add(ElementosDentroDeMovimentacaoProcessual[i]);
+                        Console.WriteLine("estou na pos: " + i + " e estou adicionando o: " + ElementosDentroDeMovimentacaoProcessual[i].Text );
+
+                        //adicionar IF para não incluir a data aqui 
+
+                        if(!ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("div-data-rolagem"))
+                        {
+                            ElementosAnterioresDoMediaData.Add(ElementosDentroDeMovimentacaoProcessual[i]);
+
+                        }
+
                     }
 
                     // Adicionar a lista de elementos irmãos antes deste "media data" à lista principal

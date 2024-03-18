@@ -246,11 +246,35 @@ namespace Pje_WebScrapping.DataStorage
 
 
             int posicao = 0;
+            //int posicao_inicial = 1;
+            int posicao_inicial = 0;
+
+
+
+            int Controle_Elementos_Lista = 0;
+            int Controle_Elementos_Lista_Atualizado = 0;
+
+
+
+
+
+
+
+
+
+
+
 
             int controle_elementos_anteriores_data = 0;
             int posicao_data = 0;
 
             int controle_inicio_for_elementos = 0;
+            int proximaPosicaoMediaData = -1;
+            int FimMediaData = 0;
+            int LocalizadorElementoMediaData = 0;
+            int marco_inicial = 0;
+
+
 
             // Lista para armazenar os elementos irmãos antes de cada "media data"
             List<List<IWebElement>> ElementosAnteriores = new List<List<IWebElement>>();
@@ -258,58 +282,134 @@ namespace Pje_WebScrapping.DataStorage
 
             //controle_elementos_anteriores_data
 
+            //criando lista para receber elementos invertidos
+            IList<IWebElement> ElementosDentroDeMovimentacaoProcessualINVERTIDO = ElementosDentroDeMovimentacaoProcessual.Where(elemento => !elemento.GetAttribute("class").Contains("div-data-rolagem")).ToList();
 
-
-
-
-            Console.WriteLine("revertendo com o vetor agora: ");
-            for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1; i >= 0; i--)
+            //for de
+            for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1 , j = 0; i >= 0; i--, j++)
             {
-                if (ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("div-data-rolagem"))
+                //Console.WriteLine("Elemento: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
+                ElementosDentroDeMovimentacaoProcessualINVERTIDO[j] = ElementosDentroDeMovimentacaoProcessual[i];
+            }
+
+            for (int i = 0; i < ElementosDentroDeMovimentacaoProcessualINVERTIDO.Count; i++)
+            {
+
+                //for para localizar a proxima data na lista de elementos e pegar o indice e atrbuir a variavel proximaPosicaoMediaData
+                //que vai entrar no for de indice J
+                for (int z = LocalizadorElementoMediaData; z < ElementosDentroDeMovimentacaoProcessualINVERTIDO.Count; z++)
                 {
-                    //recebe o index da data atual para não se perder
-                    posicao_data = i;
-                    Console.WriteLine("antes de: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
-
-
-
-
-
-
-
-
-                    // Iterar sobre os elementos anteriores
-                    for (int j = posicao_data; j >= posicao; j++)
+                    if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[z].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessualINVERTIDO[z].GetAttribute("class").Contains("div-data-rolagem"))
                     {
-                        Console.WriteLine("posicao_data: " + posicao_data + "posicao: " + posicao + "\n");
-                        Console.WriteLine("Pos: " + j + "Sou: " + ElementosDentroDeMovimentacaoProcessual[j].Text);
-                        //// Verificar se o elemento atual é "media data"
-                        //if (ElementosDentroDeMovimentacaoProcessual[j].GetAttribute("class").Contains("media data"))
-                        //{
-                        //    break; // Sai do loop interno se encontrar um elemento "media data"
-                        //}
+                        proximaPosicaoMediaData = z;
 
-                        //// Imprimir o elemento anterior
-                        //Console.WriteLine("temos: " + ElementosDentroDeMovimentacaoProcessual[j].Text + " na pos de j: " + j + " e de i: " + i);
-
-                        //for (int z = posicao; z < i; z++)
-                        //{
-                        //    Console.WriteLine("sou o elemento: " + ElementosDentroDeMovimentacaoProcessual[z].Text);
-                        //}
+                        //Console.WriteLine("Achei a próxima data e ela está em: " + proximaPosicaoMediaData);
+                        break;
+                    }
+                    else
+                    {
+                        proximaPosicaoMediaData = -1;
                     }
                 }
-                else
+                if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessualINVERTIDO[i].GetAttribute("class").Contains("div-data-rolagem"))
                 {
-                    //Console.WriteLine("Não sou uma data! e sou: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
+
+                    //recebe o index da data atual para não se perder
+                    posicao_data = i;
+                    //Console.WriteLine("antes de: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[i].Text);
+
+                    Console.WriteLine("Testando value pos: " + posicao + " e pos inic: " + posicao_inicial);
+                    for (int j = posicao_inicial; j <= proximaPosicaoMediaData; j++)
+                    {
+
+                        if (proximaPosicaoMediaData == -1)
+                        {
+                            //Console.WriteLine("Acabaram os elementos DATA - break - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+
+                            break;
+                        }
+                        if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media data"))
+                        {
+                            Console.WriteLine("Acabaram os elementos DATA - continue - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+
+                            continue;
+                        }
+                        //Console.WriteLine("Pos: " + posicao + " pos inicial: " + posicao_inicial + " J esta: " + j);
+                        Console.WriteLine("Sera??? " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+
+                        //Console.WriteLine("J vale: " + j);
+
+
+                        //Controle_Elementos_Lista_Atualizado = Controle_Elementos_Lista_Atualizado - posicao;
+                    }
+                    posicao_inicial = proximaPosicaoMediaData;
+
                 }
-
-
-                // Incrementar a posição apenas se o elemento atual não for uma data
-                if (!ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data"))
+                
+                posicao++;
+                LocalizadorElementoMediaData++;
+                //for para verificar as proximas elementos datas no vetor
+                if (proximaPosicaoMediaData == -1 )
                 {
-                    posicao++;
+                    Console.WriteLine("Acabaram os elementos DATA ");
+                    break;
                 }
             }
+
+
+
+
+
+
+
+            //Console.WriteLine("revertendo com o vetor agora: ");
+            //for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1; i >= 0; i--)
+            //{
+            //    if (ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("div-data-rolagem"))
+            //    {
+            //        //recebe o index da data atual para não se perder
+            //        posicao_data = i;
+            //        Console.WriteLine("antes de: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
+
+
+
+
+
+
+
+
+            //        // Iterar sobre os elementos anteriores
+            //        for (int j = posicao_data; j >= posicao; j++)
+            //        {
+            //            Console.WriteLine("posicao_data: " + posicao_data + "posicao: " + posicao + "\n");
+            //            Console.WriteLine("Pos: " + j + "Sou: " + ElementosDentroDeMovimentacaoProcessual[j].Text);
+            //            //// Verificar se o elemento atual é "media data"
+            //            //if (ElementosDentroDeMovimentacaoProcessual[j].GetAttribute("class").Contains("media data"))
+            //            //{
+            //            //    break; // Sai do loop interno se encontrar um elemento "media data"
+            //            //}
+
+            //            //// Imprimir o elemento anterior
+            //            //Console.WriteLine("temos: " + ElementosDentroDeMovimentacaoProcessual[j].Text + " na pos de j: " + j + " e de i: " + i);
+
+            //            //for (int z = posicao; z < i; z++)
+            //            //{
+            //            //    Console.WriteLine("sou o elemento: " + ElementosDentroDeMovimentacaoProcessual[z].Text);
+            //            //}
+            //        }
+            //    }
+            //    else
+            //    {
+            //        //Console.WriteLine("Não sou uma data! e sou: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
+            //    }
+
+
+            //    // Incrementar a posição apenas se o elemento atual não for uma data
+            //    if (!ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data"))
+            //    {
+            //        posicao++;
+            //    }
+            //}
 
 
 

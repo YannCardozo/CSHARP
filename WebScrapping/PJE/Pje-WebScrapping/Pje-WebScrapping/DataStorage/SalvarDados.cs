@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -285,13 +286,23 @@ namespace Pje_WebScrapping.DataStorage
             //criando lista para receber elementos invertidos
             IList<IWebElement> ElementosDentroDeMovimentacaoProcessualINVERTIDO = ElementosDentroDeMovimentacaoProcessual.Where(elemento => !elemento.GetAttribute("class").Contains("div-data-rolagem")).ToList();
 
-            //for de
+
+
+
+
+            //for para inverter a ordem dos elementos da lista da movimentação processual, colocando em ordem CRONOLÓGICA.
             for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1 , j = 0; i >= 0; i--, j++)
             {
                 //Console.WriteLine("Elemento: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
                 ElementosDentroDeMovimentacaoProcessualINVERTIDO[j] = ElementosDentroDeMovimentacaoProcessual[i];
             }
 
+
+
+            //instanciando LISTA de objetos que receberão os registros da lista de movimentação processual
+            List<ProcessoAtualizacao> ListaProcessosAtualizados = new List<ProcessoAtualizacao>();
+
+            //esse for faz a leitura dos elementos dentro de movimentacao processual
             for (int i = 0; i < ElementosDentroDeMovimentacaoProcessualINVERTIDO.Count; i++)
             {
 
@@ -318,9 +329,14 @@ namespace Pje_WebScrapping.DataStorage
                     posicao_data = i;
                     //Console.WriteLine("antes de: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[i].Text);
 
-                    Console.WriteLine("Testando value pos: " + posicao + " e pos inic: " + posicao_inicial);
+                    Console.WriteLine("Testando value pos: " + posicao + " e pos inic: " + posicao_inicial + "\n\n");
                     for (int j = posicao_inicial; j <= proximaPosicaoMediaData; j++)
                     {
+
+                        ProcessoAtualizacao ProcessoAtualizado = new ProcessoAtualizacao();
+
+
+
 
                         if (proximaPosicaoMediaData == -1)
                         {
@@ -331,16 +347,23 @@ namespace Pje_WebScrapping.DataStorage
                         if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media data"))
                         {
                             Console.WriteLine("Acabaram os elementos DATA - continue - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+                            string dataString = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text;
+                            DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.InvariantCulture);
+
+                            // Atribuindo a data convertida à propriedade DataMovimentacao
+                            ProcessoAtualizado.DataMovimentacao = data;
+                            Console.WriteLine("PROCESSOATUALIZADO DATA e: " + data);
 
                             continue;
                         }
-                        //Console.WriteLine("Pos: " + posicao + " pos inicial: " + posicao_inicial + " J esta: " + j);
-                        Console.WriteLine("Sera??? " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
-
-                        //Console.WriteLine("J vale: " + j);
 
 
-                        //Controle_Elementos_Lista_Atualizado = Controle_Elementos_Lista_Atualizado - posicao;
+
+                        ListaProcessosAtualizados.Add(ProcessoAtualizado);
+                        Console.WriteLine("Elemento: " + j + " :  " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+
+
+
                     }
                     posicao_inicial = proximaPosicaoMediaData;
 
@@ -348,6 +371,8 @@ namespace Pje_WebScrapping.DataStorage
                 
                 posicao++;
                 LocalizadorElementoMediaData++;
+
+
                 //for para verificar as proximas elementos datas no vetor
                 if (proximaPosicaoMediaData == -1 )
                 {
@@ -357,7 +382,14 @@ namespace Pje_WebScrapping.DataStorage
             }
 
 
+            //ActionsPJE.EncerrarConsole();
 
+            //testando a lista de movimentacao processual
+
+foreach(var teste in ListaProcessosAtualizados)
+            {
+                Console.WriteLine("Data: " + teste.DataMovimentacao);
+            }
 
 
 
@@ -418,12 +450,6 @@ namespace Pje_WebScrapping.DataStorage
 
 
             ActionsPJE.EncerrarConsole();
-
-            //ElementosDentroDeMovimentacaoProcessual.Reverse();
-            //foreach (var teste in ElementosDentroDeMovimentacaoProcessual)
-            //{
-            //    Console.WriteLine("atestando: " + teste.Text);
-            //}
 
 
             // Iterar sobre os elementos, em ordem reversa

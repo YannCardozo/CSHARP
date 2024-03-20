@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Pje_WebScrapping.DataStorage
 {
@@ -290,6 +291,13 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
+            //lista destinada aos CONTEUDOS nos casos da classe media tipo-D , que tem varias informações dentro do media box
+            IList<IWebElement> ListaConteudoMovimentoProcessual = new List<IWebElement>();
+
+            string ConteudoTipoD = "";
+
+
+
             //for para inverter a ordem dos elementos da lista da movimentação processual, colocando em ordem CRONOLÓGICA.
             for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1 , j = 0; i >= 0; i--, j++)
             {
@@ -332,34 +340,111 @@ namespace Pje_WebScrapping.DataStorage
                     Console.WriteLine("Testando value pos: " + posicao + " e pos inic: " + posicao_inicial + "\n\n");
                     for (int j = posicao_inicial; j <= proximaPosicaoMediaData; j++)
                     {
-
-                        ProcessoAtualizacao ProcessoAtualizado = new ProcessoAtualizacao();
-
-
-
-
                         if (proximaPosicaoMediaData == -1)
                         {
                             //Console.WriteLine("Acabaram os elementos DATA - break - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
 
                             break;
                         }
+
+
+                        ProcessoAtualizacao ProcessoAtualizado = new ProcessoAtualizacao();
+
                         if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media data"))
                         {
                             Console.WriteLine("Acabaram os elementos DATA - continue - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
-                            string dataString = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text;
-                            DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.InvariantCulture);
+
 
                             // Atribuindo a data convertida à propriedade DataMovimentacao
-                            ProcessoAtualizado.DataMovimentacao = data;
-                            Console.WriteLine("PROCESSOATUALIZADO DATA e: " + data);
+
 
                             continue;
                         }
 
+                        //inserindo a data para os registros de movimentação processual
+                        if(proximaPosicaoMediaData != -1)
+                        {
+                            string dataString = ElementosDentroDeMovimentacaoProcessualINVERTIDO[proximaPosicaoMediaData].Text;
+                            DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.InvariantCulture);
+                            ProcessoAtualizado.DataMovimentacao = data;
+
+                        }
+                        if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-D"))
+                        {
+                            //encotrando o TITULO da movimentação processual
+
+                            IWebElement MediaBodyBoxTipoD = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].FindElement(By.ClassName("media-body"));
+
+                            IList<IWebElement> MaisDeUmElementoSpanNoMediaBoxTipoD = MediaBodyBoxTipoD.FindElements(By.ClassName("texto-movimento"));
 
 
+                            IWebElement SpanTextoMovimentacao = MediaBodyBoxTipoD.FindElement(By.TagName("span"));
+                            ProcessoAtualizado.TituloMovimento = SpanTextoMovimentacao.Text;
+
+
+
+                            ListaConteudoMovimentoProcessual = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].FindElements(By.TagName("span")).Skip(1).ToList();
+
+
+                            //montando uma variavel para armazenar toda a lista do 
+                            foreach(var testa in ListaConteudoMovimentoProcessual)
+                            {
+                                ConteudoTipoD += testa.Text + " ";
+                            }
+
+                            //insere o conteúdo da atualizacao para o objeto
+
+                            ProcessoAtualizado.ConteudoAtualizacao = ConteudoTipoD;
+
+
+                            //esvazia a string para a próxima atualização de dados
+                            ConteudoTipoD = string.Empty;
+                        }
+                        else if(ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-M"))
+                        {
+                            //encotrando o TITULO da movimentação processual
+                            IWebElement MediaBodyBoxTipoM = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].FindElement(By.ClassName("media-body"));
+                            IWebElement SpanTextoMovimentacao = MediaBodyBoxTipoM.FindElement(By.ClassName("texto-movimento"));
+
+                            ProcessoAtualizado.TituloMovimento = SpanTextoMovimentacao.Text;
+
+                            if(ProcessoAtualizado.ConteudoAtualizacao == "")
+                            {
+                                ProcessoAtualizado.ConteudoAtualizacao = "Sem conteúdo no PJE";
+                            }
+
+                            //ALIMENTAR OS PROCESSOS AQUI
+
+                            //ProcessoAtualizado.TituloMovimento = primeiroSpan.Text;
+
+                        }
+
+
+
+
+
+
+
+
+                        //insere o objeto na lista
                         ListaProcessosAtualizados.Add(ProcessoAtualizado);
+
+
+
+                        //reinicia a lista após terminar ela
+                        //ListaProcessosAtualizados.Clear();
+
+
+                        //realizar de para dos objetos aqui
+                        //implementar parametro em salvar movimentacao processual ( método ) para que dê o objeto processo
+                        //para obter seu numero de processo e outros dados caso necessário
+
+
+
+
+
+
+
                         Console.WriteLine("Elemento: " + j + " :  " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
 
 
@@ -386,192 +471,16 @@ namespace Pje_WebScrapping.DataStorage
 
             //testando a lista de movimentacao processual
 
-foreach(var teste in ListaProcessosAtualizados)
+
+            Console.WriteLine("\n\n\n\n");
+
+
+            foreach (var teste in ListaProcessosAtualizados)
             {
-                Console.WriteLine("Data: " + teste.DataMovimentacao);
+                Console.WriteLine("Data: " + teste.DataMovimentacao + " - Titulo Mov: " + teste.TituloMovimento + " - Conteudo: " + teste.ConteudoAtualizacao);
             }
-
-
-
-
-            //Console.WriteLine("revertendo com o vetor agora: ");
-            //for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1; i >= 0; i--)
-            //{
-            //    if (ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("div-data-rolagem"))
-            //    {
-            //        //recebe o index da data atual para não se perder
-            //        posicao_data = i;
-            //        Console.WriteLine("antes de: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
-
-
-
-
-
-
-
-
-            //        // Iterar sobre os elementos anteriores
-            //        for (int j = posicao_data; j >= posicao; j++)
-            //        {
-            //            Console.WriteLine("posicao_data: " + posicao_data + "posicao: " + posicao + "\n");
-            //            Console.WriteLine("Pos: " + j + "Sou: " + ElementosDentroDeMovimentacaoProcessual[j].Text);
-            //            //// Verificar se o elemento atual é "media data"
-            //            //if (ElementosDentroDeMovimentacaoProcessual[j].GetAttribute("class").Contains("media data"))
-            //            //{
-            //            //    break; // Sai do loop interno se encontrar um elemento "media data"
-            //            //}
-
-            //            //// Imprimir o elemento anterior
-            //            //Console.WriteLine("temos: " + ElementosDentroDeMovimentacaoProcessual[j].Text + " na pos de j: " + j + " e de i: " + i);
-
-            //            //for (int z = posicao; z < i; z++)
-            //            //{
-            //            //    Console.WriteLine("sou o elemento: " + ElementosDentroDeMovimentacaoProcessual[z].Text);
-            //            //}
-            //        }
-            //    }
-            //    else
-            //    {
-            //        //Console.WriteLine("Não sou uma data! e sou: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
-            //    }
-
-
-            //    // Incrementar a posição apenas se o elemento atual não for uma data
-            //    if (!ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data"))
-            //    {
-            //        posicao++;
-            //    }
-            //}
-
-
-
-
-
-
 
             ActionsPJE.EncerrarConsole();
-
-
-            // Iterar sobre os elementos, em ordem reversa
-            foreach (IWebElement Elemento in ElementosDentroDeMovimentacaoProcessual.Reverse())
-            {
-                // Verificar se o elemento é o ponto de parada (div-data-rolagem)
-                if (Elemento.GetAttribute("class").Contains("div-data-rolagem"))
-                {
-                    //irá sair da lista de elementos pois será a condição de parada, a data no topo
-                    break;
-                }
-
-                // Verificar se o elemento filho possui a classe "media data" e não possui a classe "div-data-rolagem"
-                if (Elemento.GetAttribute("class").Contains("media data") && !Elemento.GetAttribute("class").Contains("div-data-rolagem"))
-                {
-                    //capturou com sucesso
-                    Console.WriteLine("Data: " + Elemento.Text + " sou um: " + Elemento.TagName + " estou na posição: " + posicao);
-
-                    // Lista para armazenar os elementos irmãos antes deste "media data"
-                    List<IWebElement> ElementosAnterioresDoMediaData = new List<IWebElement>();
-
-                    // Iterar sobre os elementos irmãos antes do "media data"
-                    for (int i = controle_inicio_for_elementos; i < posicao; i++)
-                    {
-                        Console.WriteLine("estou na pos: " + i + " e estou adicionando o: " + ElementosDentroDeMovimentacaoProcessual[i].Text );
-
-                        //adicionar IF para não incluir a data aqui 
-
-                        if(!ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessual[i].GetAttribute("class").Contains("div-data-rolagem"))
-                        {
-                            ElementosAnterioresDoMediaData.Add(ElementosDentroDeMovimentacaoProcessual[i]);
-
-                        }
-
-                    }
-
-                    // Adicionar a lista de elementos irmãos antes deste "media data" à lista principal
-                    ElementosAnteriores.Add(ElementosAnterioresDoMediaData);
-
-                    // Atualizar o controle_inicio_for_elementos para a próxima iteração
-                    controle_inicio_for_elementos = posicao + 1; // Correção aqui
-
-                }
-
-                // Incrementar a posição
-                posicao++;
-            }
-
-            // Imprimir os elementos irmãos capturados antes de cada "media data"
-            Console.WriteLine("\n\n listando resultado: \n\n");
-
-            foreach (var elementosAnterioresDoMediaData in ElementosAnteriores)
-            {
-                Console.WriteLine("\n\nElementos antes do media data: ");
-                foreach (var elementoAnterior in elementosAnterioresDoMediaData)
-                {
-                    Console.WriteLine("elemento: " + elementoAnterior.Text);
-                }
-            }
-
-
-
-
-            //verificar essa lista o que está acontecendo e ver se de repente póde ser o reverse talvez
-            Console.WriteLine("\n\nChecando os elementos que estão dentro da lista: ");
-
-            foreach (IWebElement Elemento in ElementosDentroDeMovimentacaoProcessual.Reverse())
-            {
-                Console.WriteLine("Teste Elemento Conteudo: " + Elemento.Text + " nome da classe: " + Elemento.GetAttribute("class"));
-            }
-
-
-
-            ActionsPJE.EncerrarConsole();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            //List<IWebElement> elementossss = new List<IWebElement>();
-
-            //foreach (var paiElemento in paiElementos)
-            //{
-            //    // Encontrar todos os elementos com a classe "media data" dentro do pai atual
-            //    IList<IWebElement> elementosMediaData = paiElemento.FindElements(By.CssSelector(".media.data"));
-
-            //    // Adicionar todos os elementos encontrados à lista elementossss
-            //    elementossss.AddRange(elementosMediaData);
-
-            //    // Para cada elemento "media data", encontrar seus irmãos imediatamente abaixo dele
-            //    foreach (var elementoMediaData in elementosMediaData)
-            //    {
-            //        // Encontrar todos os irmãos imediatamente abaixo do elemento "media data"
-            //        IList<IWebElement> irmãos = elementoMediaData.FindElements(By.XPath("following-sibling::*"));
-
-            //        // Adicionar todos os irmãos à lista elementossss
-            //        elementossss.AddRange(irmãos);
-            //    }
-            //}
-
-            //// Imprimir os textos dos elementos coletados
-            //foreach (var elemento in elementossss)
-            //{
-            //    Console.WriteLine("Testando Data: " + elemento.Text);
-            //}
-
-
-
-
-
-
-
 
 
 
@@ -678,203 +587,6 @@ foreach(var teste in ListaProcessosAtualizados)
 
 
 
-
-
-
-
-            Console.WriteLine("\n o que é MEDIABODYBOX??? SalvarMovimentacaoProcessual?\n\n");
-
-            //colocando ela de forma CRONOLÓGICA ( desde o início até o presente momento da movimentação processual .Reverse() )
-            //MediaBodyBoxHistoricoProcessual é o título de cada atualização de processo
-
-
-            //vou fazer um foreach para verificar cada mediabodybox e acessar cada vetor do array para poder retornar ao usuario
-            //os elementos contidos na bodybox
-            //criar uma lista de processoatualizacao para inserir dentro do objeto cada value pertinente
-
-
-            List<ProcessoAtualizacao> ProcessosAtualizacoes = new List<ProcessoAtualizacao>();
-
-
-
-
-            //testar para ver se altera a ordem de forma correta
-            //foreach (var teste in TituloMovimentacaoProcessual.Reverse())
-            //{
-            //    Console.WriteLine("TESTE PARA TITULOS DAS ATUALIZAÇÕES: " + teste.Text);
-            //}
-
-            //Console.WriteLine("\n\n\n\n\n");
-
-            ////será o CONTEUDO DA ATUALIZACAO PROCESSOS
-            //foreach (var teste in TestandoANEXOS.Reverse())
-            //{
-            //    if (!string.IsNullOrEmpty(teste.Text))
-            //    {
-            //        Console.WriteLine("TESTE PARA ANEXOS: " + teste.Text);
-            //    }
-            //}
-
-
-            //for(int i = 0; i <= MediaBodyBoxHistoricoProcessual.Count; i++)
-            //{
-
-            //    if (!string.IsNullOrEmpty(MediaBodyBoxHistoricoProcessual[i].Text))
-            //    {
-            //        if(!string.IsNullOrEmpty())
-            //    }
-
-            //}
-
-
-            //Console.WriteLine("Testando: \n\n " + PaginaMovimentacaoProcessual.Text);
-
-
-
-
-            //for(int i = 0; i< PaginaMovimentacaoProcessual.Text.Length;i++)
-            //{
-            //    //vamos verificar o tipo de tag que está dentro de paginamovimentacaoprocessual
-            //    //IWebElement Teste = PaginaMovimentacaoProcessual.GetAttribute
-
-                
-            //}
-
-            //foreach (var teste in MediaBodyBoxHistoricoProcessual)
-            //{ 
-            //    if(!string.IsNullOrEmpty(teste.Text))
-            //    {
-                    
-            //    }
-            //        Console.WriteLine("TESTE PARA ANEXOS: " + teste.Text + "Sou uma Tag: " + teste.TagName);
-
-            //}
-
-
-
-
-
-
-
-            //    //foreach (var verificabodybox in MediaBodyBoxHistoricoProcessual.Reverse())
-            //    //{
-
-            //    //    ProcessoAtualizacao processoAtualizacao = new ProcessoAtualizacao(); // Criar um novo objeto a cada iteração
-            //    //    processoAtualizacao.TituloPjeMovimentacaoProcessual = verificabodybox.Text.ToString();
-            //    //    if (verificabodybox.Text != "")
-
-            //    //        Console.WriteLine("meu valor da bodybox é de: " + verificabodybox.Text);
-            //    //    ProcessosAtualizacoes.Add(processoAtualizacao);
-            //    //}
-
-            //    // Verificar lista sendo preenchida para inserirmos no banco
-            //    foreach (var listadosprocessosatualizados in ProcessosAtualizacoes)
-            //{
-            //    Console.WriteLine("Lista processo atualizado: " + listadosprocessosatualizados.TituloPjeMovimentacaoProcessual);
-            //}
-
-
-
-
-
-            //agilizando testes
-            ActionsPJE.EncerrarConsole();
-
-
-
-
-            //como fazer buscar pelo classname que contenha esse nome de classe media interno tipo
-
-
-            //IList<IWebElement> QuadradoDaMovimentacao = driver.FindElements(By.ClassName().ToString().Contains);
-
-
-
-            //na hora de inserir no banco preciso fazer da seguinte forma:
-            //fazer lista com media interno tipo ( que são as divs com todas as descrições da movimentação )
-            //fazer lista com media data para puxar as datas da movimentação que ficam acima das divs.
-
-            int roda = 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-            //VERIFICAR DPS ISSO DAQUI PARAMETRO DE SALVARMOVIMENTACAOPROCESSUAL INSTANCIADA AQUI
-
-
-
-
-            ////objeto instanciado da div BRUTA da movimentaão processual, TODOS OS ELEMENTOS AQUI:
-            //IList<IWebElement> HistoricoDeProcessos = ListaDeMovimentacaoProcessual;
-
-            ////IList<IWebElement> QuadradoDaMovimentacao = driver.FindElements(By.ClassName("media-body.box"));
-            ////IList<IWebElement> DatasDaMovimentacao = driver.FindElements(By.ClassName("mediadata"));
-
-            //Console.WriteLine("\n o que é historicoDeProcessos dentro de SalvarMovimentacaoProcessual?\n\n");
-            //foreach (var testando in HistoricoDeProcessos)
-            //{
-            //    Console.WriteLine("historico de processos: " + testando.Text);
-            //}
-
-            //Console.WriteLine("\n\n\n\n\n\n");
-            //foreach (var stringonamovimentacao in HistoricoDeProcessos)
-            //{
-            //    string texto = stringonamovimentacao.Text.ToString();
-            //    int comprimentoTotal = texto.Length;
-
-            //    // Calcula o tamanho de cada parte
-            //    int tamanhoParte = comprimentoTotal / 3;
-
-            //    // Divide a string em três partes
-            //    string parte1 = texto.Substring(0, tamanhoParte);
-            //    string parte2 = texto.Substring(tamanhoParte, tamanhoParte);
-            //    string parte3 = texto.Substring(2 * tamanhoParte, tamanhoParte);
-
-            //    // Imprime as partes
-            //    Console.WriteLine("Parte 1: " + parte1);
-            //    Console.WriteLine("\n\n\n");
-            //    Console.WriteLine("Parte 2: " + parte2);
-            //    Console.WriteLine("\n\n\n");
-            //    Console.WriteLine("Parte 3: " + parte3);
-            //    Console.WriteLine("\n\n\n");
-
-
-
-            //    //roda++;
-            //    //Console.WriteLine("Começando a imprimir o que tem na movimentação processual");
-            //    //ActionsPJE.AguardarPje("Baixo");
-            //    ////imprime TODA A MOVIMENTAÇÃO PROCESSUAL
-            //    //Console.WriteLine("\n +++ "  + stringonamovimentacao.TagName);
-            //    //Console.WriteLine("SalvarMovimentacaoProcessual, iten: " + ponto_de_parada + "  " + stringonamovimentacao.Text);
-            //    //Console.WriteLine("Total : " + stringonamovimentacao.ToString().Length);
-            //    //foreach (var teste in stringonamovimentacao.Text)
-            //    //{
-
-            //    //}
-
-
-            //    //if(HistoricoDeProcessos.Count - 1 == ponto_de_parada)
-            //    //{
-            //    //    Console.WriteLine("Finalizei a lista");
-            //    //}
-            //    //ponto_de_parada++;
-
-            //}
-            ponto_de_parada = 0;
-
-            //Console.WriteLine("lista finalizada com um total de: " + HistoricoDeProcessos.Count + " registros");
-            //Console.WriteLine("Roda rodou: " + roda);
-            //Console.WriteLine("lista finalizada com um total de: " + QuadradoDaMovimentacao.Count + " registros");
-            //Console.WriteLine("lista finalizada com um total de: " + DatasDaMovimentacao.Count + " registros");
         }
 
 

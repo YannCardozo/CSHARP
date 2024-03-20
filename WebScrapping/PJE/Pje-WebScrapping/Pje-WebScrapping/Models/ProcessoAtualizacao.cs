@@ -22,6 +22,7 @@ namespace Pje_WebScrapping.Models
 
         //as vezes só vai ter um titulo e não um conteudo, verificar "media interno tipo-D"
         public string? ConteudoAtualizacao { get; set; }
+        public string? TituloMovimento { get; set; }
         public DateOnly? DataMovimentacao { get; set; }
 
 

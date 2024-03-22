@@ -22,7 +22,6 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
             //clica no botão que redireciona para o painel do representante processual dentro de painel
             driver.FindElement(By.XPath("//*[@id=\"menu\"]/div[2]/ul/li[1]/div/ul/li/a")).Click();
-
             ActionsPJE.AguardarPje("Medio");
 
             //recebe a div que contém os elementos a serem capturados, caso haja.
@@ -38,6 +37,8 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
             IList<IWebElement> linkscomnotificacao = menupainelrepresentanteprocessual.FindElements(By.TagName("a"));
 
+
+            //verifica quantas NOTIFICACOES tem dentro do menu de movimentacao processual e inicia as repeticoes FOR baseado nisso.
             if (linkscomnotificacao.Count > 0)
             {
 
@@ -47,7 +48,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                     //imprime na tela o texto da tag <a> que esta sendo lida
                     Console.WriteLine("texto: " + linkscomnotificacao[i].Text);
                     Console.WriteLine("Nome da Tag: " + linkscomnotificacao[i].TagName);
-                    //aqui clica nos links tag <a> com notificação e abre a opção com a table
+                    //inicializa aqui cada entrada em cada
                     linkscomnotificacao[i].Click();
                     ActionsPJE.AguardarPje("Medio");
                     Console.WriteLine("cliquei");
@@ -83,10 +84,27 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                 testea.Click();
                                 ActionsPJE.AguardarPje("Baixo");
                                 //retorna toda a tabela desejada para cá:
+
+
+
                                 IList<IWebElement> Tabela = driver.FindElements(By.Id("divListaExpedientes"));
 
                                 //insere novos elementos na lista ListaDeTabelas ( tables de registros que encontre )
                                 listaDeTabelas.AddRange(Tabela);
+
+
+
+                                //fazer a lista aqui dos elementos 
+
+                                IWebElement TabelaUnitaria = driver.FindElement(By.Id("divListaExpedientes"));
+
+                                //todos os TDS da tabela que tem col-md-4
+                                IList<IWebElement> ElementosTDColMD4 = TabelaUnitaria.FindElements(By.CssSelector(".col-md-4.informacoes-linha-expedientes"));
+
+                                //todos os TDS da tabela que tem col-md-8
+                                IList<IWebElement> ElementosTDColMD8= TabelaUnitaria.FindElements(By.CssSelector(".col-md-8.informacoes-linha-expedientes"));
+
+
                                 foreach (var tabela in listaDeTabelas)
                                 {
                                     Console.WriteLine(tabela.Text);
@@ -110,8 +128,36 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                 //recebe o link da pagina, antes de abrir outra janela
                                 string Janela_Principal = ActionsPJE.RetornarParaJanelaPrincipal(driver);
 
+                                int controleMD4 = 0;
+                                int controleMD8 = 0;
+
                                 foreach (var linkprocesso in linkmovimentacaoprocessual)
                                 {
+                                    Console.WriteLine("\n\n");
+                                    //verificando os TDS com os dados do processo inicial para salvardadosprocessos antes de acessar cada link
+                                    if (ElementosTDColMD4.Count > 0)
+                                    {
+
+                                        Console.WriteLine("[" + controleMD4 + "] - MD4 : " + ElementosTDColMD4[controleMD4].Text);
+
+
+
+                                        controleMD4++;
+                                    }
+                                    Console.WriteLine("\n\n");
+                                    if (ElementosTDColMD8.Count > 0)
+                                    {
+
+                                        Console.WriteLine("[" + controleMD8 + "] - MD8 : " + ElementosTDColMD8[controleMD8].Text);
+
+                                        controleMD8++;
+                                    }
+
+
+                                    //começar a chamar salvar dados processo AQUI
+
+                                    //ActionsPJE.EncerrarConsole();
+
                                     Console.WriteLine("LinkProcesso: " + linkprocesso.Text);
                                     Console.WriteLine("LinkPRocesso TAG: " + linkprocesso.TagName);
                                     linkprocesso.Click();
@@ -137,14 +183,22 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                                 ActionsPJE.AguardarPje("Baixo");
 
                                                 IList<IWebElement> movimentacaoprocessual = driver.FindElements(By.Id("divTimeLine:eventosTimeLineElement"));
-                                                
-                                                SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver);
-                                                Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
 
-                                                DAR CONTINUIDADE AQUI NESSE TRECHO
+                                                Console.WriteLine("\n\n\n\n\n O que é salvar dados processo: \n\n");
+
 
                                                 //salvar processo inicial
                                                 SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, linkmovimentacaoprocessual, driver);
+
+                                                Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
+
+                                                SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver);
+
+
+
+
+                                                //salvar processo inicial
+                                                //SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, linkmovimentacaoprocessual, driver);
 
                                                 //tentando entender o que é movimentacaoprocessual
 
@@ -184,7 +238,8 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                     //puxar desse ID a movimentacao processual do link aberto : divTimeLine:eventosTimeLineElement
                                 }
-
+                                controleMD4 = 0;
+                                controleMD8 = 0;
 
                             }
 

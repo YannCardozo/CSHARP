@@ -33,6 +33,9 @@ namespace Pje_WebScrapping.DataStorage
         //verificar se são realmente 7 divs em EXPEDIENTES dentro dos TDS
         public static string SalvarDadosProcesso(IList<IWebElement> CabecalhoProcesso, IList<IWebElement> NumProcesso ,IWebDriver driver)
         {
+
+            APAGAR A PORRA TODA E FAZER DO ZERO PASSANDO O PARAMETRO DO QUE IRÁ SALVAR VINDO DE NAVBAROPTIONSACTIONS
+
             try
             {
                 if (driver != null)

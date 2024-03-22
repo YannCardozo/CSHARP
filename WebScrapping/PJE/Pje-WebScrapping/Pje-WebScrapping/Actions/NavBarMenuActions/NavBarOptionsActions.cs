@@ -141,6 +141,8 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                                 SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver);
                                                 Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
 
+                                                DAR CONTINUIDADE AQUI NESSE TRECHO
+
                                                 //salvar processo inicial
                                                 SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, linkmovimentacaoprocessual, driver);
 

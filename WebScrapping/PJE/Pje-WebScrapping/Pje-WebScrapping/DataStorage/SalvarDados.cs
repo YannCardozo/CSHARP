@@ -34,7 +34,7 @@ namespace Pje_WebScrapping.DataStorage
         public static string SalvarDadosProcesso(IList<IWebElement> CabecalhoProcesso, IList<IWebElement> NumProcesso ,IWebDriver driver)
         {
 
-            APAGAR A PORRA TODA E FAZER DO ZERO PASSANDO O PARAMETRO DO QUE IRÁ SALVAR VINDO DE NAVBAROPTIONSACTIONS
+            //APAGAR A PORRA TODA E FAZER DO ZERO PASSANDO O PARAMETRO DO QUE IRÁ SALVAR VINDO DE NAVBAROPTIONSACTIONS
 
             try
             {
@@ -113,7 +113,8 @@ namespace Pje_WebScrapping.DataStorage
                             Console.WriteLine("{0}: {1}", propriedade.Name, valor);
                         }
                         Console.WriteLine("\n\nFinalizei  PROCESSOENTIDADE: ");
-                        return "SalvarDadosProcesso foi concluido com sucesso";
+
+                        return "\n Processo nº " + ProcessoEntidade.CodProcessoTJ + " inserido com sucesso no banco.";
                     }
                     return "Driver esta null em SalvarDadosProcesso";
                 }

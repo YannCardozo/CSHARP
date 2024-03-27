@@ -156,16 +156,16 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                     //salvar processo inicial
 
-                                    - linkmovimentacaoprocessual pode ser o nº do processo a ser armazenado ( para fazer verificacao no banco se ja existe )
-                                    o processo cadastrado ou nao
+                                    //- linkmovimentacaoprocessual pode ser o nº do processo a ser armazenado ( para fazer verificacao no banco se ja existe )
+                                    //o processo cadastrado ou nao
 
-                                    - implementar parametros para salvar dados processo com esses elementos: ElementosTDColMD4 ( 1ª coluna de dados do processo )
-                                    - ElementosTDColMD8 para salvar 2 coluna de dados do processo, passando por parametro
+                                    //- implementar parametros para salvar dados processo com esses elementos: ElementosTDColMD4 ( 1ª coluna de dados do processo )
+                                    //- ElementosTDColMD8 para salvar 2 coluna de dados do processo, passando por parametro
 
-                                    - lembrando que vou precisar fechar a janela do navegador apos rodar a movimentacao processual e avançar para o proximo processo
+                                    //- lembrando que vou precisar fechar a janela do navegador apos rodar a movimentacao processual e avançar para o proximo processo
 
 
-                                    SalvarDados.SalvarDadosProcesso(ConteudoProcessoAberto, linkmovimentacaoprocessual, driver);
+                                    SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
 
 
                                     //começar a chamar salvar dados processo AQUI

@@ -31,100 +31,172 @@ namespace Pje_WebScrapping.DataStorage
 
         //método destinado a salvar o processo INICIAL
         //verificar se são realmente 7 divs em EXPEDIENTES dentro dos TDS
-        public static string SalvarDadosProcesso(IList<IWebElement> CabecalhoProcesso, IList<IWebElement> NumProcesso ,IWebDriver driver)
+        public static string SalvarDadosProcesso(IWebElement PrimeiraColDados, IWebElement SegundaColDados, IWebElement NumProcesso)
         {
 
             //APAGAR A PORRA TODA E FAZER DO ZERO PASSANDO O PARAMETRO DO QUE IRÁ SALVAR VINDO DE NAVBAROPTIONSACTIONS
 
-            try
+
+            //IF verificacao no banco de dados ID EFC para saber se ja existe o registro cadastrado
+
+            //processo a ser inserido
+            //redefinir classe processo, reduzir atributos
+            Processo ProcessoEntidade = new Processo();
+
+
+            //os atributos serão obtidos pela tag span com o title respectivo
+
+            IList<IWebElement> ListaSpansPrimeiracolDados = PrimeiraColDados.FindElements(By.TagName("span"));
+
+            Console.WriteLine("\n\n\n");
+
+            IWebElement spanDestinatario = null;
+            IWebElement spanTipoDeDocumento = null;
+            IWebElement spanMeioDeComunicacao = null;
+            Prazo para manifestação
+            //o que não conseguir pelo title do span, tentar conseguir pela posição dentro de primeiracoldados
+
+            //funcionou, melhorar.
+            foreach (IWebElement span in ListaSpansPrimeiracolDados)
             {
-                if (driver != null)
+                string title = span.GetAttribute("title");
+                if (title != null && title.Equals("Destinatário", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (CabecalhoProcesso.Count > 0)
-                    {
-                        IList<IWebElement> ConteudoDasDivsProcessoAberto = new List<IWebElement>();
-                        foreach (var elemento in CabecalhoProcesso)
-                        {
-                            // Encontra todas as divs dentro do elemento atual e adiciona à lista ConteudoDasDivsProcessoAberto
-                            IList<IWebElement> divsInternas = elemento.FindElements(By.TagName("div"));
-                            foreach (var div in divsInternas)
-                            {
-                                //insere todas as divs dentro do elemento TD referente ao processo
-                                ConteudoDasDivsProcessoAberto.Add(div);
-                            }
-                        }
-                        Console.WriteLine("\n\n\n\n\n\n\n\n\n\n Testando SALVARDADOSPROCESSOAGORA");
-                        //objetos para inserir no banco
-
-                        //processo a ser inserido
-                        Processo ProcessoEntidade = new Processo();
-
-                        //lista de processos a serem inseridos
-                        List<string> TestandoLista = new List<string>();
-
-
-                        //testando inserir dados 
-                        ProcessoEntidade.Cliente = ConteudoDasDivsProcessoAberto[0].Text;
-                        ProcessoEntidade.Despacho = ConteudoDasDivsProcessoAberto[1].Text;
-                        ProcessoEntidade.MeioDeComunicacao = ConteudoDasDivsProcessoAberto[2].Text;
-                        ProcessoEntidade.Prazo = ConteudoDasDivsProcessoAberto[3].Text;
-
-                        if (ConteudoDasDivsProcessoAberto[4].Text != "")
-                        {
-                            // Texto fornecido
-                            string texto = ConteudoDasDivsProcessoAberto[4].Text;
-
-                            // Encontrar o índice de "tomou ciência"
-                            int indiceTomouCiencia = texto.IndexOf("tomou ciência");
-
-                            // Extrair o nome da advogada
-                            string nomeAdvogada = texto.Substring(0, indiceTomouCiencia).Trim();
-
-                            // Armazenar o nome da advogada em ProcessoEntidade
-                            ProcessoEntidade.Advogada = nomeAdvogada;
-                            ProcessoEntidade.AdvogadaCiente = ConteudoDasDivsProcessoAberto[4].Text.ToString().Replace(nomeAdvogada + " ", "");
-
-                        }
-
-                        ProcessoEntidade.Resposta = ConteudoDasDivsProcessoAberto[6].Text;
-                        ProcessoEntidade.ProximoPrazo = ConteudoDasDivsProcessoAberto[8].Text;
-                        ProcessoEntidade.Causa = ConteudoDasDivsProcessoAberto[9].Text;
-
-                        if (ConteudoDasDivsProcessoAberto[9].Text != "")
-                        {
-                            //num processo é a lista de links que redirecionam para o processo
-                            //numero do processo em azul 
-                            ProcessoEntidade.CodProcessoTJ = NumProcesso[0].Text.ToString().Replace("PJEC ", "");
-                        }
-
-                        //ultima movimentacao processual
-                        if (ConteudoDasDivsProcessoAberto[10].Text.Contains("Último movimento:"))
-                        {
-                            var stringverificadora = ConteudoDasDivsProcessoAberto[10].Text;
-                            var indiceInicio = stringverificadora.IndexOf("Último movimento: ") + "Último movimento:".Length;
-                            var parteDaString = stringverificadora.Substring(indiceInicio);
-                            // agora 'parteDaString' contém a parte da string após "Último movimento:"
-                            ProcessoEntidade.UltimaMovimentacaoProcessual = parteDaString;
-                        }
-                        Console.WriteLine("\n\n\n\n\n\n\n\n\n\n Começando a imprimir  PROCESSOENTIDADE: ");
-                        foreach (var propriedade in typeof(Processo).GetProperties())
-                        {
-                            var valor = propriedade.GetValue(ProcessoEntidade);
-                            Console.WriteLine("{0}: {1}", propriedade.Name, valor);
-                        }
-                        Console.WriteLine("\n\nFinalizei  PROCESSOENTIDADE: ");
-
-                        return "\n Processo nº " + ProcessoEntidade.CodProcessoTJ + " inserido com sucesso no banco.";
-                    }
-                    return "Driver esta null em SalvarDadosProcesso";
+                    spanDestinatario = span;
+                    break;
                 }
-                return "Erro em SalvarDadosProcesso";
+                else if (title != null && title.Equals("Tipo de documento", StringComparison.OrdinalIgnoreCase))
+                {
+                    spanTipoDeDocumento = span;
+                    break;
+                }
+                else if(title != null && title.Equals("spanMeioDeComunicacao", StringComparison.OrdinalIgnoreCase))
+                {
+                    spanMeioDeComunicacao = span;
+                    break;
+                }
+
+
+
+
+
+
+
             }
-            catch(Exception ex)
+
+
+
+            if (spanDestinatario != null)
             {
-                 Console.WriteLine("Erro em Salvar dadosProcesso: " + ex.Message);
-                return "Erro em SalvarDadosProcesso";
+                Console.WriteLine("\n\n\n\n Inserindo nome do destinatário: " + spanDestinatario.Text);
+                ProcessoEntidade.Cliente = spanDestinatario.Text;
+
             }
+
+            ActionsPJE.EncerrarConsole();
+            Console.WriteLine("Testando: \n\n\n");
+
+
+            Console.WriteLine("Sou a 1 coluna: \n " + PrimeiraColDados.Text);
+            Console.WriteLine("Sou a 2 coluna: \n " + SegundaColDados.Text);
+            Console.WriteLine(NumProcesso.Text);
+
+
+
+            return "string";
+
+
+            //try
+            //{
+            //    if (driver != null)
+            //    {
+            //        //Console.WriteLine("Meu tamanho de cabecalho processo é: " + CabecalhoProcesso.Count);
+            //        //ActionsPJE.EncerrarConsole();
+            //        if (CabecalhoProcesso.Count > 0)
+            //        {
+            //            IList<IWebElement> ConteudoDasDivsProcessoAberto = new List<IWebElement>();
+            //            foreach (var elemento in CabecalhoProcesso)
+            //            {
+            //                // Encontra todas as divs dentro do elemento atual e adiciona à lista ConteudoDasDivsProcessoAberto
+            //                IList<IWebElement> divsInternas = elemento.FindElements(By.TagName("div"));
+            //                foreach (var div in divsInternas)
+            //                {
+            //                    //insere todas as divs dentro do elemento TD referente ao processo
+            //                    ConteudoDasDivsProcessoAberto.Add(div);
+            //                }
+            //            }
+            //            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n Testando SALVARDADOSPROCESSOAGORA");
+            //            //objetos para inserir no banco
+
+
+
+            //            //lista de processos a serem inseridos
+            //            List<string> TestandoLista = new List<string>();
+
+
+            //            //testando inserir dados 
+            //            ProcessoEntidade.Cliente = ConteudoDasDivsProcessoAberto[0].Text;
+            //            ProcessoEntidade.Despacho = ConteudoDasDivsProcessoAberto[1].Text;
+            //            ProcessoEntidade.MeioDeComunicacao = ConteudoDasDivsProcessoAberto[2].Text;
+            //            ProcessoEntidade.Prazo = ConteudoDasDivsProcessoAberto[3].Text;
+
+            //            if (ConteudoDasDivsProcessoAberto[4].Text != "")
+            //            {
+            //                // Texto fornecido
+            //                string texto = ConteudoDasDivsProcessoAberto[4].Text;
+
+            //                // Encontrar o índice de "tomou ciência"
+            //                int indiceTomouCiencia = texto.IndexOf("tomou ciência");
+
+            //                // Extrair o nome da advogada
+            //                string nomeAdvogada = texto.Substring(0, indiceTomouCiencia).Trim();
+
+            //                // Armazenar o nome da advogada em ProcessoEntidade
+            //                ProcessoEntidade.Advogada = nomeAdvogada;
+            //                ProcessoEntidade.AdvogadaCiente = ConteudoDasDivsProcessoAberto[4].Text.ToString().Replace(nomeAdvogada + " ", "");
+
+            //            }
+
+            //            ProcessoEntidade.Resposta = ConteudoDasDivsProcessoAberto[6].Text;
+            //            ProcessoEntidade.ProximoPrazo = ConteudoDasDivsProcessoAberto[8].Text;
+            //            ProcessoEntidade.Causa = ConteudoDasDivsProcessoAberto[9].Text;
+
+            //            if (ConteudoDasDivsProcessoAberto[9].Text != "")
+            //            {
+            //                //num processo é a lista de links que redirecionam para o processo
+            //                //numero do processo em azul 
+            //                ProcessoEntidade.CodProcessoTJ = NumProcesso[0].Text.ToString().Replace("PJEC ", "");
+            //            }
+
+            //            //ultima movimentacao processual
+            //            if (ConteudoDasDivsProcessoAberto[10].Text.Contains("Último movimento:"))
+            //            {
+            //                var stringverificadora = ConteudoDasDivsProcessoAberto[10].Text;
+            //                var indiceInicio = stringverificadora.IndexOf("Último movimento: ") + "Último movimento:".Length;
+            //                var parteDaString = stringverificadora.Substring(indiceInicio);
+            //                // agora 'parteDaString' contém a parte da string após "Último movimento:"
+            //                ProcessoEntidade.UltimaMovimentacaoProcessual = parteDaString;
+            //            }
+            //            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n Começando a imprimir  PROCESSOENTIDADE: ");
+            //            foreach (var propriedade in typeof(Processo).GetProperties())
+            //            {
+            //                var valor = propriedade.GetValue(ProcessoEntidade);
+            //                Console.WriteLine("{0}: {1}", propriedade.Name, valor);
+            //            }
+            //            Console.WriteLine("\n\nFinalizei  PROCESSOENTIDADE: ");
+
+            //            return "\n Processo nº " + ProcessoEntidade.CodProcessoTJ + " inserido com sucesso no banco.";
+            //        }
+            //        return "Driver esta null em SalvarDadosProcesso";
+            //    }
+            //    return "Erro em SalvarDadosProcesso";
+            //}
+            //catch(Exception ex)
+            //{
+            //     Console.WriteLine("Erro em Salvar dadosProcesso: " + ex.Message);
+            //    //ActionsPJE.EncerrarConsole();
+            //    return "Erro em SalvarDadosProcesso";
+            //}
  
         }
 

@@ -52,6 +52,7 @@ namespace Pje_WebScrapping.DataStorage
             IList<IWebElement> ListaElementosPrimeiraColDados = PrimeiraColDados.FindElements(By.XPath(".//*"));
             Console.WriteLine("\n\n\n ENTREI");
 
+            //PrimeiraColDados
             foreach (IWebElement elemento in ListaElementosPrimeiraColDados)
             {
                 string title = elemento.GetAttribute("title");
@@ -135,6 +136,42 @@ namespace Pje_WebScrapping.DataStorage
 
             //começar a verificar a SegundaColDados:
             IList<IWebElement> ListaElementosSegundaColDados = SegundaColDados.FindElements(By.XPath(".//*"));
+
+            //anotar as tags do pje em segunda col dados;
+            //começar a detrinchar no webscrapping dentro do foreach
+            //verificar se vai precisar criar novos atributos na tabela processo
+
+
+            //SegundaColDados
+            foreach (IWebElement elemento in ListaElementosSegundaColDados)
+            {
+                //string title = elemento.GetAttribute("title");
+
+                //tentativa de obter o primeiro elemento do texto da div
+
+
+                // Obtenha o texto dentro do elemento div
+                string textoCompleto = elemento.Text;
+
+                // Use expressões regulares para remover as tags <a> e <span>
+                string textoSemTags = System.Text.RegularExpressions.Regex.Replace(textoCompleto, @"<a\b[^>]*>(.*?)</a>|<span\b[^>]*>(.*?)</span>", string.Empty);
+
+                // Agora você tem o texto sem as tags <a> e <span>
+                Console.WriteLine(textoSemTags);
+
+
+                //ProcessoEntidade.Cliente = spanDestinatario;
+                //ProcessoEntidade.CodPJECAcao = TipoDocumento;
+                //ProcessoEntidade.MeioDeComunicacao = spanMeioDeComunicacao;
+                //ProcessoEntidade.MeioDeComunicacaoData = MeioDeComunicacaoData;
+                //ProcessoEntidade.AdvogadaCiente = DataCienciaProcesso;
+                //ProcessoEntidade.ProximoPrazo = DataPrevistaLimiteManifestacao;
+                //ProcessoEntidade.ProximoPrazoData = dataLimite;
+                //ProcessoEntidade.Prazo = PrazoManifestacao;
+                //ProcessoEntidade.CodPJEC = NumProcesso.Text;
+            }
+
+
 
             ActionsPJE.EncerrarConsole();
 

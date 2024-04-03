@@ -142,7 +142,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
 
 
-                                        controleMD4++;
+
                                     }
                                     Console.WriteLine("\n\n");
                                     if (ElementosTDColMD8.Count > 0)
@@ -150,9 +150,11 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                         Console.WriteLine("[" + controleMD8 + "] - MD8 : " + ElementosTDColMD8[controleMD8].Text);
 
-                                        controleMD8++;
-                                    }
 
+                                    }
+                                    SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
+                                    controleMD4++;
+                                    controleMD8++;
 
                                     //salvar processo inicial
 
@@ -165,7 +167,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                     //- lembrando que vou precisar fechar a janela do navegador apos rodar a movimentacao processual e avançar para o proximo processo
 
 
-                                    SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
+
 
 
                                     //começar a chamar salvar dados processo AQUI

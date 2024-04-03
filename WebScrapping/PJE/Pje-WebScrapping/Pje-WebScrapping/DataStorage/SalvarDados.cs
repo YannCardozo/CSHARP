@@ -11,8 +11,10 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -33,65 +35,149 @@ namespace Pje_WebScrapping.DataStorage
         //verificar se são realmente 7 divs em EXPEDIENTES dentro dos TDS
         public static string SalvarDadosProcesso(IWebElement PrimeiraColDados, IWebElement SegundaColDados, IWebElement NumProcesso)
         {
-
-            //APAGAR A PORRA TODA E FAZER DO ZERO PASSANDO O PARAMETRO DO QUE IRÁ SALVAR VINDO DE NAVBAROPTIONSACTIONS
-
-
-            //IF verificacao no banco de dados ID EFC para saber se ja existe o registro cadastrado
-
-            //processo a ser inserido
-            //redefinir classe processo, reduzir atributos
             Processo ProcessoEntidade = new Processo();
-
-
-            //os atributos serão obtidos pela tag span com o title respectivo
-
-            IList<IWebElement> ListaSpansPrimeiracolDados = PrimeiraColDados.FindElements(By.TagName("span"));
-
             Console.WriteLine("\n\n\n");
 
-            IWebElement spanDestinatario = null;
-            IWebElement spanTipoDeDocumento = null;
-            IWebElement spanMeioDeComunicacao = null;
-            Prazo para manifestação
-            //o que não conseguir pelo title do span, tentar conseguir pela posição dentro de primeiracoldados
+            string spanDestinatario = "";
+            string spanTipoDeDocumento = "";
+            string spanMeioDeComunicacao = "";
+            string DataCienciaProcesso = "";
+            string PrazoManifestacao = "";
+            string MeioDeComunicacaoData = "";
+            string numeroTipoDocumento = "";
+            string DataPrevistaLimiteManifestacao = "";
+            string TipoDocumento = "";
+            string dataLimite = "";
 
-            //funcionou, melhorar.
-            foreach (IWebElement span in ListaSpansPrimeiracolDados)
+            IList<IWebElement> ListaElementosPrimeiraColDados = PrimeiraColDados.FindElements(By.XPath(".//*"));
+            Console.WriteLine("\n\n\n ENTREI");
+
+            foreach (IWebElement elemento in ListaElementosPrimeiraColDados)
             {
-                string title = span.GetAttribute("title");
-                if (title != null && title.Equals("Destinatário", StringComparison.OrdinalIgnoreCase))
+                string title = elemento.GetAttribute("title");
+                if (!string.IsNullOrEmpty(title) && title.Equals("Destinatário", StringComparison.OrdinalIgnoreCase))
                 {
-                    spanDestinatario = span;
-                    break;
+                    spanDestinatario = elemento.Text;
                 }
-                else if (title != null && title.Equals("Tipo de documento", StringComparison.OrdinalIgnoreCase))
+                else if (!string.IsNullOrEmpty(title) && title == "Tipo de documento" && (elemento.Text.StartsWith("Decisão", StringComparison.OrdinalIgnoreCase) || elemento.Text.StartsWith("Intimação", StringComparison.OrdinalIgnoreCase)))
                 {
-                    spanTipoDeDocumento = span;
-                    break;
+                    TipoDocumento = elemento.Text;
+                    numeroTipoDocumento = elemento.Text;
+                    numeroTipoDocumento = numeroTipoDocumento.Replace("Decisão (", "");
+                    numeroTipoDocumento = numeroTipoDocumento.Replace("Intimação (", "");
+                    numeroTipoDocumento = numeroTipoDocumento.Replace(")", "");
+
                 }
-                else if(title != null && title.Equals("spanMeioDeComunicacao", StringComparison.OrdinalIgnoreCase))
+                else if (!string.IsNullOrEmpty(title) && title.Equals("Meio de comunicação", StringComparison.OrdinalIgnoreCase))
                 {
-                    spanMeioDeComunicacao = span;
-                    break;
+
+                    spanMeioDeComunicacao = elemento.Text;
+                }
+                else if (!string.IsNullOrEmpty(title) && MeioDeComunicacaoData == "" && title.Equals("Data de criação do expediente", StringComparison.OrdinalIgnoreCase))
+                {
+                    MeioDeComunicacaoData = elemento.Text;
+                }
+                else if (!string.IsNullOrEmpty(title) && title.Equals("Prazo para manifestação", StringComparison.OrdinalIgnoreCase))
+                {
+                    PrazoManifestacao = elemento.Text;
+                    PrazoManifestacao = PrazoManifestacao.Replace("Prazo:" ,"");
+                }
+                string divId = elemento.GetAttribute("id");
+                if (!string.IsNullOrEmpty(divId) && divId.Contains(numeroTipoDocumento) && !string.IsNullOrEmpty(numeroTipoDocumento) && DataCienciaProcesso == "")
+                {
+                    DataCienciaProcesso = elemento.Text;
                 }
 
+                string TextoDentroDiv = elemento.Text;
+                if (TextoDentroDiv.Contains("Data limite prevista"))
+                {
+                    DataPrevistaLimiteManifestacao = elemento.Text;
+                    // Use expressão regular para extrair a data do texto
+                    Match match = Regex.Match(TextoDentroDiv, @"\d{2}/\d{2}/\d{4} \d{2}:\d{2}");
+                    if (match.Success)
+                    {
+                        dataLimite = match.Value;
+                        // Agora, você pode armazenar a dataLimite onde desejar.
+                    }
+                }
 
-
-
-
-
-
+                ProcessoEntidade.Cliente = spanDestinatario;
+                ProcessoEntidade.CodPJECAcao = TipoDocumento;
+                ProcessoEntidade.MeioDeComunicacao = spanMeioDeComunicacao;
+                ProcessoEntidade.MeioDeComunicacaoData = MeioDeComunicacaoData;
+                ProcessoEntidade.AdvogadaCiente = DataCienciaProcesso;
+                ProcessoEntidade.ProximoPrazo = DataPrevistaLimiteManifestacao;
+                ProcessoEntidade.ProximoPrazoData = dataLimite;
+                ProcessoEntidade.Prazo = PrazoManifestacao;
+                ProcessoEntidade.CodPJEC = NumProcesso.Text;
             }
 
+            Console.WriteLine("Cliente: " + ProcessoEntidade.Cliente);
+            Console.WriteLine($"Nº Processo: {ProcessoEntidade.CodPJEC}");
+            Console.WriteLine("CodPJECAcao: " + ProcessoEntidade.CodPJECAcao);
+            Console.WriteLine("MeioDeComunicacao: " + ProcessoEntidade.MeioDeComunicacao);
+            Console.WriteLine("MeioDeComunicacaoData: " + ProcessoEntidade.MeioDeComunicacaoData);
+            Console.WriteLine("AdvogadaCiente: " + ProcessoEntidade.AdvogadaCiente);
+            Console.WriteLine("ProximoPrazo: " + ProcessoEntidade.ProximoPrazo);
+            Console.WriteLine("ProximoPrazoData: " + ProcessoEntidade.ProximoPrazoData);
+            Console.WriteLine("Prazo: " + ProcessoEntidade.Prazo);
 
 
-            if (spanDestinatario != null)
-            {
-                Console.WriteLine("\n\n\n\n Inserindo nome do destinatário: " + spanDestinatario.Text);
-                ProcessoEntidade.Cliente = spanDestinatario.Text;
+            spanDestinatario = "";
+            TipoDocumento = "";
+            spanMeioDeComunicacao = "";
+            MeioDeComunicacaoData = "";
+            DataCienciaProcesso = "";
+            DataPrevistaLimiteManifestacao = "";
+            dataLimite = "";
+            PrazoManifestacao = "";
 
-            }
+
+            //começar a verificar a SegundaColDados:
+            IList<IWebElement> ListaElementosSegundaColDados = SegundaColDados.FindElements(By.XPath(".//*"));
+
+            ActionsPJE.EncerrarConsole();
+
+
+
+            ////o que não conseguir pelo title do span, tentar conseguir pela posição dentro de primeiracoldados
+
+            ////funcionou, melhorar.
+            //foreach (IWebElement span in ListaSpansPrimeiracolDados)
+            //{
+            //    string title = span.GetAttribute("title");
+            //    if (title != null && title.Equals("Destinatário", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        spanDestinatario = span;
+            //        break;
+            //    }
+            //    else if (title != null && title.Equals("Tipo de documento", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        spanTipoDeDocumento = span;
+            //        break;
+            //    }
+            //    else if(title != null && title.Equals("spanMeioDeComunicacao", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        spanMeioDeComunicacao = span;
+            //        break;
+            //    }
+
+
+
+
+
+
+
+            //}
+
+
+
+            //if (spanDestinatario != null)
+            //{
+            //    Console.WriteLine("\n\n\n\n Inserindo nome do destinatário: " + spanDestinatario.Text);
+            //    ProcessoEntidade.Cliente = spanDestinatario.Text;
+
+            //}
 
             ActionsPJE.EncerrarConsole();
             Console.WriteLine("Testando: \n\n\n");

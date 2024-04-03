@@ -20,11 +20,14 @@ namespace Pje_WebScrapping.Models
         public string Advogada { get; set; }
         public string Despacho { get; set; }
         public string MeioDeComunicacao { get; set; }
+        public string MeioDeComunicacaoData { get; set; }
         public string Prazo { get; set; }
         public string Resposta { get; set; }
         public string ProximoPrazo { get; set; }
+        public string ProximoPrazoData { get; set; }
         public string Causa { get; set; }
-        public string CodProcessoTJ { get; set; }
+        public string CodPJEC { get; set; }
+        public string CodPJECAcao { get; set; }
         public string UltimaMovimentacaoProcessual { get; set; }
         public string AdvogadaCiente { get; set; }
 

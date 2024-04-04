@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using Pje_WebScrapping.Actions.NavBarMenu;
 using Pje_WebScrapping.DataStorage;
+using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -152,7 +153,8 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
 
                                     }
-                                    SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
+                                    Processo ProcessoRetornado = SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
+
                                     controleMD4++;
                                     controleMD8++;
 
@@ -191,7 +193,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                                 Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
 
-                                                SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver);
+                                                SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver, ProcessoRetornado);
 
 
 

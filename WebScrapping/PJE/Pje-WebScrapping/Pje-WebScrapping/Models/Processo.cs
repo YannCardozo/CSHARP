@@ -30,7 +30,28 @@ namespace Pje_WebScrapping.Models
         public string AdvogadaCiente { get; set; }
 
 
+        //detalhes:
 
+        public string Comarca { get; set; }
+        //assunto
+        public string CausasProcesso { get; set; }
+        public DateOnly DataDistribuicao { get; set; }
+        public string ValorCausa { get; set; }
+        public bool JusGratis { get; set; }
+        public bool TutelaLiminar { get; set; }
+        public bool Prioridade { get; set; }
+
+        //polo ativo
+
+
+
+
+        //polo passivo
+
+
+
+        //colocar em movimentacaoprocessual
+        //public bool SegredoJus { get; set; }
 
 
         public string TituloProcesso { get; set; }

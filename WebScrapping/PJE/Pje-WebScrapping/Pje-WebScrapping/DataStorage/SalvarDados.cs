@@ -33,7 +33,7 @@ namespace Pje_WebScrapping.DataStorage
 
         //método destinado a salvar o processo INICIAL
         //verificar se são realmente 7 divs em EXPEDIENTES dentro dos TDS
-        public static string SalvarDadosProcesso(IWebElement PrimeiraColDados, IWebElement SegundaColDados, IWebElement NumProcesso)
+        public static Processo SalvarDadosProcesso(IWebElement PrimeiraColDados, IWebElement SegundaColDados, IWebElement NumProcesso)
         {
             Processo ProcessoEntidade = new Processo();
             Console.WriteLine("\n\n\n");
@@ -212,12 +212,12 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-            return "string";
+            return ProcessoEntidade;
  
         }
 
         public static void SalvarMovimentacaoProcessual(IList<IWebElement> ListaDeMovimentacaoProcessual,
-            IWebDriver driver)
+            IWebDriver driver, Processo ProcessoEntidadeRetornado)
         {
 
             int ponto_de_parada = 0;
@@ -515,6 +515,90 @@ namespace Pje_WebScrapping.DataStorage
             }
 
             //ActionsPJE.EncerrarConsole();
+
+            //implementar aqui testes para abrir o menu
+
+
+            IWebElement LinkDetalhesMovimentacaoProcessual = driver.FindElement(By.ClassName("titulo-topo"));
+
+
+            LinkDetalhesMovimentacaoProcessual.Click();
+            ActionsPJE.AguardarPje("Baixo");
+            IWebElement Detalhes = driver.FindElement(By.Id("maisDetalhes"));
+
+            IList<IWebElement> ElementosDentroDeDetalhes = Detalhes.FindElements(By.ClassName("dl-horizontal"));
+
+            for(int zelta = 0; zelta < ElementosDentroDeDetalhes.Count; zelta++)
+            {
+                Console.WriteLine($"Cada elemento: {ElementosDentroDeDetalhes[zelta].Text}");
+            }
+
+
+
+            Console.WriteLine("terminei");
+            ActionsPJE.EncerrarConsole();
+
+
+
+
+            //obter elementos de DETALHES agora:
+
+            ProcessoEntidadeRetornado.Comarca = "";
+
+
+            Console.WriteLine("\n\n\n\n");
+
+            foreach (var propriedade in typeof(Processo).GetProperties())
+            {
+                var valor = propriedade.GetValue(ProcessoEntidadeRetornado);
+                Console.WriteLine($"{propriedade.Name}: {valor}");
+            }
+
+            Console.WriteLine("testeeeee");
+
+
+
+
+
+
+        //public string Comarca { get; set; }
+        //assunto
+        //public string CausasProcesso { get; set; }
+        //public DateOnly DataDistribuicao { get; set; }
+        //public string ValorCausa { get; set; }
+        //public bool JusGratis { get; set; }
+        //public bool TutelaLiminar { get; set; }
+        //public bool Prioridade { get; set; }
+
+
+
+
+
+
+
+
+
+
+            //poloAtivo
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM
+
+            //fecha detalhes
+            LinkDetalhesMovimentacaoProcessual.Click();
+
+            ActionsPJE.EncerrarConsole();
 
             ActionsPJE.RetornarParaJanelaPrincipal(driver);
 

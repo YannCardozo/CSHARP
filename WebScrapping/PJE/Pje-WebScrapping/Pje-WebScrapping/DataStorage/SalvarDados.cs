@@ -38,6 +38,7 @@ namespace Pje_WebScrapping.DataStorage
             Processo ProcessoEntidade = new Processo();
             Console.WriteLine("\n\n\n");
 
+            //primeiracoldados
             string spanDestinatario = "";
             string spanTipoDeDocumento = "";
             string spanMeioDeComunicacao = "";
@@ -48,6 +49,15 @@ namespace Pje_WebScrapping.DataStorage
             string DataPrevistaLimiteManifestacao = "";
             string TipoDocumento = "";
             string dataLimite = "";
+
+
+            //segundacoldados
+            string TituloProcesso = "";
+            string TituloPartes = "";
+            string ComarcaInicial = "";
+            string UltimaMovimentacao = "";
+            string NumProcessoSegundaColDados = "";
+
 
             IList<IWebElement> ListaElementosPrimeiraColDados = PrimeiraColDados.FindElements(By.XPath(".//*"));
             Console.WriteLine("\n\n\n ENTREI");
@@ -124,7 +134,7 @@ namespace Pje_WebScrapping.DataStorage
             Console.WriteLine("Prazo: " + ProcessoEntidade.Prazo);
 
 
-            spanDestinatario = "";
+            //spanDestinatario = "";
             TipoDocumento = "";
             spanMeioDeComunicacao = "";
             MeioDeComunicacaoData = "";
@@ -145,19 +155,34 @@ namespace Pje_WebScrapping.DataStorage
             //SegundaColDados
             foreach (IWebElement elemento in ListaElementosSegundaColDados)
             {
-                //string title = elemento.GetAttribute("title");
 
-                //tentativa de obter o primeiro elemento do texto da div
+                if (!string.IsNullOrEmpty(NumProcesso) && elemento.Text.Contains(NumProcesso))
+                {
+                    TituloProcesso = elemento.Text;
+                    TituloProcesso = TituloProcesso.Replace("" + NumProcesso, "");
+                }
+                else if(elemento.Text.Contains(spanDestinatario))
+                {
+                    TituloPartes = elemento.Text;
+                    //Nome do processo?
+                }
+                else if(elemento.Text.Contains("º") || elemento.Text.Contains("Juizado") || elemento.Text.Contains("Especial"))
+                {
+                    ComarcaInicial = elemento.Text;
+                }
+                else if(elemento.Text.Contains("Último movimento:") || elemento.Text.Contains("Publicado"))
+                {
+                    UltimaMovimentacao = elemento.Text;
+                }
+                    // Obtenha o texto dentro do elemento div
 
+                    //string textoCompleto = elemento.Text;
 
-                // Obtenha o texto dentro do elemento div
-                string textoCompleto = elemento.Text;
+                    // Use expressões regulares para remover as tags<a> e < span >
+                    //string textoSemTags = System.Text.RegularExpressions.Regex.Replace(textoCompleto, @"<a\b[^>]*>(.*?)</a>|<span\b[^>]*>(.*?)</span>", string.Empty);
 
-                // Use expressões regulares para remover as tags <a> e <span>
-                string textoSemTags = System.Text.RegularExpressions.Regex.Replace(textoCompleto, @"<a\b[^>]*>(.*?)</a>|<span\b[^>]*>(.*?)</span>", string.Empty);
-
-                // Agora você tem o texto sem as tags <a> e <span>
-                Console.WriteLine(textoSemTags);
+                    // Agora você tem o texto sem as tags<a> e<span>
+                    // Console.WriteLine(textoSemTags);
 
 
                 //ProcessoEntidade.Cliente = spanDestinatario;
@@ -171,6 +196,10 @@ namespace Pje_WebScrapping.DataStorage
                 //ProcessoEntidade.CodPJEC = NumProcesso.Text;
             }
 
+            Console.WriteLine("Titulo processo: " + TituloProcesso);
+            Console.WriteLine("Titulo Partes: " + TituloPartes);
+            Console.WriteLine("Comarca Inicial: " + ComarcaInicial);
+            Console.WriteLine("Última Movimentação: " + UltimaMovimentacao);
 
 
             ActionsPJE.EncerrarConsole();
@@ -624,3 +653,4 @@ namespace Pje_WebScrapping.DataStorage
 
     }
 }
+    

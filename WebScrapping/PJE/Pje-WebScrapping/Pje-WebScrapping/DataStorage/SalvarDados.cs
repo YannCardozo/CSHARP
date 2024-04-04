@@ -56,7 +56,8 @@ namespace Pje_WebScrapping.DataStorage
             string TituloPartes = "";
             string ComarcaInicial = "";
             string UltimaMovimentacao = "";
-            string NumProcessoSegundaColDados = "";
+            string NumProcessoSegundaColDados = NumProcesso.Text;
+            string UltimaMovimentacaoProcessualData = "";
 
 
             IList<IWebElement> ListaElementosPrimeiraColDados = PrimeiraColDados.FindElements(By.XPath(".//*"));
@@ -110,6 +111,14 @@ namespace Pje_WebScrapping.DataStorage
                         dataLimite = match.Value;
                         // Agora, você pode armazenar a dataLimite onde desejar.
                     }
+                    if(string.IsNullOrEmpty(DataPrevistaLimiteManifestacao))
+                    {
+                        DataPrevistaLimiteManifestacao = "Sem próximo prazo";
+                    }
+                    if(string.IsNullOrEmpty(dataLimite))
+                    {
+                        dataLimite = "Sem data próximo prazo";
+                    }
                 }
 
                 ProcessoEntidade.Cliente = spanDestinatario;
@@ -123,6 +132,7 @@ namespace Pje_WebScrapping.DataStorage
                 ProcessoEntidade.CodPJEC = NumProcesso.Text;
             }
 
+            Console.WriteLine("\n PrimeiraColDados");
             Console.WriteLine("Cliente: " + ProcessoEntidade.Cliente);
             Console.WriteLine($"Nº Processo: {ProcessoEntidade.CodPJEC}");
             Console.WriteLine("CodPJECAcao: " + ProcessoEntidade.CodPJECAcao);
@@ -147,208 +157,62 @@ namespace Pje_WebScrapping.DataStorage
             //começar a verificar a SegundaColDados:
             IList<IWebElement> ListaElementosSegundaColDados = SegundaColDados.FindElements(By.XPath(".//*"));
 
-            //anotar as tags do pje em segunda col dados;
-            //começar a detrinchar no webscrapping dentro do foreach
-            //verificar se vai precisar criar novos atributos na tabela processo
-
-
             //SegundaColDados
             foreach (IWebElement elemento in ListaElementosSegundaColDados)
             {
 
-                if (!string.IsNullOrEmpty(NumProcesso) && elemento.Text.Contains(NumProcesso))
+                if (elemento.Text.Contains(NumProcessoSegundaColDados) && elemento.TagName == "div")
                 {
                     TituloProcesso = elemento.Text;
-                    TituloProcesso = TituloProcesso.Replace("" + NumProcesso, "");
+                    TituloProcesso = TituloProcesso.Replace(NumProcessoSegundaColDados, "");
                 }
-                else if(elemento.Text.Contains(spanDestinatario))
+                else if(elemento.Text.Contains(spanDestinatario) && (!elemento.Text.Contains("Último movimento: ") && !elemento.Text.Contains("Decorrido prazo de")))
                 {
                     TituloPartes = elemento.Text;
-                    //Nome do processo?
                 }
-                else if(elemento.Text.Contains("º") || elemento.Text.Contains("Juizado") || elemento.Text.Contains("Especial"))
+                else if(elemento.Text.Contains("º") || elemento.Text.Contains("Juizado") || elemento.Text.Contains("Especial") || elemento.Text.Contains("Comarca"))
                 {
                     ComarcaInicial = elemento.Text;
+                    ComarcaInicial = ComarcaInicial.Replace("/","");
                 }
-                else if(elemento.Text.Contains("Último movimento:") || elemento.Text.Contains("Publicado"))
+                if(elemento.Text.Contains("Último movimento: ") || elemento.Text.Contains("Publicado") || elemento.Text.Contains("Decorrido prazo de"))
                 {
                     UltimaMovimentacao = elemento.Text;
+                    UltimaMovimentacaoProcessualData = UltimaMovimentacao;
+                    UltimaMovimentacaoProcessualData = UltimaMovimentacaoProcessualData.Replace("Último movimento: ", "");
+                    int index = UltimaMovimentacaoProcessualData.IndexOf("-");
+                    if (index != -1)
+                    {
+                        UltimaMovimentacaoProcessualData = UltimaMovimentacaoProcessualData.Substring(0, index);
+                    }
                 }
-                    // Obtenha o texto dentro do elemento div
 
-                    //string textoCompleto = elemento.Text;
+                ProcessoEntidade.TituloProcesso = TituloProcesso;
+                ProcessoEntidade.PartesProcesso = TituloPartes;
+                ProcessoEntidade.ComarcaInicial = ComarcaInicial;
+                ProcessoEntidade.UltimaMovimentacaoProcessual = UltimaMovimentacao;
+                ProcessoEntidade.UltimaMovimentacaoProcessualData = UltimaMovimentacaoProcessualData;
 
-                    // Use expressões regulares para remover as tags<a> e < span >
-                    //string textoSemTags = System.Text.RegularExpressions.Regex.Replace(textoCompleto, @"<a\b[^>]*>(.*?)</a>|<span\b[^>]*>(.*?)</span>", string.Empty);
-
-                    // Agora você tem o texto sem as tags<a> e<span>
-                    // Console.WriteLine(textoSemTags);
-
-
-                //ProcessoEntidade.Cliente = spanDestinatario;
-                //ProcessoEntidade.CodPJECAcao = TipoDocumento;
-                //ProcessoEntidade.MeioDeComunicacao = spanMeioDeComunicacao;
-                //ProcessoEntidade.MeioDeComunicacaoData = MeioDeComunicacaoData;
-                //ProcessoEntidade.AdvogadaCiente = DataCienciaProcesso;
-                //ProcessoEntidade.ProximoPrazo = DataPrevistaLimiteManifestacao;
-                //ProcessoEntidade.ProximoPrazoData = dataLimite;
-                //ProcessoEntidade.Prazo = PrazoManifestacao;
-                //ProcessoEntidade.CodPJEC = NumProcesso.Text;
             }
 
-            Console.WriteLine("Titulo processo: " + TituloProcesso);
-            Console.WriteLine("Titulo Partes: " + TituloPartes);
-            Console.WriteLine("Comarca Inicial: " + ComarcaInicial);
-            Console.WriteLine("Última Movimentação: " + UltimaMovimentacao);
+            Console.WriteLine("\n SegundaColDados");
+            Console.WriteLine("Titulo processo: " + ProcessoEntidade.TituloProcesso);
+            Console.WriteLine("Partes do Processo: " + ProcessoEntidade.PartesProcesso);
+            Console.WriteLine("Comarca Inicial: " + ProcessoEntidade.ComarcaInicial);
+            Console.WriteLine("Última Movimentação: " + ProcessoEntidade.UltimaMovimentacaoProcessual);
+            Console.WriteLine("Última Movimentação DATA: " + ProcessoEntidade.UltimaMovimentacaoProcessualData);
 
+            TituloProcesso = "";
+            TituloPartes = "";
+            ComarcaInicial = "";
+            UltimaMovimentacao = "";
+            UltimaMovimentacaoProcessualData = "";
 
-            ActionsPJE.EncerrarConsole();
-
-
-
-            ////o que não conseguir pelo title do span, tentar conseguir pela posição dentro de primeiracoldados
-
-            ////funcionou, melhorar.
-            //foreach (IWebElement span in ListaSpansPrimeiracolDados)
-            //{
-            //    string title = span.GetAttribute("title");
-            //    if (title != null && title.Equals("Destinatário", StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        spanDestinatario = span;
-            //        break;
-            //    }
-            //    else if (title != null && title.Equals("Tipo de documento", StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        spanTipoDeDocumento = span;
-            //        break;
-            //    }
-            //    else if(title != null && title.Equals("spanMeioDeComunicacao", StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        spanMeioDeComunicacao = span;
-            //        break;
-            //    }
-
-
-
-
-
-
-
-            //}
-
-
-
-            //if (spanDestinatario != null)
-            //{
-            //    Console.WriteLine("\n\n\n\n Inserindo nome do destinatário: " + spanDestinatario.Text);
-            //    ProcessoEntidade.Cliente = spanDestinatario.Text;
-
-            //}
-
-            ActionsPJE.EncerrarConsole();
-            Console.WriteLine("Testando: \n\n\n");
-
-
-            Console.WriteLine("Sou a 1 coluna: \n " + PrimeiraColDados.Text);
-            Console.WriteLine("Sou a 2 coluna: \n " + SegundaColDados.Text);
-            Console.WriteLine(NumProcesso.Text);
+            //ActionsPJE.EncerrarConsole();
 
 
 
             return "string";
-
-
-            //try
-            //{
-            //    if (driver != null)
-            //    {
-            //        //Console.WriteLine("Meu tamanho de cabecalho processo é: " + CabecalhoProcesso.Count);
-            //        //ActionsPJE.EncerrarConsole();
-            //        if (CabecalhoProcesso.Count > 0)
-            //        {
-            //            IList<IWebElement> ConteudoDasDivsProcessoAberto = new List<IWebElement>();
-            //            foreach (var elemento in CabecalhoProcesso)
-            //            {
-            //                // Encontra todas as divs dentro do elemento atual e adiciona à lista ConteudoDasDivsProcessoAberto
-            //                IList<IWebElement> divsInternas = elemento.FindElements(By.TagName("div"));
-            //                foreach (var div in divsInternas)
-            //                {
-            //                    //insere todas as divs dentro do elemento TD referente ao processo
-            //                    ConteudoDasDivsProcessoAberto.Add(div);
-            //                }
-            //            }
-            //            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n Testando SALVARDADOSPROCESSOAGORA");
-            //            //objetos para inserir no banco
-
-
-
-            //            //lista de processos a serem inseridos
-            //            List<string> TestandoLista = new List<string>();
-
-
-            //            //testando inserir dados 
-            //            ProcessoEntidade.Cliente = ConteudoDasDivsProcessoAberto[0].Text;
-            //            ProcessoEntidade.Despacho = ConteudoDasDivsProcessoAberto[1].Text;
-            //            ProcessoEntidade.MeioDeComunicacao = ConteudoDasDivsProcessoAberto[2].Text;
-            //            ProcessoEntidade.Prazo = ConteudoDasDivsProcessoAberto[3].Text;
-
-            //            if (ConteudoDasDivsProcessoAberto[4].Text != "")
-            //            {
-            //                // Texto fornecido
-            //                string texto = ConteudoDasDivsProcessoAberto[4].Text;
-
-            //                // Encontrar o índice de "tomou ciência"
-            //                int indiceTomouCiencia = texto.IndexOf("tomou ciência");
-
-            //                // Extrair o nome da advogada
-            //                string nomeAdvogada = texto.Substring(0, indiceTomouCiencia).Trim();
-
-            //                // Armazenar o nome da advogada em ProcessoEntidade
-            //                ProcessoEntidade.Advogada = nomeAdvogada;
-            //                ProcessoEntidade.AdvogadaCiente = ConteudoDasDivsProcessoAberto[4].Text.ToString().Replace(nomeAdvogada + " ", "");
-
-            //            }
-
-            //            ProcessoEntidade.Resposta = ConteudoDasDivsProcessoAberto[6].Text;
-            //            ProcessoEntidade.ProximoPrazo = ConteudoDasDivsProcessoAberto[8].Text;
-            //            ProcessoEntidade.Causa = ConteudoDasDivsProcessoAberto[9].Text;
-
-            //            if (ConteudoDasDivsProcessoAberto[9].Text != "")
-            //            {
-            //                //num processo é a lista de links que redirecionam para o processo
-            //                //numero do processo em azul 
-            //                ProcessoEntidade.CodProcessoTJ = NumProcesso[0].Text.ToString().Replace("PJEC ", "");
-            //            }
-
-            //            //ultima movimentacao processual
-            //            if (ConteudoDasDivsProcessoAberto[10].Text.Contains("Último movimento:"))
-            //            {
-            //                var stringverificadora = ConteudoDasDivsProcessoAberto[10].Text;
-            //                var indiceInicio = stringverificadora.IndexOf("Último movimento: ") + "Último movimento:".Length;
-            //                var parteDaString = stringverificadora.Substring(indiceInicio);
-            //                // agora 'parteDaString' contém a parte da string após "Último movimento:"
-            //                ProcessoEntidade.UltimaMovimentacaoProcessual = parteDaString;
-            //            }
-            //            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n Começando a imprimir  PROCESSOENTIDADE: ");
-            //            foreach (var propriedade in typeof(Processo).GetProperties())
-            //            {
-            //                var valor = propriedade.GetValue(ProcessoEntidade);
-            //                Console.WriteLine("{0}: {1}", propriedade.Name, valor);
-            //            }
-            //            Console.WriteLine("\n\nFinalizei  PROCESSOENTIDADE: ");
-
-            //            return "\n Processo nº " + ProcessoEntidade.CodProcessoTJ + " inserido com sucesso no banco.";
-            //        }
-            //        return "Driver esta null em SalvarDadosProcesso";
-            //    }
-            //    return "Erro em SalvarDadosProcesso";
-            //}
-            //catch(Exception ex)
-            //{
-            //     Console.WriteLine("Erro em Salvar dadosProcesso: " + ex.Message);
-            //    //ActionsPJE.EncerrarConsole();
-            //    return "Erro em SalvarDadosProcesso";
-            //}
  
         }
 

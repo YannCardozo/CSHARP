@@ -156,22 +156,6 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                     controleMD4++;
                                     controleMD8++;
 
-                                    //salvar processo inicial
-
-                                    //- linkmovimentacaoprocessual pode ser o nº do processo a ser armazenado ( para fazer verificacao no banco se ja existe )
-                                    //o processo cadastrado ou nao
-
-                                    //- implementar parametros para salvar dados processo com esses elementos: ElementosTDColMD4 ( 1ª coluna de dados do processo )
-                                    //- ElementosTDColMD8 para salvar 2 coluna de dados do processo, passando por parametro
-
-                                    //- lembrando que vou precisar fechar a janela do navegador apos rodar a movimentacao processual e avançar para o proximo processo
-
-
-
-
-
-                                    //começar a chamar salvar dados processo AQUI
-
                                     //ActionsPJE.EncerrarConsole();
 
                                     Console.WriteLine("LinkProcesso: " + linkprocesso.Text);

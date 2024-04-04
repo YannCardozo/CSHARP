@@ -389,9 +389,17 @@ namespace Pje_WebScrapping.DataStorage
                         if(proximaPosicaoMediaData != -1)
                         {
                             string dataString = ElementosDentroDeMovimentacaoProcessualINVERTIDO[proximaPosicaoMediaData].Text;
-                            DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.InvariantCulture);
-                            ProcessoAtualizado.DataMovimentacao = data;
-
+                            try
+                            {
+                                DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.CreateSpecificCulture("pt-br"));
+                                Console.WriteLine("Data é: " + data);
+                                ProcessoAtualizado.DataMovimentacao = data;
+                            }
+                            catch(Exception ex)
+                            {
+                                Console.WriteLine($"erro : {ex.Message}");
+                                Console.WriteLine("teste erro ");
+                            }
                         }
                         if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-D"))
                         {

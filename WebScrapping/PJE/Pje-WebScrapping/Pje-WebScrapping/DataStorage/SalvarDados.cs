@@ -391,14 +391,14 @@ namespace Pje_WebScrapping.DataStorage
                             string dataString = ElementosDentroDeMovimentacaoProcessualINVERTIDO[proximaPosicaoMediaData].Text;
                             try
                             {
-                                DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.CreateSpecificCulture("pt-br"));
-                                Console.WriteLine("Data é: " + data);
-                                ProcessoAtualizado.DataMovimentacao = data;
+                                //DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.CreateSpecificCulture("pt-br"));
+                                Console.WriteLine("Data é: " + dataString);
+                                ProcessoAtualizado.DataMovimentacao = dataString;
                             }
                             catch(Exception ex)
                             {
                                 Console.WriteLine($"erro : {ex.Message}");
-                                Console.WriteLine("teste erro ");
+                                Console.WriteLine("teste erro em aquisicao de data processoatualizado SalvarDados");
                             }
                         }
                         if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-D"))
@@ -444,7 +444,7 @@ namespace Pje_WebScrapping.DataStorage
 
                             if(ListaDeSpansNoMediaBodyBox.Count <= 1)
                             {
-                                ProcessoAtualizado.ConteudoAtualizacao = "Sem conteúdo no PJE";
+                                ProcessoAtualizado.ConteudoAtualizacao = "Sem Documentos ou Anexos no PJE";
                             }
 
                             //ALIMENTAR OS PROCESSOS AQUI
@@ -455,9 +455,12 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-
-
-
+                        //atualizando entidade base:
+                        ProcessoAtualizado.DataCadastro = DateTime.Now;
+                        ProcessoAtualizado.CadastradoPor = 5;
+                        ProcessoAtualizado.DataAtualizacao = DateTime.Now;
+                        ProcessoAtualizado.AtualizadoPor = 5;
+                        //5 será o numero para o webscrapping
 
 
                         //insere o objeto na lista
@@ -481,7 +484,15 @@ namespace Pje_WebScrapping.DataStorage
 
                         Console.WriteLine("Elemento: " + j + " :  " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
 
+                        Console.WriteLine("\n\n\n\n Lendo Processo atualizado");
 
+                        foreach (var propriedade in typeof(ProcessoAtualizacao).GetProperties())
+                        {
+                            var valor = propriedade.GetValue(ProcessoAtualizado);
+                            Console.WriteLine($"{propriedade.Name}: {valor}");
+
+
+                        }
 
                     }
                     posicao_inicial = proximaPosicaoMediaData;
@@ -499,7 +510,7 @@ namespace Pje_WebScrapping.DataStorage
                     break;
                 }
             }
-
+            ActionsPJE.EncerrarConsole();
 
             //ActionsPJE.EncerrarConsole();
 
@@ -526,24 +537,151 @@ namespace Pje_WebScrapping.DataStorage
             ActionsPJE.AguardarPje("Baixo");
             IWebElement Detalhes = driver.FindElement(By.Id("maisDetalhes"));
 
-            IList<IWebElement> ElementosDentroDeDetalhes = Detalhes.FindElements(By.ClassName("dl-horizontal"));
+            //POLO ATIVO
 
-            for(int zelta = 0; zelta < ElementosDentroDeDetalhes.Count; zelta++)
+            IWebElement PoloAtivo = driver.FindElement(By.Id("poloAtivo"));
+            IList<IWebElement> ElementosPoloAtivo = PoloAtivo.FindElements(By.TagName("span"));
+
+            List<string> ElementosPoloAtivoUNICOS = new List<string>();
+
+            //fazendo uma lista de elementos do polo ativo sem DUPLICATAS
+
+            foreach (var elemento in ElementosPoloAtivo)
             {
-                Console.WriteLine($"Cada elemento: {ElementosDentroDeDetalhes[zelta].Text}");
+                if (!ElementosPoloAtivoUNICOS.Contains(elemento.Text))
+                {
+                    ElementosPoloAtivoUNICOS.Add(elemento.Text);
+                }
+            }
+
+            IList<IWebElement> ElementosDentroDeDetalhes = Detalhes.FindElements(By.TagName("dt"));
+
+            for (int zelta = 0; zelta < ElementosDentroDeDetalhes.Count; zelta++)
+            {
+                // Extrai o texto de <dt> e <dd> correspondente
+
+                //tag do conteudo
+                string dtText = ElementosDentroDeDetalhes[zelta].Text;
+
+                //conteudo 
+                string ddText = ElementosDentroDeDetalhes[zelta].FindElement(By.XPath("./following-sibling::dd")).Text;
+
+                if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Assunto")
+                {
+                    ProcessoEntidadeRetornado.MotivosProcesso = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Competência")
+                {
+                    ProcessoEntidadeRetornado.Competencia = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Órgão julgador")
+                {
+                    ProcessoEntidadeRetornado.OrgaoJulgador = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Valor da causa")
+                {
+                    ProcessoEntidadeRetornado.ValorCausa = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Segredo de justiça?")
+                {
+                    ProcessoEntidadeRetornado.SegredoJustica = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Justiça gratuita?")
+                {
+                    ProcessoEntidadeRetornado.JusGratis = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Tutela/liminar?")
+                {
+                    ProcessoEntidadeRetornado.TutelaLiminar = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Prioridade?")
+                {
+                    ProcessoEntidadeRetornado.Prioridade = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Autuação")
+                {
+                    ProcessoEntidadeRetornado.Autuacao = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Jurisdição")
+                {
+                    ProcessoEntidadeRetornado.Comarca = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+
+
+
+                // Imprime o resultado
+                //Console.WriteLine($"{dtText}: {ddText}");
+            }
+            string NomePartePoloAtivo = "";
+            string ParteCpfPoloAtivo = "";
+            foreach (var DentroPoloAtivo in ElementosPoloAtivoUNICOS)
+            {
+
+                if (DentroPoloAtivo.Contains("(AUTOR)"))
+                {
+                    Console.WriteLine($"Autor é : {DentroPoloAtivo}");
+                    NomePartePoloAtivo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                    ParteCpfPoloAtivo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
+                    if(string.IsNullOrEmpty(NomePartePoloAtivo))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.NomeParte = NomePartePoloAtivo;
+                    }
+                    if(string.IsNullOrEmpty(ParteCpfPoloAtivo))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = ParteCpfPoloAtivo;
+                    }
+
+                }
+                else if (DentroPoloAtivo.Contains("(ADVOGADO)"))
+                {
+                    Console.WriteLine($"Adv é : {DentroPoloAtivo}");
+                    var nomeAdvogado = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                    var oabAdvogado = ActionsPJE.ExtrairOABDeDetalhes(DentroPoloAtivo).Trim();
+                    var cpfAdvogado = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
+
+                    if ((cpfAdvogado == "152.489.457-55" || oabAdvogado == "RJ253001") && (nomeAdvogado == "NATALI CORDEIRO MARQUES"))
+                    {
+                        ProcessoEntidadeRetornado.ClienteCPF = ParteCpfPoloAtivo;
+                        ProcessoEntidadeRetornado.Cliente = NomePartePoloAtivo;
+
+                    }
+
+                    ProcessoEntidadeRetornado.Advogada = nomeAdvogado;
+                    ProcessoEntidadeRetornado.AdvogadaOAB = oabAdvogado;
+                    ProcessoEntidadeRetornado.AdvogadaCPF = cpfAdvogado;
+
+
+                    if (string.IsNullOrEmpty(nomeAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado = nomeAdvogado;
+                    }
+                    if (string.IsNullOrEmpty(oabAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.OAB = oabAdvogado;
+                    }
+                    if (string.IsNullOrEmpty(cpfAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado = cpfAdvogado;
+                    }
+                }
+
+
+
             }
 
 
 
-            Console.WriteLine("terminei");
-            ActionsPJE.EncerrarConsole();
-
-
-
-
-            //obter elementos de DETALHES agora:
-
-            ProcessoEntidadeRetornado.Comarca = "";
+                //ActionsPJE.EncerrarConsole();
 
 
             Console.WriteLine("\n\n\n\n");
@@ -552,45 +690,17 @@ namespace Pje_WebScrapping.DataStorage
             {
                 var valor = propriedade.GetValue(ProcessoEntidadeRetornado);
                 Console.WriteLine($"{propriedade.Name}: {valor}");
+
+
             }
 
-            Console.WriteLine("testeeeee");
 
 
 
+            Console.WriteLine("Encerrei");
 
 
-
-        //public string Comarca { get; set; }
-        //assunto
-        //public string CausasProcesso { get; set; }
-        //public DateOnly DataDistribuicao { get; set; }
-        //public string ValorCausa { get; set; }
-        //public bool JusGratis { get; set; }
-        //public bool TutelaLiminar { get; set; }
-        //public bool Prioridade { get; set; }
-
-
-
-
-
-
-
-
-
-
-            //poloAtivo
-
-
-
-
-
-
-
-
-
-
-
+            ActionsPJE.EncerrarConsole();
 
 
             //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM

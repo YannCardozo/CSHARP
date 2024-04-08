@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -121,9 +122,47 @@ namespace Pje_WebScrapping.Actions
             }
         }
 
+        public static string ExtrairNomeDeDetalhes(string texto)
+        {
+            string padrao = @"([^-\n]+)\s*-\s*";
+            Match match = Regex.Match(texto, padrao);
+            if (match.Success)
+            {
+                return match.Groups[1].Value.Trim();
+            }
+            else
+            {
+                return null;
+            }
+        }
 
+        public static string ExtrairCPFDeDetalhes(string texto)
+        {
+            string padrao = @"CPF:\s*([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})";
+            Match match = Regex.Match(texto, padrao);
+            if (match.Success)
+            {
+                return match.Groups[1].Value.Trim();
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-
+        public static string ExtrairOABDeDetalhes(string texto)
+        {
+            string padrao = @"OAB\s*([A-Z]{2}\d+)";
+            Match match = Regex.Match(texto, padrao);
+            if (match.Success)
+            {
+                return match.Groups[1].Value.Trim();
+            }
+            else
+            {
+                return null;
+            }
+        }
 
 
 

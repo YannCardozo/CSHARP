@@ -17,7 +17,10 @@ namespace Pje_WebScrapping.Models
         
         }
         public string Cliente { get; set; }
+        public string ClienteCPF { get; set; }
         public string Advogada { get; set; }
+        public string AdvogadaOAB { get; set; }
+        public string AdvogadaCPF{ get; set; }
         public string MeioDeComunicacao { get; set; }
         public string MeioDeComunicacaoData { get; set; }
         public string Prazo { get; set; }
@@ -33,20 +36,23 @@ namespace Pje_WebScrapping.Models
         //detalhes:
 
         public string Comarca { get; set; }
+        public string OrgaoJulgador { get; set; }
+        public string Competencia { get; set; }
         //assunto
-        public string CausasProcesso { get; set; }
-        public DateOnly DataDistribuicao { get; set; }
+        public string MotivosProcesso { get; set; }
         public string ValorCausa { get; set; }
-        public bool JusGratis { get; set; }
-        public bool TutelaLiminar { get; set; }
-        public bool Prioridade { get; set; }
-
-        //polo ativo
-
-
+        public string SegredoJustica { get; set; }
+        public string JusGratis { get; set; }
+        public string TutelaLiminar { get; set; }
+        public string Prioridade { get; set; }
+        public string Autuacao { get;set; }
 
 
-        //polo passivo
+
+
+
+        public Polo PoloAtivo { get; set; }
+        public Polo PoloPassivo { get; set; }
 
 
 
@@ -56,10 +62,8 @@ namespace Pje_WebScrapping.Models
 
         public string TituloProcesso { get; set; }
         public string PartesProcesso { get; set; }
-
-        public string TipoProcesso { get; set; }
-        public string Situacao { get; set; }
         public string ComarcaInicial { get; set; }
+        public string Situacao { get; set; }
         public string ConteudoInicial { get; set; }
 
         public string? ObsProcesso { get; set; }

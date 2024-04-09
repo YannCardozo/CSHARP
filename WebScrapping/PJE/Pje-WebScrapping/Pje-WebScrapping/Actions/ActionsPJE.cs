@@ -165,7 +165,19 @@ namespace Pje_WebScrapping.Actions
         }
 
 
-
+        public static string ExtrairCNPJDeDetalhes(string texto)
+        {
+            string padrao = @"CNPJ:\s*([0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})";
+            Match match = Regex.Match(texto, padrao);
+            if (match.Success)
+            {
+                return match.Groups[1].Value.Trim();
+            }
+            else
+            {
+                return null;
+            }
+        }
 
 
 

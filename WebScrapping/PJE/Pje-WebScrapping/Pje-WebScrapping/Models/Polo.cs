@@ -9,6 +9,7 @@ namespace Pje_WebScrapping.Models
     public class Polo
     {
         public string NomeParte { get; set; }
+        public string? TipoParte { get; set; } = "não informado";
         public string? CPFCNPJParte { get; set; }
         public string? NomeAdvogado { get; set; }
         public string? CPFAdvogado { get; set; }

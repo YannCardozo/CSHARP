@@ -323,7 +323,7 @@ namespace Pje_WebScrapping.DataStorage
 
 
             //for para inverter a ordem dos elementos da lista da movimentação processual, colocando em ordem CRONOLÓGICA.
-            for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1 , j = 0; i >= 0; i--, j++)
+            for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1, j = 0; i >= 0; i--, j++)
             {
                 //Console.WriteLine("Elemento: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
                 ElementosDentroDeMovimentacaoProcessualINVERTIDO[j] = ElementosDentroDeMovimentacaoProcessual[i];
@@ -373,6 +373,7 @@ namespace Pje_WebScrapping.DataStorage
 
 
                         ProcessoAtualizacao ProcessoAtualizado = new ProcessoAtualizacao();
+                        ProcessoAtualizado.CodPJEC = ProcessoEntidadeRetornado.CodPJEC;
 
                         if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media data"))
                         {
@@ -386,16 +387,19 @@ namespace Pje_WebScrapping.DataStorage
                         }
 
                         //inserindo a data para os registros de movimentação processual
-                        if(proximaPosicaoMediaData != -1)
+                        if (proximaPosicaoMediaData != -1)
                         {
                             string dataString = ElementosDentroDeMovimentacaoProcessualINVERTIDO[proximaPosicaoMediaData].Text;
+
                             try
                             {
                                 //DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.CreateSpecificCulture("pt-br"));
-                                Console.WriteLine("Data é: " + dataString);
-                                ProcessoAtualizado.DataMovimentacao = dataString;
+                                DateOnly dataConvertida = ActionsPJE.ConverterFormatoData(dataString);
+                                //Console.WriteLine("Data é: " + dataString);
+                                Console.WriteLine("Data é: " + dataConvertida);
+                                ProcessoAtualizado.DataMovimentacao = dataConvertida;
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 Console.WriteLine($"erro : {ex.Message}");
                                 Console.WriteLine("teste erro em aquisicao de data processoatualizado SalvarDados");
@@ -419,7 +423,7 @@ namespace Pje_WebScrapping.DataStorage
 
 
                             //montando uma variavel para armazenar toda a lista do 
-                            foreach(var testa in ListaConteudoMovimentoProcessual.Skip(1))
+                            foreach (var testa in ListaConteudoMovimentoProcessual.Skip(1))
                             {
                                 ConteudoTipoD += testa.Text + " ";
                             }
@@ -432,7 +436,7 @@ namespace Pje_WebScrapping.DataStorage
                             //esvazia a string para a próxima atualização de dados
                             ConteudoTipoD = string.Empty;
                         }
-                        else if(ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-M"))
+                        else if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-M"))
                         {
                             //encotrando o TITULO da movimentação processual
                             IWebElement MediaBodyBoxTipoM = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].FindElement(By.ClassName("media-body"));
@@ -442,7 +446,7 @@ namespace Pje_WebScrapping.DataStorage
 
                             ProcessoAtualizado.TituloMovimento = SpanTextoMovimentacao.Text;
 
-                            if(ListaDeSpansNoMediaBodyBox.Count <= 1)
+                            if (ListaDeSpansNoMediaBodyBox.Count <= 1)
                             {
                                 ProcessoAtualizado.ConteudoAtualizacao = "Sem Documentos ou Anexos no PJE";
                             }
@@ -498,13 +502,13 @@ namespace Pje_WebScrapping.DataStorage
                     posicao_inicial = proximaPosicaoMediaData;
 
                 }
-                
+
                 posicao++;
                 LocalizadorElementoMediaData++;
 
 
                 //for para verificar as proximas elementos datas no vetor
-                if (proximaPosicaoMediaData == -1 )
+                if (proximaPosicaoMediaData == -1)
                 {
                     Console.WriteLine("Acabaram os elementos DATA ");
                     break;
@@ -519,11 +523,8 @@ namespace Pje_WebScrapping.DataStorage
 
             Console.WriteLine("\n\n\n\n");
 
-
-            foreach (var teste in ListaProcessosAtualizados)
-            {
-                Console.WriteLine("Data: " + teste.DataMovimentacao + " - Titulo Mov: " + teste.TituloMovimento + " - Conteudo: " + teste.ConteudoAtualizacao);
-            }
+            //Console.WriteLine("Encerrei");
+            //ActionsPJE.EncerrarConsole();
 
             //ActionsPJE.EncerrarConsole();
 
@@ -790,7 +791,7 @@ namespace Pje_WebScrapping.DataStorage
                         ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado = cpfAdvogado;
                     }
                 }
-                else if(DentroPoloPassivo.Contains("(RÉU)"))
+                else if (DentroPoloPassivo.Contains("(RÉU)"))
                 {
                     Console.WriteLine($"Réu é : {DentroPoloPassivo}");
                     if (DentroPoloPassivo.Contains("CNPJ"))
@@ -859,27 +860,21 @@ namespace Pje_WebScrapping.DataStorage
 
             foreach (var propriedade in typeof(Processo).GetProperties())
             {
+                //listando atributos do objeto
+
                 var valor = propriedade.GetValue(ProcessoEntidadeRetornado);
                 Console.WriteLine($"{propriedade.Name}: {valor}");
 
 
-            }
-
-
-            Console.WriteLine("\n\n\n\n");
-
-            foreach (var propriedade in typeof(Processo).GetProperties())
-            {
-                var valor = propriedade.GetValue(ProcessoEntidadeRetornado);
-                Console.WriteLine($"{propriedade.Name}: {valor}");
 
 
             }
+
 
             Console.WriteLine("Encerrei");
 
 
-            ActionsPJE.EncerrarConsole();
+            //ActionsPJE.EncerrarConsole();
 
 
             //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM
@@ -887,7 +882,7 @@ namespace Pje_WebScrapping.DataStorage
             //fecha detalhes
             LinkDetalhesMovimentacaoProcessual.Click();
 
-            ActionsPJE.EncerrarConsole();
+            //ActionsPJE.EncerrarConsole();
 
             ActionsPJE.RetornarParaJanelaPrincipal(driver);
 

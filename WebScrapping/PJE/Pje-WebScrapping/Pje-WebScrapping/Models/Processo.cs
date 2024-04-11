@@ -63,11 +63,9 @@ namespace Pje_WebScrapping.Models
         public string TituloProcesso { get; set; }
         public string PartesProcesso { get; set; }
         public string ComarcaInicial { get; set; }
-        public string Situacao { get; set; }
-        public string ConteudoInicial { get; set; }
 
         public string? ObsProcesso { get; set; }
-        public DateTime DataAbertura { get; set; }
-        public DateTime DataFim { get; set; }
+        public DateOnly DataAbertura { get; set; }
+        public DateOnly DataFim { get; set; }
     }
 }

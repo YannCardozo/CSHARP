@@ -60,6 +60,9 @@ namespace Pje_WebScrapping.DataStorage
             string UltimaMovimentacaoProcessualData = "";
 
 
+
+
+
             IList<IWebElement> ListaElementosPrimeiraColDados = PrimeiraColDados.FindElements(By.XPath(".//*"));
             Console.WriteLine("\n\n\n ENTREI");
 
@@ -222,7 +225,7 @@ namespace Pje_WebScrapping.DataStorage
 
             int ponto_de_parada = 0;
             //instanciar um novo perfil de advogado e salvar usando o perfil dele no banco?
-
+            int ContadorDataAberturaProcessual = 0;
 
 
             //instancia a lista de mediabodybox ( boxes dentro da movimentação processual contendo as atualizações )
@@ -378,8 +381,11 @@ namespace Pje_WebScrapping.DataStorage
                         if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media data"))
                         {
                             Console.WriteLine("Acabaram os elementos DATA - continue - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
-
-
+                            ContadorDataAberturaProcessual++;
+                            if(ContadorDataAberturaProcessual == 1)
+                            {
+                                ProcessoEntidadeRetornado.DataAbertura = ActionsPJE.ConverterFormatoData(ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+                            }
                             // Atribuindo a data convertida à propriedade DataMovimentacao
 
 
@@ -500,7 +506,6 @@ namespace Pje_WebScrapping.DataStorage
 
                     }
                     posicao_inicial = proximaPosicaoMediaData;
-
                 }
 
                 posicao++;
@@ -645,9 +650,13 @@ namespace Pje_WebScrapping.DataStorage
             //verificando elementos do polo ativo unico
             string NomePartePolo = "";
             string ParteCpfPolo = "";
+            ProcessoEntidadeRetornado.PoloAtivo = new();
             foreach (var DentroPoloAtivo in ElementosPoloAtivoUNICOS)
             {
-
+                if (ProcessoEntidadeRetornado.PoloAtivo == null)
+                {
+                    ProcessoEntidadeRetornado.PoloAtivo = new PoloAtivo(); // ou qualquer método de inicialização apropriado
+                }
                 if (DentroPoloAtivo.Contains("(AUTOR)"))
                 {
                     Console.WriteLine($"Autor é : {DentroPoloAtivo}");
@@ -655,27 +664,28 @@ namespace Pje_WebScrapping.DataStorage
                     {
                         var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloAtivo).Trim();
                         var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
-                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
-                        ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
-                        ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PJ";
+                        ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
+                        ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
                         if (!string.IsNullOrEmpty(RazaoSocial))
                         {
-                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
                         }
                         if (!string.IsNullOrEmpty(cnpjParte))
                         {
-                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
                         }
                     }
                     else
                     {
                         NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
                         ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
-                        if (string.IsNullOrEmpty(NomePartePolo))
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PF";
+                        if (!string.IsNullOrEmpty(NomePartePolo))
                         {
                             ProcessoEntidadeRetornado.PoloAtivo.NomeParte = NomePartePolo;
                         }
-                        if (string.IsNullOrEmpty(ParteCpfPolo))
+                        if (!string.IsNullOrEmpty(ParteCpfPolo))
                         {
                             ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = ParteCpfPolo;
                         }
@@ -689,6 +699,8 @@ namespace Pje_WebScrapping.DataStorage
                     var oabAdvogado = ActionsPJE.ExtrairOABDeDetalhes(DentroPoloAtivo).Trim();
                     var cpfAdvogado = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
 
+
+                    //dados da natali ADV
                     if ((cpfAdvogado == "152.489.457-55" || oabAdvogado == "RJ253001") && (nomeAdvogado == "NATALI CORDEIRO MARQUES"))
                     {
                         ProcessoEntidadeRetornado.ClienteCPF = ParteCpfPolo;
@@ -700,23 +712,59 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-                    if (string.IsNullOrEmpty(nomeAdvogado))
+                    if (!string.IsNullOrEmpty(nomeAdvogado))
                     {
                         ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado = nomeAdvogado;
                     }
-                    if (string.IsNullOrEmpty(oabAdvogado))
+                    if (!string.IsNullOrEmpty(oabAdvogado))
                     {
                         ProcessoEntidadeRetornado.PoloAtivo.OAB = oabAdvogado;
                     }
-                    if (string.IsNullOrEmpty(cpfAdvogado))
+                    if (!string.IsNullOrEmpty(cpfAdvogado))
                     {
                         ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado = cpfAdvogado;
+                    }
+                }
+                else if (DentroPoloAtivo.Contains("(RÉU)"))
+                {
+                    Console.WriteLine($"Réu é : {DentroPoloAtivo}");
+                    if (DentroPoloAtivo.Contains("CNPJ"))
+                    {
+
+                        var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloAtivo).Trim();
+                        var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PJ";
+                        ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
+                        ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
+                        if (!string.IsNullOrEmpty(RazaoSocial))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
+                        }
+                        if (!string.IsNullOrEmpty(cnpjParte))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
+                        }
+                    }
+                    else
+                    {
+                        var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
+                        var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PF";
+                        if (!string.IsNullOrEmpty(nomeReu))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.NomeParte = nomeReu;
+                        }
+                        if (!string.IsNullOrEmpty(cpfPolo))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cpfPolo;
+                        }
                     }
                 }
 
 
             }
 
+            ProcessoEntidadeRetornado.PoloPassivo = new();
             //verificando elementos do polo passivo
             foreach (var DentroPoloPassivo in ElementosPoloPassivoUNICOS)
             {
@@ -731,6 +779,9 @@ namespace Pje_WebScrapping.DataStorage
                     {
                         var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
                         var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+
+                        Console.WriteLine("cnpj do passivo e " + cnpjParte);
+
                         ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
                         ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
                         ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
@@ -747,6 +798,7 @@ namespace Pje_WebScrapping.DataStorage
                     {
                         NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
                         ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
                         if (!string.IsNullOrEmpty(NomePartePolo))
                         {
                             ProcessoEntidadeRetornado.PoloPassivo.NomeParte = NomePartePolo;
@@ -766,6 +818,8 @@ namespace Pje_WebScrapping.DataStorage
                     var oabAdvogado = ActionsPJE.ExtrairOABDeDetalhes(DentroPoloPassivo).Trim();
                     var cpfAdvogado = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
 
+
+                    //dados da natali ADV
                     if ((cpfAdvogado == "152.489.457-55" || oabAdvogado == "RJ253001") && (nomeAdvogado == "NATALI CORDEIRO MARQUES"))
                     {
                         ProcessoEntidadeRetornado.ClienteCPF = ParteCpfPolo;
@@ -828,7 +882,7 @@ namespace Pje_WebScrapping.DataStorage
                 }
             }
 
-
+            ProcessoEntidadeRetornado.PartesProcesso = ProcessoEntidadeRetornado.PoloAtivo.NomeParte + " x " + ProcessoEntidadeRetornado.PoloPassivo.NomeParte ;
 
 
 
@@ -865,16 +919,31 @@ namespace Pje_WebScrapping.DataStorage
                 var valor = propriedade.GetValue(ProcessoEntidadeRetornado);
                 Console.WriteLine($"{propriedade.Name}: {valor}");
 
-
-
-
             }
+
+
+                Console.WriteLine("\n\n\n\n Listando POLO ATIVO");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.NomeParte}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.TipoParte}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.OAB}");
+
+                Console.WriteLine("\n\n\n\n Listando POLO PASSIVO");
+
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.NomeParte}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.TipoParte}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.OAB}");
 
 
             Console.WriteLine("Encerrei");
 
 
-            //ActionsPJE.EncerrarConsole();
+            ActionsPJE.EncerrarConsole();
 
 
             //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM

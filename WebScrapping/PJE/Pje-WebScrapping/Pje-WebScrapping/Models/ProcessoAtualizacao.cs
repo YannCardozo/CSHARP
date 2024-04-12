@@ -24,21 +24,5 @@ namespace Pje_WebScrapping.Models
         public string? ConteudoAtualizacao { get; set; }
         public string? TituloMovimento { get; set; }
         public DateOnly DataMovimentacao { get; set; }
-
-
-
-
-        //public string TituloPjeMovimentacaoProcessual { get; set; }
-        //public string MovimentacaoProcessual { get; set; }
-        //public string JulgamentoStatus { get; set; }
-        //public DateTime DataVencimentoProcessual { get; set; }
-        //public string Conteudo { get; set; }
-        //public string? LinkArquivos { get; set; }
-        //public string? TipoDeAcao { get; set; }
-        //public string? OrgaoJulgador { get; set; }
-        //public DateTime MarcacaoDeData { get; set; }
-        //public string ComarcaAtual { get; set; }
-        //public bool StatusProcesso { get; set; }
-        //public int ProcessoId { get; set; }
     }
 }

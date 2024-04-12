@@ -223,21 +223,6 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                             }
                                         }
                                     }
-                                    //https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam
-                                    //linkprocesso.Click() abrirá uma nova janela no navegador
-
-
-                                    //url principal https://tjrj.pje.jus.br/1g/Painel/painel_usuario/advogado.seam
-                                    //url nova janela https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam
-
-
-
-
-
-                                    //agora abrindo o link e armazenando toda a MOVIMENTAÇÃO PROCESSUAL
-
-
-                                    //puxar desse ID a movimentacao processual do link aberto : divTimeLine:eventosTimeLineElement
                                 }
                                 controleMD4 = 0;
                                 controleMD8 = 0;

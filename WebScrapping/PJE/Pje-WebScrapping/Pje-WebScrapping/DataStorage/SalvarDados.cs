@@ -655,7 +655,7 @@ namespace Pje_WebScrapping.DataStorage
             {
                 if (ProcessoEntidadeRetornado.PoloAtivo == null)
                 {
-                    ProcessoEntidadeRetornado.PoloAtivo = new PoloAtivo(); // ou qualquer método de inicialização apropriado
+                    ProcessoEntidadeRetornado.PoloAtivo = new Polo(); // ou qualquer método de inicialização apropriado
                 }
                 if (DentroPoloAtivo.Contains("(AUTOR)"))
                 {
@@ -770,7 +770,7 @@ namespace Pje_WebScrapping.DataStorage
             {
                 if (ProcessoEntidadeRetornado.PoloPassivo == null)
                 {
-                    ProcessoEntidadeRetornado.PoloPassivo = new PoloPassivo(); // ou qualquer método de inicialização apropriado
+                    ProcessoEntidadeRetornado.PoloPassivo = new Polo(); // ou qualquer método de inicialização apropriado
                 }
                 if (DentroPoloPassivo.Contains("(AUTOR)"))
                 {
@@ -943,7 +943,7 @@ namespace Pje_WebScrapping.DataStorage
             Console.WriteLine("Encerrei");
 
 
-            ActionsPJE.EncerrarConsole();
+            //ActionsPJE.EncerrarConsole();
 
 
             //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM
@@ -951,7 +951,7 @@ namespace Pje_WebScrapping.DataStorage
             //fecha detalhes
             LinkDetalhesMovimentacaoProcessual.Click();
 
-            //ActionsPJE.EncerrarConsole();
+            ActionsPJE.EncerrarConsole();
 
             ActionsPJE.RetornarParaJanelaPrincipal(driver);
 

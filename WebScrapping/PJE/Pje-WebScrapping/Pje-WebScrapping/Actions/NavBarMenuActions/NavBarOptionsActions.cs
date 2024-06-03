@@ -5,7 +5,9 @@ using Pje_WebScrapping.DataStorage;
 using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -154,6 +156,26 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                     }
                                     Processo ProcessoRetornado = SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
+
+
+
+                                    //pegar os dados e fazer insert na tabela Processo aqui ( pelo menos iniciar o insert aqui )
+                                    //tendo em vista que nem todos os dados de processo sao inseridos, apos inseridos no banco pode fazer verificacao;
+                                    //nas atualizacaoes de movimentacao processual para que atualize caso encontre algum codPJEC identificado no cadastro do banco.
+                                    //mantendo tudo como null e fazendo updates a partir do processo com codpjec já cadastrado no banco.
+                                    //dar continuidade em: SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver, ProcessoRetornado);
+
+
+                                    Console.WriteLine("\n\n///////////////////////////////////////////\n\n");
+
+                                    foreach (PropertyInfo prop in ProcessoRetornado.GetType().GetProperties())
+                                    {
+                                        string nome = prop.Name;
+                                        object valor = prop.GetValue(ProcessoRetornado, null);
+
+                                        Console.WriteLine($"{nome}: {valor ?? "null"}");
+                                    }
+                                    Console.WriteLine("\n\n///////////////////////////////////////////\n\n");
 
                                     controleMD4++;
                                     controleMD8++;

@@ -951,7 +951,7 @@ namespace Pje_WebScrapping.DataStorage
             //fecha detalhes
             LinkDetalhesMovimentacaoProcessual.Click();
 
-            ActionsPJE.EncerrarConsole();
+            //ActionsPJE.EncerrarConsole();
 
             ActionsPJE.RetornarParaJanelaPrincipal(driver);
 

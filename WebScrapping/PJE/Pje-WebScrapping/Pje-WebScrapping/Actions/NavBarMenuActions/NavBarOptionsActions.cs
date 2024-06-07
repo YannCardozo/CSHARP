@@ -5,6 +5,7 @@ using Pje_WebScrapping.DataStorage;
 using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -164,6 +165,77 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                     //nas atualizacaoes de movimentacao processual para que atualize caso encontre algum codPJEC identificado no cadastro do banco.
                                     //mantendo tudo como null e fazendo updates a partir do processo com codpjec já cadastrado no banco.
                                     //dar continuidade em: SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver, ProcessoRetornado);
+
+                                    //iniciando testes ao BANCO, tentar deixar generico em outra classe pra diminuir codigo e reutilizar.
+
+
+
+                                    try
+                                    {
+                                        using (var connectionBanco = new SqlConnection(ConnectDB.connectionStringCasa))
+                                        {
+                                            connectionBanco.Open();
+                                            string insertQuery = @"
+                                                INSERT INTO Processos (CodPJEC,CodPJECAcao,Cliente, ClienteCPF, Advogada, AdvogadaOAB , AdvogadaCPF
+                                                , MeioDeComunicacao, MeioDeComunicacaoMeioDeComunicacaoData, Prazo, ProximoPrazo, ProximoPrazoData
+                                                ,UltimaMovimentacaoProcessual, UltimaMovimentacaoProcessualData, AdvogadaCiente , Comarca
+                                                , OrgaoJulgador , Competencia
+                                                ) 
+
+                                                VALUES (@CodPJEC, @CodPJECAcao, @Cliente, @ClienteCPF, @Advogada, @AdvogadaOAB, @AdvogadaCPF, @MeioDeComunicacao
+                                                ,@MeioDeComunicacaoMeioDeComunicacaoData, @Prazo, @ProximoPrazo, @ProximoPrazoData,
+                                                @UltimaMovimentacaoProcessual, @UltimaMovimentacaoProcessualData , @AdvogadaCiente , @Comarca, @OrgaoJulgador, @Competencia
+                                                        
+                                                )";
+                                            using (var command = new SqlCommand(insertQuery, connectionBanco))
+                                            {
+                                                // Adicionando os parâmetros de forma segura para evitar SQL Injection
+                                                command.Parameters.AddWithValue("@Cliente", ProcessoRetornado.CodPJEC);
+                                                command.Parameters.AddWithValue("@Cliente", ProcessoRetornado.CodPJECAcao);
+                                                command.Parameters.AddWithValue("@Cliente", ProcessoRetornado.Cliente);
+                                                command.Parameters.AddWithValue("@ClienteCPF", ProcessoRetornado.ClienteCPF);
+                                                command.Parameters.AddWithValue("@Advogada", ProcessoRetornado.Advogada);
+                                                command.Parameters.AddWithValue("@AdvogadaOAB", ProcessoRetornado.AdvogadaOAB);
+                                                command.Parameters.AddWithValue("@AdvogadaCPF", ProcessoRetornado.AdvogadaCPF);
+                                                command.Parameters.AddWithValue("@MeioDeComunicacao", ProcessoRetornado.MeioDeComunicacao);
+                                                command.Parameters.AddWithValue("@MeioDeComunicacaoData", ProcessoRetornado.MeioDeComunicacaoData);
+                                                command.Parameters.AddWithValue("@Prazo", ProcessoRetornado.Prazo);
+                                                command.Parameters.AddWithValue("@ProximoPrazo", ProcessoRetornado.ProximoPrazo);
+                                                command.Parameters.AddWithValue("@ProximoPrazoData", ProcessoRetornado.ProximoPrazoData);
+                                                command.Parameters.AddWithValue("@UltimaMovimentacaoProcessual", ProcessoRetornado.UltimaMovimentacaoProcessual);
+                                                command.Parameters.AddWithValue("@UltimaMovimentacaoProcessualData", ProcessoRetornado.UltimaMovimentacaoProcessualData);
+                                                command.Parameters.AddWithValue("@AdvogadaCiente", ProcessoRetornado.AdvogadaCiente);
+                                                command.Parameters.AddWithValue("@Comarca", ProcessoRetornado.Comarca);
+                                                command.Parameters.AddWithValue("@OrgaoJulgador", ProcessoRetornado.OrgaoJulgador);
+                                                command.Parameters.AddWithValue("@Competencia", ProcessoRetornado.Competencia);
+                                                command.Parameters.AddWithValue("@MotivosProcesso", ProcessoRetornado.MotivosProcesso);
+                                                command.Parameters.AddWithValue("@ValorCausa", ProcessoRetornado.ValorCausa);
+                                                command.Parameters.AddWithValue("@SegredoJustica", ProcessoRetornado.SegredoJustica);
+                                                command.Parameters.AddWithValue("@JusGratis", ProcessoRetornado.JusGratis);
+
+
+
+
+                                                // Executa o comando de inserção e retorna o número de linhas afetadas
+                                                int result = command.ExecuteNonQuery();
+
+                                                // Verifica se a inserção foi bem-sucedida
+                                                if (result > 0)
+                                                {
+                                                    Console.WriteLine("Processo inserido com sucesso.");
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("Falha ao inserir o processo.");
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+
+                                    }
 
 
                                     Console.WriteLine("\n\n///////////////////////////////////////////\n\n");

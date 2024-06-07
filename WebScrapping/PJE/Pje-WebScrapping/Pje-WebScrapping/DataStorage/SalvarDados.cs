@@ -8,6 +8,7 @@ using Pje_WebScrapping.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -240,43 +241,43 @@ namespace Pje_WebScrapping.DataStorage
             //        {
             //            //alterar tabela no banco para receber todas essas entidades
             //            // Adicionando os parâmetros de forma segura para evitar SQL Injection
-            //            command.Parameters.AddWithValue("@CodPJEC", ProcessoRetornado.CodPJEC);
-            //            command.Parameters.AddWithValue("@CodPJECAcao", ProcessoRetornado.CodPJECAcao);
-            //            command.Parameters.AddWithValue("@Cliente", ProcessoRetornado.Cliente);
-            //            command.Parameters.AddWithValue("@ClienteCPF", ProcessoRetornado.ClienteCPF);
-            //            command.Parameters.AddWithValue("@Advogada", ProcessoRetornado.Advogada);
-            //            command.Parameters.AddWithValue("@AdvogadaOAB", ProcessoRetornado.AdvogadaOAB);
-            //            command.Parameters.AddWithValue("@AdvogadaCPF", ProcessoRetornado.AdvogadaCPF);
-            //            command.Parameters.AddWithValue("@MeioDeComunicacao", ProcessoRetornado.MeioDeComunicacao);
-            //            command.Parameters.AddWithValue("@MeioDeComunicacaoData", ProcessoRetornado.MeioDeComunicacaoData);
-            //            command.Parameters.AddWithValue("@Prazo", ProcessoRetornado.Prazo);
-            //            command.Parameters.AddWithValue("@ProximoPrazo", ProcessoRetornado.ProximoPrazo);
-            //            command.Parameters.AddWithValue("@ProximoPrazoData", ProcessoRetornado.ProximoPrazoData);
-            //            command.Parameters.AddWithValue("@UltimaMovimentacaoProcessual", ProcessoRetornado.UltimaMovimentacaoProcessual);
-            //            command.Parameters.AddWithValue("@UltimaMovimentacaoProcessualData", ProcessoRetornado.UltimaMovimentacaoProcessualData);
-            //            command.Parameters.AddWithValue("@AdvogadaCiente", ProcessoRetornado.AdvogadaCiente);
-            //            command.Parameters.AddWithValue("@Comarca", ProcessoRetornado.Comarca);
-            //            command.Parameters.AddWithValue("@OrgaoJulgador", ProcessoRetornado.OrgaoJulgador);
-            //            command.Parameters.AddWithValue("@Competencia", ProcessoRetornado.Competencia);
-            //            command.Parameters.AddWithValue("@MotivosProcesso", ProcessoRetornado.MotivosProcesso);
-            //            command.Parameters.AddWithValue("@ValorCausa", ProcessoRetornado.ValorCausa);
-            //            command.Parameters.AddWithValue("@SegredoJustica", ProcessoRetornado.SegredoJustica);
-            //            command.Parameters.AddWithValue("@JusGratis", ProcessoRetornado.JusGratis);
-            //            command.Parameters.AddWithValue("@TutelaLiminar", ProcessoRetornado.TutelaLiminar);
-            //            command.Parameters.AddWithValue("@Prioridade", ProcessoRetornado.Prioridade);
-            //            command.Parameters.AddWithValue("@Autuacao", ProcessoRetornado.Autuacao);
-            //            command.Parameters.AddWithValue("@PoloAtivo", ProcessoRetornado.PoloAtivo);
-            //            command.Parameters.AddWithValue("@PoloPassivo", ProcessoRetornado.PoloPassivo);
-            //            command.Parameters.AddWithValue("@TituloProcesso", ProcessoRetornado.TituloProcesso);
-            //            command.Parameters.AddWithValue("@PartesProcesso", ProcessoRetornado.PartesProcesso);
-            //            command.Parameters.AddWithValue("@ComarcaInicial", ProcessoRetornado.ComarcaInicial);
-            //            command.Parameters.AddWithValue("@ObsProcesso", ProcessoRetornado.ObsProcesso);
-            //            command.Parameters.AddWithValue("@DataAbertura", ProcessoRetornado.DataAbertura);
-            //            command.Parameters.AddWithValue("@DataFim", ProcessoRetornado.DataFim);
-            //            command.Parameters.AddWithValue("@DataCadastro", ProcessoRetornado.DataCadastro);
-            //            command.Parameters.AddWithValue("@CadastradoPor", ProcessoRetornado.CadastradoPor);
-            //            command.Parameters.AddWithValue("@DataAtualizacao", ProcessoRetornado.DataAtualizacao);
-            //            command.Parameters.AddWithValue("@AtualizadoPor", ProcessoRetornado.AtualizadoPor);
+            //            command.Parameters.AddWithValue("@CodPJEC", ProcessoEntidade.CodPJEC);
+            //            command.Parameters.AddWithValue("@CodPJECAcao", ProcessoEntidade.CodPJECAcao);
+            //            command.Parameters.AddWithValue("@Cliente", ProcessoEntidade.Cliente);
+            //            command.Parameters.AddWithValue("@ClienteCPF", ProcessoEntidade.ClienteCPF);
+            //            command.Parameters.AddWithValue("@Advogada", ProcessoEntidade.Advogada);
+            //            command.Parameters.AddWithValue("@AdvogadaOAB", ProcessoEntidade.AdvogadaOAB);
+            //            command.Parameters.AddWithValue("@AdvogadaCPF", ProcessoEntidade.AdvogadaCPF);
+            //            command.Parameters.AddWithValue("@MeioDeComunicacao", ProcessoEntidade.MeioDeComunicacao);
+            //            command.Parameters.AddWithValue("@MeioDeComunicacaoData", ProcessoEntidade.MeioDeComunicacaoData);
+            //            command.Parameters.AddWithValue("@Prazo", ProcessoEntidade.Prazo);
+            //            command.Parameters.AddWithValue("@ProximoPrazo", ProcessoEntidade.ProximoPrazo);
+            //            command.Parameters.AddWithValue("@ProximoPrazoData", ProcessoEntidade.ProximoPrazoData);
+            //            command.Parameters.AddWithValue("@UltimaMovimentacaoProcessual", ProcessoEntidade.UltimaMovimentacaoProcessual);
+            //            command.Parameters.AddWithValue("@UltimaMovimentacaoProcessualData", ProcessoEntidade.UltimaMovimentacaoProcessualData);
+            //            command.Parameters.AddWithValue("@AdvogadaCiente", ProcessoEntidade.AdvogadaCiente);
+            //            command.Parameters.AddWithValue("@Comarca", ProcessoEntidade.Comarca);
+            //            command.Parameters.AddWithValue("@OrgaoJulgador", ProcessoEntidade.OrgaoJulgador);
+            //            command.Parameters.AddWithValue("@Competencia", ProcessoEntidade.Competencia);
+            //            command.Parameters.AddWithValue("@MotivosProcesso", ProcessoEntidade.MotivosProcesso);
+            //            command.Parameters.AddWithValue("@ValorCausa", ProcessoEntidade.ValorCausa);
+            //            command.Parameters.AddWithValue("@SegredoJustica", ProcessoEntidade.SegredoJustica);
+            //            command.Parameters.AddWithValue("@JusGratis", ProcessoEntidade.JusGratis);
+            //            command.Parameters.AddWithValue("@TutelaLiminar", ProcessoEntidade.TutelaLiminar);
+            //            command.Parameters.AddWithValue("@Prioridade", ProcessoEntidade.Prioridade);
+            //            command.Parameters.AddWithValue("@Autuacao", ProcessoEntidade.Autuacao);
+            //            command.Parameters.AddWithValue("@PoloAtivo", ProcessoEntidade.PoloAtivo);
+            //            command.Parameters.AddWithValue("@PoloPassivo", ProcessoEntidade.PoloPassivo);
+            //            command.Parameters.AddWithValue("@TituloProcesso", ProcessoEntidade.TituloProcesso);
+            //            command.Parameters.AddWithValue("@PartesProcesso", ProcessoEntidade.PartesProcesso);
+            //            command.Parameters.AddWithValue("@ComarcaInicial", ProcessoEntidade.ComarcaInicial);
+            //            command.Parameters.AddWithValue("@ObsProcesso", ProcessoEntidade.ObsProcesso);
+            //            command.Parameters.AddWithValue("@DataAbertura", ProcessoEntidade.DataAbertura);
+            //            command.Parameters.AddWithValue("@DataFim", ProcessoEntidade.DataFim);
+            //            command.Parameters.AddWithValue("@DataCadastro", ProcessoEntidade.DataCadastro);
+            //            command.Parameters.AddWithValue("@CadastradoPor", ProcessoEntidade.CadastradoPor);
+            //            command.Parameters.AddWithValue("@DataAtualizacao", ProcessoEntidade.DataAtualizacao);
+            //            command.Parameters.AddWithValue("@AtualizadoPor", ProcessoEntidade.AtualizadoPor);
 
             //            // Executa o comando de inserção e retorna o número de linhas afetadas
             //            int result = command.ExecuteNonQuery();
@@ -296,8 +297,20 @@ namespace Pje_WebScrapping.DataStorage
             //}
             //catch (Exception ex)
             //{
-
+            //    Console.WriteLine("testando: " + ex.Message);
             //}
+
+
+
+
+
+
+
+
+
+
+
+
 
             TituloProcesso = "";
             TituloPartes = "";

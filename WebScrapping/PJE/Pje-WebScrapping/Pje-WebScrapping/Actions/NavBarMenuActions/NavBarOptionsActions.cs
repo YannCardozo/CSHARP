@@ -178,20 +178,24 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                             string insertQuery = @"
                                                 INSERT INTO Processos (CodPJEC,CodPJECAcao,Cliente, ClienteCPF, Advogada, AdvogadaOAB , AdvogadaCPF
                                                 , MeioDeComunicacao, MeioDeComunicacaoMeioDeComunicacaoData, Prazo, ProximoPrazo, ProximoPrazoData
-                                                ,UltimaMovimentacaoProcessual, UltimaMovimentacaoProcessualData, AdvogadaCiente , Comarca
-                                                , OrgaoJulgador , Competencia
-                                                ) 
+                                                , UltimaMovimentacaoProcessual, UltimaMovimentacaoProcessualData, AdvogadaCiente , Comarca
+                                                , OrgaoJulgador , Competencia, MotivosProcesso, ValorCausa, SegredoJustica, JusGratis, TutelaLiminar
+                                                , Prioridade , Autuacao, PoloAtivo , PoloPassivo, TituloProcesso, PartesProcesso, ComarcaInicial, ObsProcesso
+                                                , DataAbertura, DataFim, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor ) 
 
                                                 VALUES (@CodPJEC, @CodPJECAcao, @Cliente, @ClienteCPF, @Advogada, @AdvogadaOAB, @AdvogadaCPF, @MeioDeComunicacao
-                                                ,@MeioDeComunicacaoMeioDeComunicacaoData, @Prazo, @ProximoPrazo, @ProximoPrazoData,
-                                                @UltimaMovimentacaoProcessual, @UltimaMovimentacaoProcessualData , @AdvogadaCiente , @Comarca, @OrgaoJulgador, @Competencia
-                                                        
-                                                )";
+                                                ,@MeioDeComunicacaoMeioDeComunicacaoData, @Prazo, @ProximoPrazo, @ProximoPrazoData
+                                                , @UltimaMovimentacaoProcessual, @UltimaMovimentacaoProcessualData , @AdvogadaCiente , @Comarca, @OrgaoJulgador, @Competencia
+                                                , @MotivosProcesso , @ValorCausa, @SegredoJustica, @JusGratis, @TutelaLiminar, @Prioridade, @Autuacao , @PoloAtivo , @PoloPassivo
+                                                , @TituloProcesso, @PartesProcesso, @ComarcaInicial , @ObsProcesso, @DataAbertura, @DataFim, @DataCadastro, @CadastradoPor, @DataAtualizacao
+                                                , @AtualizadoPor)";
                                             using (var command = new SqlCommand(insertQuery, connectionBanco))
                                             {
+                                                ATENCAO
+                                                //alterar tabela no banco para receber todas essas entidades
                                                 // Adicionando os parâmetros de forma segura para evitar SQL Injection
-                                                command.Parameters.AddWithValue("@Cliente", ProcessoRetornado.CodPJEC);
-                                                command.Parameters.AddWithValue("@Cliente", ProcessoRetornado.CodPJECAcao);
+                                                command.Parameters.AddWithValue("@CodPJEC", ProcessoRetornado.CodPJEC);
+                                                command.Parameters.AddWithValue("@CodPJECAcao", ProcessoRetornado.CodPJECAcao);
                                                 command.Parameters.AddWithValue("@Cliente", ProcessoRetornado.Cliente);
                                                 command.Parameters.AddWithValue("@ClienteCPF", ProcessoRetornado.ClienteCPF);
                                                 command.Parameters.AddWithValue("@Advogada", ProcessoRetornado.Advogada);
@@ -212,6 +216,22 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                                 command.Parameters.AddWithValue("@ValorCausa", ProcessoRetornado.ValorCausa);
                                                 command.Parameters.AddWithValue("@SegredoJustica", ProcessoRetornado.SegredoJustica);
                                                 command.Parameters.AddWithValue("@JusGratis", ProcessoRetornado.JusGratis);
+                                                command.Parameters.AddWithValue("@TutelaLiminar", ProcessoRetornado.TutelaLiminar);
+                                                command.Parameters.AddWithValue("@Prioridade", ProcessoRetornado.Prioridade);
+                                                command.Parameters.AddWithValue("@Autuacao", ProcessoRetornado.Autuacao);
+                                                command.Parameters.AddWithValue("@PoloAtivo", ProcessoRetornado.PoloAtivo);
+                                                command.Parameters.AddWithValue("@PoloPassivo", ProcessoRetornado.PoloPassivo);
+                                                command.Parameters.AddWithValue("@TituloProcesso", ProcessoRetornado.TituloProcesso);
+                                                command.Parameters.AddWithValue("@PartesProcesso", ProcessoRetornado.PartesProcesso);
+                                                command.Parameters.AddWithValue("@ComarcaInicial", ProcessoRetornado.ComarcaInicial);
+                                                command.Parameters.AddWithValue("@ObsProcesso", ProcessoRetornado.ObsProcesso);
+                                                command.Parameters.AddWithValue("@DataAbertura", ProcessoRetornado.DataAbertura);
+                                                command.Parameters.AddWithValue("@DataFim", ProcessoRetornado.DataFim);
+                                                command.Parameters.AddWithValue("@DataCadastro", ProcessoRetornado.DataCadastro);
+                                                command.Parameters.AddWithValue("@CadastradoPor", ProcessoRetornado.CadastradoPor);
+                                                command.Parameters.AddWithValue("@DataAtualizacao", ProcessoRetornado.DataAtualizacao);
+                                                command.Parameters.AddWithValue("@AtualizadoPor", ProcessoRetornado.AtualizadoPor);
+
 
 
 

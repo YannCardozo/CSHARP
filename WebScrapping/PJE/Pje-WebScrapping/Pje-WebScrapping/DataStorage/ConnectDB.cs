@@ -48,18 +48,18 @@ namespace Pje_WebScrapping.DataStorage
                 {
                     connectionBanco.Open();
                     string insertQuery = @"
-                    INSERT INTO Processo (CodPJEC, CodPJECAcao, Cliente, ClienteCPF, Advogada, AdvogadaOAB, AdvogadaCPF,
+                    INSERT INTO Processo (CodPJEC, PJECAcao, Cliente, ClienteCPF, Advogada, AdvogadaOAB, AdvogadaCPF,
                     MeioDeComunicacao, MeioDeComunicacaoData, Prazo, ProximoPrazo, ProximoPrazoData,
                     UltimaMovimentacaoProcessual, UltimaMovimentacaoProcessualData, AdvogadaCiente, Comarca,
                     OrgaoJulgador, Competencia, MotivosProcesso, ValorCausa, SegredoJustica, JusGratis, TutelaLiminar,
-                    Prioridade, Autuacao, PoloAtivo, PoloPassivo, TituloProcesso, PartesProcesso, ComarcaInicial, ObsProcesso,
+                    Prioridade, Autuacao, PoloAtivo, PoloPassivo, TituloProcesso, PartesProcesso, ObsProcesso,
                     DataAbertura, DataFim, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor) 
 
-                    VALUES (@CodPJEC, @CodPJECAcao, @Cliente, @ClienteCPF, @Advogada, @AdvogadaOAB, @AdvogadaCPF,
+                    VALUES (@CodPJEC, @PJECAcao, @Cliente, @ClienteCPF, @Advogada, @AdvogadaOAB, @AdvogadaCPF,
                     @MeioDeComunicacao, @MeioDeComunicacaoData, @Prazo, @ProximoPrazo, @ProximoPrazoData,
                     @UltimaMovimentacaoProcessual, @UltimaMovimentacaoProcessualData, @AdvogadaCiente, @Comarca,
                     @OrgaoJulgador, @Competencia, @MotivosProcesso, @ValorCausa, @SegredoJustica, @JusGratis, @TutelaLiminar,
-                    @Prioridade, @Autuacao, @PoloAtivo, @PoloPassivo, @TituloProcesso, @PartesProcesso, @ComarcaInicial, @ObsProcesso,
+                    @Prioridade, @Autuacao, @PoloAtivo, @PoloPassivo, @TituloProcesso, @PartesProcesso, @ObsProcesso,
                     @DataAbertura, @DataFim, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
                     using (var command = new SqlCommand(insertQuery, connectionBanco))
                     {
@@ -69,7 +69,7 @@ namespace Pje_WebScrapping.DataStorage
 
                             // Adicionando os parâmetros de forma segura para evitar SQL Injection
                             command.Parameters.AddWithValue("@CodPJEC", (object)ProcessoInicial.CodPJEC ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@CodPJECAcao", (object)ProcessoInicial.CodPJECAcao ?? DBNull.Value);
+                            command.Parameters.AddWithValue("@PJECAcao", (object)ProcessoInicial.CodPJECAcao ?? DBNull.Value);
                             command.Parameters.AddWithValue("@Cliente", (object)ProcessoInicial.Cliente ?? DBNull.Value);
                             command.Parameters.AddWithValue("@ClienteCPF", (object)ProcessoInicial.ClienteCPF ?? DBNull.Value);
                             command.Parameters.AddWithValue("@Advogada", (object)ProcessoInicial.Advogada ?? DBNull.Value);
@@ -102,7 +102,7 @@ namespace Pje_WebScrapping.DataStorage
                             command.Parameters.AddWithValue("@OrgaoJulgador", (object)ProcessoInicial.OrgaoJulgador ?? DBNull.Value);
                             command.Parameters.AddWithValue("@Competencia", (object)ProcessoInicial.Competencia ?? DBNull.Value);
                             command.Parameters.AddWithValue("@MotivosProcesso", (object)ProcessoInicial.MotivosProcesso ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@ValorCausa", (object)ProcessoInicial.ValorCausa ?? DBNull.Value);
+                            command.Parameters.AddWithValue("@ValorDaCausa", (object)ProcessoInicial.ValorCausa ?? DBNull.Value);
                             command.Parameters.AddWithValue("@SegredoJustica", (object)ProcessoInicial.SegredoJustica ?? DBNull.Value);
                             command.Parameters.AddWithValue("@JusGratis", (object)ProcessoInicial.JusGratis ?? DBNull.Value);
                             command.Parameters.AddWithValue("@TutelaLiminar", (object)ProcessoInicial.TutelaLiminar ?? DBNull.Value);
@@ -112,7 +112,6 @@ namespace Pje_WebScrapping.DataStorage
                             command.Parameters.AddWithValue("@PoloPassivo", (object)ProcessoInicial.PoloPassivo ?? DBNull.Value);
                             command.Parameters.AddWithValue("@TituloProcesso", (object)ProcessoInicial.TituloProcesso ?? DBNull.Value);
                             command.Parameters.AddWithValue("@PartesProcesso", (object)ProcessoInicial.PartesProcesso ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@ComarcaInicial", (object)ProcessoInicial.ComarcaInicial ?? DBNull.Value);
                             command.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
 
 

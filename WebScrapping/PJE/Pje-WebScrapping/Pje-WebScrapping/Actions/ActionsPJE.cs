@@ -1,9 +1,12 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using Pje_WebScrapping.DataStorage;
 using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -55,7 +58,7 @@ namespace Pje_WebScrapping.Actions
         public static void AguardarPje(string tempodeespera)
         {
             int tempoDeEsperaDaThread = 0;
-
+            
 
             if (tempodeespera == "Baixo")
             {
@@ -257,6 +260,42 @@ namespace Pje_WebScrapping.Actions
             {
                 new SelectElement(driver.FindElement(By.Id(elemento))).SelectByText(value);
             }
+        }
+        public static DateTime? StringParaDatetime(string converterparadatetime)
+        {
+            if (string.IsNullOrEmpty(converterparadatetime))
+            {
+                Console.WriteLine("String vazia ou nula recebida.");
+                return null;
+            }
+
+            if (DateTime.TryParseExact(converterparadatetime.Trim(), "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dataDateTime))
+            {
+                return dataDateTime;
+            }
+            else
+            {
+                Console.WriteLine($"Falha ao converter '{converterparadatetime}' para DateTime.");
+                return null;
+            }
+        }
+
+        public static DateTime? AjustarDataParaSql(DateTime? data)
+        {
+            if (data == null || data < (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue)
+            {
+                Console.WriteLine($"Data inválida ou nula recebida: {data}. Ajustando para a data mínima permitida.");
+                return (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+            }
+            return data;
+        }
+        public static DateTime? DateOnlyToDateTime(DateOnly? dateOnly)
+        {
+            if (dateOnly.HasValue && dateOnly.Value.ToDateTime(TimeOnly.MinValue) >= SqlDateTime.MinValue.Value)
+            {
+                return dateOnly.Value.ToDateTime(TimeOnly.MinValue);
+            }
+            return null;
         }
 
     }

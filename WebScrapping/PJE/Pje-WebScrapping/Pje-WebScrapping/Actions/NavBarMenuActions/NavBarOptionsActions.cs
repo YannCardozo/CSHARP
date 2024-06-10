@@ -157,7 +157,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                     }
                                     Processo ProcessoRetornado = SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
-
+                                    ActionsPJE.EncerrarConsole();
                                     Console.WriteLine("\n\n///////////////////////////////////////////\n\n");
 
                                     foreach (PropertyInfo prop in ProcessoRetornado.GetType().GetProperties())

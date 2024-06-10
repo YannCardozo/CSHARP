@@ -22,6 +22,7 @@ namespace Pje_WebScrapping.Models
         public string AdvogadaOAB { get; set; }
         public string AdvogadaCPF{ get; set; }
         public string MeioDeComunicacao { get; set; }
+        //datetime MeioDeComunicacaoData
         public string MeioDeComunicacaoData { get; set; }
         public string Prazo { get; set; }
         public string ProximoPrazo { get; set; }
@@ -29,6 +30,7 @@ namespace Pje_WebScrapping.Models
         public string CodPJEC { get; set; }
         public string CodPJECAcao { get; set; }
         public string UltimaMovimentacaoProcessual { get; set; }
+        //datetime UltimaMovimentacaoProcessualData
         public string UltimaMovimentacaoProcessualData { get; set; }
         public string AdvogadaCiente { get; set; }
 
@@ -65,7 +67,9 @@ namespace Pje_WebScrapping.Models
         public string ComarcaInicial { get; set; }
 
         public string? ObsProcesso { get; set; }
-        public DateOnly DataAbertura { get; set; }
-        public DateOnly DataFim { get; set; }
+        //datetime DataAbertura
+        public DateOnly DataAbertura { get; set; } = DateOnly.MinValue;
+        //datetime DATAFIM
+        public DateOnly DataFim { get; set; } = DateOnly.MinValue;
     }
 }

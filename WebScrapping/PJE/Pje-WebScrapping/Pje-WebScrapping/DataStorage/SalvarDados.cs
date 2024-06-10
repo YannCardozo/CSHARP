@@ -211,6 +211,21 @@ namespace Pje_WebScrapping.DataStorage
             Console.WriteLine("\n\n\n");
 
 
+                //Cliente: NATALI CORDEIRO MARQUES
+                //MeioDeComunicacao: Expedição eletrônica(28 / 05 / 2024 13:01)
+                //MeioDeComunicacaoData: 28 / 05 / 2024 13:01
+                //Prazo: sem prazo
+                //CodPJEC: PJEC 0808829 - 86.2024.8.19.0002
+                //CodPJECAcao: Intimação(23203749)
+                //UltimaMovimentacaoProcessual: Último movimento: 28 / 05 / 2024 13:47 - Expedição de Mandado.
+                //UltimaMovimentacaoProcessualData: 28 / 05 / 2024 13:47
+                //AdvogadaCiente: Você tomou ciência em 30 / 05 / 2024 16:59
+                //TituloProcesso: Inclusão Indevida em Cadastro de Inadimplentes
+                //ComarcaInicial: 1º Juizado Especial Cível da Comarca de Niterói
+                //DataCadastro: 10 / 06 / 2024 09:01:10
+                //CadastradoPor: 0
+                //DataAtualizacao: 10 / 06 / 2024 09:01:10
+                //AtualizadoPor: 0
             //começar os inserts aqui:
             //adaptar eles, inserir mesmo o nome cliente e dar update em atualizacao de movimentacao processual
 
@@ -318,7 +333,7 @@ namespace Pje_WebScrapping.DataStorage
             UltimaMovimentacao = "";
             UltimaMovimentacaoProcessualData = "";
 
-
+            ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
             ActionsPJE.EncerrarConsole();
 
 

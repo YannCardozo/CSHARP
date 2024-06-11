@@ -211,122 +211,6 @@ namespace Pje_WebScrapping.DataStorage
             Console.WriteLine("\n\n\n");
 
 
-                //Cliente: NATALI CORDEIRO MARQUES
-                //MeioDeComunicacao: Expedição eletrônica(28 / 05 / 2024 13:01)
-                //MeioDeComunicacaoData: 28 / 05 / 2024 13:01
-                //Prazo: sem prazo
-                //CodPJEC: PJEC 0808829 - 86.2024.8.19.0002
-                //CodPJECAcao: Intimação(23203749)
-                //UltimaMovimentacaoProcessual: Último movimento: 28 / 05 / 2024 13:47 - Expedição de Mandado.
-                //UltimaMovimentacaoProcessualData: 28 / 05 / 2024 13:47
-                //AdvogadaCiente: Você tomou ciência em 30 / 05 / 2024 16:59
-                //TituloProcesso: Inclusão Indevida em Cadastro de Inadimplentes
-                //ComarcaInicial: 1º Juizado Especial Cível da Comarca de Niterói
-                //DataCadastro: 10 / 06 / 2024 09:01:10
-                //CadastradoPor: 0
-                //DataAtualizacao: 10 / 06 / 2024 09:01:10
-                //AtualizadoPor: 0
-            //começar os inserts aqui:
-            //adaptar eles, inserir mesmo o nome cliente e dar update em atualizacao de movimentacao processual
-
-            //COMEÇAR OS INSERTS AQUI!!!!!!
-            //devo fazer um insert em navbaroptionsactions para que obtenha o CodPJEC e CodPJECAcao,
-            //atributos que consigam diferenciar os processos.
-            //dps disso a partir do codpjec e codpjecacao fazer inserts no banco de dados.
-            //try
-            //{
-            //    using (var connectionBanco = new SqlConnection(ConnectDB.connectionStringTrabalho))
-            //    {
-            //        connectionBanco.Open();
-            //        string insertQuery = @"
-            //            INSERT INTO Processos (CodPJEC,CodPJECAcao,Cliente, ClienteCPF, Advogada, AdvogadaOAB , AdvogadaCPF
-            //            , MeioDeComunicacao, MeioDeComunicacaoMeioDeComunicacaoData, Prazo, ProximoPrazo, ProximoPrazoData
-            //            , UltimaMovimentacaoProcessual, UltimaMovimentacaoProcessualData, AdvogadaCiente , Comarca
-            //            , OrgaoJulgador , Competencia, MotivosProcesso, ValorCausa, SegredoJustica, JusGratis, TutelaLiminar
-            //            , Prioridade , Autuacao, PoloAtivo , PoloPassivo, TituloProcesso, PartesProcesso, ComarcaInicial, ObsProcesso
-            //            , DataAbertura, DataFim, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor ) 
-
-            //            VALUES (@CodPJEC, @CodPJECAcao, @Cliente, @ClienteCPF, @Advogada, @AdvogadaOAB, @AdvogadaCPF, @MeioDeComunicacao
-            //            ,@MeioDeComunicacaoMeioDeComunicacaoData, @Prazo, @ProximoPrazo, @ProximoPrazoData
-            //            , @UltimaMovimentacaoProcessual, @UltimaMovimentacaoProcessualData , @AdvogadaCiente , @Comarca, @OrgaoJulgador, @Competencia
-            //            , @MotivosProcesso , @ValorCausa, @SegredoJustica, @JusGratis, @TutelaLiminar, @Prioridade, @Autuacao , @PoloAtivo , @PoloPassivo
-            //            , @TituloProcesso, @PartesProcesso, @ComarcaInicial , @ObsProcesso, @DataAbertura, @DataFim, @DataCadastro, @CadastradoPor, @DataAtualizacao
-            //            , @AtualizadoPor)";
-            //        using (var command = new SqlCommand(insertQuery, connectionBanco))
-            //        {
-            //            //alterar tabela no banco para receber todas essas entidades
-            //            // Adicionando os parâmetros de forma segura para evitar SQL Injection
-            //            command.Parameters.AddWithValue("@CodPJEC", ProcessoEntidade.CodPJEC);
-            //            command.Parameters.AddWithValue("@CodPJECAcao", ProcessoEntidade.CodPJECAcao);
-            //            command.Parameters.AddWithValue("@Cliente", ProcessoEntidade.Cliente);
-            //            command.Parameters.AddWithValue("@ClienteCPF", ProcessoEntidade.ClienteCPF);
-            //            command.Parameters.AddWithValue("@Advogada", ProcessoEntidade.Advogada);
-            //            command.Parameters.AddWithValue("@AdvogadaOAB", ProcessoEntidade.AdvogadaOAB);
-            //            command.Parameters.AddWithValue("@AdvogadaCPF", ProcessoEntidade.AdvogadaCPF);
-            //            command.Parameters.AddWithValue("@MeioDeComunicacao", ProcessoEntidade.MeioDeComunicacao);
-            //            command.Parameters.AddWithValue("@MeioDeComunicacaoData", ProcessoEntidade.MeioDeComunicacaoData);
-            //            command.Parameters.AddWithValue("@Prazo", ProcessoEntidade.Prazo);
-            //            command.Parameters.AddWithValue("@ProximoPrazo", ProcessoEntidade.ProximoPrazo);
-            //            command.Parameters.AddWithValue("@ProximoPrazoData", ProcessoEntidade.ProximoPrazoData);
-            //            command.Parameters.AddWithValue("@UltimaMovimentacaoProcessual", ProcessoEntidade.UltimaMovimentacaoProcessual);
-            //            command.Parameters.AddWithValue("@UltimaMovimentacaoProcessualData", ProcessoEntidade.UltimaMovimentacaoProcessualData);
-            //            command.Parameters.AddWithValue("@AdvogadaCiente", ProcessoEntidade.AdvogadaCiente);
-            //            command.Parameters.AddWithValue("@Comarca", ProcessoEntidade.Comarca);
-            //            command.Parameters.AddWithValue("@OrgaoJulgador", ProcessoEntidade.OrgaoJulgador);
-            //            command.Parameters.AddWithValue("@Competencia", ProcessoEntidade.Competencia);
-            //            command.Parameters.AddWithValue("@MotivosProcesso", ProcessoEntidade.MotivosProcesso);
-            //            command.Parameters.AddWithValue("@ValorCausa", ProcessoEntidade.ValorCausa);
-            //            command.Parameters.AddWithValue("@SegredoJustica", ProcessoEntidade.SegredoJustica);
-            //            command.Parameters.AddWithValue("@JusGratis", ProcessoEntidade.JusGratis);
-            //            command.Parameters.AddWithValue("@TutelaLiminar", ProcessoEntidade.TutelaLiminar);
-            //            command.Parameters.AddWithValue("@Prioridade", ProcessoEntidade.Prioridade);
-            //            command.Parameters.AddWithValue("@Autuacao", ProcessoEntidade.Autuacao);
-            //            command.Parameters.AddWithValue("@PoloAtivo", ProcessoEntidade.PoloAtivo);
-            //            command.Parameters.AddWithValue("@PoloPassivo", ProcessoEntidade.PoloPassivo);
-            //            command.Parameters.AddWithValue("@TituloProcesso", ProcessoEntidade.TituloProcesso);
-            //            command.Parameters.AddWithValue("@PartesProcesso", ProcessoEntidade.PartesProcesso);
-            //            command.Parameters.AddWithValue("@ComarcaInicial", ProcessoEntidade.ComarcaInicial);
-            //            command.Parameters.AddWithValue("@ObsProcesso", ProcessoEntidade.ObsProcesso);
-            //            command.Parameters.AddWithValue("@DataAbertura", ProcessoEntidade.DataAbertura);
-            //            command.Parameters.AddWithValue("@DataFim", ProcessoEntidade.DataFim);
-            //            command.Parameters.AddWithValue("@DataCadastro", ProcessoEntidade.DataCadastro);
-            //            command.Parameters.AddWithValue("@CadastradoPor", ProcessoEntidade.CadastradoPor);
-            //            command.Parameters.AddWithValue("@DataAtualizacao", ProcessoEntidade.DataAtualizacao);
-            //            command.Parameters.AddWithValue("@AtualizadoPor", ProcessoEntidade.AtualizadoPor);
-
-            //            // Executa o comando de inserção e retorna o número de linhas afetadas
-            //            int result = command.ExecuteNonQuery();
-
-            //            // Verifica se a inserção foi bem-sucedida
-            //            if (result > 0)
-            //            {
-            //                Console.WriteLine("Processo inserido com sucesso.");
-            //            }
-            //            else
-            //            {
-            //                Console.WriteLine("Falha ao inserir o processo.");
-            //            }
-            //        }
-            //    }
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine("testando: " + ex.Message);
-            //}
-
-
-
-
-
-
-
-
-
-
-
-
-
             TituloProcesso = "";
             TituloPartes = "";
             ComarcaInicial = "";
@@ -334,6 +218,8 @@ namespace Pje_WebScrapping.DataStorage
             UltimaMovimentacaoProcessualData = "";
 
             ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
+
+            //parei aqui
             ActionsPJE.EncerrarConsole();
 
 

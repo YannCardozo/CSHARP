@@ -183,7 +183,63 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
+        public static Advogado LerAdvogado(int codADVOGADO)
+        {
+            if (codADVOGADO >= 0)
+            {
+                string StringDeConexaoAtiva = EstabelecerConexao();
 
-        //salvar movimentação processual aqui,  fazendo inserts nas respectivas tabelas para isso.
+                using (var connectionBanco = new SqlConnection(StringDeConexaoAtiva))
+                {
+                    string LeituraQueryAdvogado = @"SELECT * FROM Advogado WHERE id = @codAdvogado";
+                    using (var command = new SqlCommand(LeituraQueryAdvogado, connectionBanco))
+                    {
+                        command.Parameters.AddWithValue("@codAdvogado", codADVOGADO);
+
+                        try
+                        {
+                            connectionBanco.Open();
+                            using (var reader = command.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    Console.WriteLine("Advogado encontrado.");
+                                    var AdvogadoEncontrado = new Advogado
+                                    {
+                                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                        Nome = reader.GetString(reader.GetOrdinal("Nome")),
+                                        Oab = reader.GetString(reader.GetOrdinal("Oab")),
+                                        Cpf = reader.GetString(reader.GetOrdinal("Cpf")),
+                                        // Adicione os outros campos conforme necessário
+                                    };
+                                    return AdvogadoEncontrado;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Advogado não encontrado.");
+                                    return null;
+                                }
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.WriteLine($"Erro na leitura de ID de advogado: {codADVOGADO} - {ex.Message}");
+                            return null;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Erro ao ler advogado: {ex.Message}");
+                            return null;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("ID de advogado inválido.");
+                return null;
+            }
+        }
     }
+        //salvar movimentação processual aqui,  fazendo inserts nas respectivas tabelas para isso.
 }

@@ -207,7 +207,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                                 Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
 
-                                                SalvarDados.SalvarMovimentacaoProcessual(movimentacaoprocessual, driver, ProcessoRetornado);
+                                                SalvarDados.SalvarMovimentacaoProcessual(driver, ProcessoRetornado);
 
 
 

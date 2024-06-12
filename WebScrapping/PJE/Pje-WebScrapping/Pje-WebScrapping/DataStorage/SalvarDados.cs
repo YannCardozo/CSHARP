@@ -217,6 +217,15 @@ namespace Pje_WebScrapping.DataStorage
             UltimaMovimentacao = "";
             UltimaMovimentacaoProcessualData = "";
 
+
+            //método de ler advogado esta funcionando
+            //var AdvogadoVerifica = ConnectDB.LerAdvogado(28);
+
+            //if(AdvogadoVerifica != null)
+            //{
+            //    Console.WriteLine($"{AdvogadoVerifica.Id} : {AdvogadoVerifica.Nome}");
+            //}
+
             ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
 
             //parei aqui
@@ -227,8 +236,7 @@ namespace Pje_WebScrapping.DataStorage
  
         }
 
-        public static void SalvarMovimentacaoProcessual(IList<IWebElement> ListaDeMovimentacaoProcessual,
-            IWebDriver driver, Processo ProcessoEntidadeRetornado)
+        public static void SalvarMovimentacaoProcessual(IWebDriver driver, Processo ProcessoEntidadeRetornado)
         {
 
             int ponto_de_parada = 0;

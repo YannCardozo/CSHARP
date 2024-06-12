@@ -227,7 +227,16 @@ namespace Pje_WebScrapping.DataStorage
             //}
 
             ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
+            var ProcessoVerifica = ConnectDB.LerProcesso("PJEC12345"); 
+            if(ProcessoVerifica != null)
+            {
+                Console.WriteLine($"Funcionei e meu processo é: {ProcessoVerifica.CodPJEC}");
+            }
+            else
+            {
+                Console.WriteLine($"{ProcessoEntidade.CodPJEC}");
 
+            }
             //parei aqui
             ActionsPJE.EncerrarConsole();
 

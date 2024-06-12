@@ -71,5 +71,15 @@ namespace Pje_WebScrapping.Models
         public DateOnly DataAbertura { get; set; } = DateOnly.MinValue;
         //datetime DATAFIM
         public DateOnly DataFim { get; set; } = DateOnly.MinValue;
+
+        public int? AdvogadoId { get; set; }
+
+
+        //tentativa de converter variaveis vindo do banco como datetime ao inves de converter no codigo para datetime.
+        public DateTime? MeioDeComunicacaoData_DATETIME { get; set; }
+        public DateTime? ProximoPrazoData_DATETIME { get; set; }
+        public DateTime? UltimaMovimentacaoProcessualData_DATETIME { get; set; }
+
+
     }
 }

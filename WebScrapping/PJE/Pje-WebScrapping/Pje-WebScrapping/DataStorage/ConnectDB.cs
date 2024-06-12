@@ -1,7 +1,10 @@
-﻿using Pje_WebScrapping.Actions;
+﻿using Justo.Entities.Entidades;
+using OpenQA.Selenium;
+using Pje_WebScrapping.Actions;
 using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -12,8 +15,7 @@ namespace Pje_WebScrapping.DataStorage
 {
     public static class ConnectDB
     {
-        //tratamento de catch 
-        public static SqlException ExceptionDoBanco;
+        //tratamento de catch
 
 
         public static string connectionStringCasa = "Server=DESKTOP-RAGDGN0\\SQLEXPRESS;Database=JustoTesteValdir;Trusted_Connection=True;TrustServerCertificate=true;";
@@ -180,9 +182,120 @@ namespace Pje_WebScrapping.DataStorage
             }
         }
 
+        //vai precisar de um método para verificar o CodPJECAcao pois poderão ter varios diferentes para o mesmo processo.
+        //como intimação, procuração e etc e eetc
+        public static Processo LerProcesso(string codPJEC)
+        {
+            if (!string.IsNullOrEmpty(codPJEC))
+            {
+                string StringConexao = ConnectDB.EstabelecerConexao();
+                using (var ConexaoAoBanco = new SqlConnection(StringConexao))
+                {
+                    string ConsultaQueryProcesso = @"SELECT * FROM Processo WHERE CodPJEC = @codPJEC";
+                    using (var ComandoAoBanco = new SqlCommand(ConsultaQueryProcesso, ConexaoAoBanco))
+                    {
+                        ComandoAoBanco.Parameters.AddWithValue("@codPJEC", codPJEC);
+
+                        try
+                        {
+                            ConexaoAoBanco.Open();
+                            using (var reader = ComandoAoBanco.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    Console.WriteLine("Processo encontrado.");
+                                    var ProcessoEncontrado = new Processo
+                                    {
+                                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                        Nome = reader.GetString(reader.GetOrdinal("Nome")),
+                                        CodPJEC = reader.GetString(reader.GetOrdinal("CodPJEC")),
+                                        ObsProcesso = reader.IsDBNull(reader.GetOrdinal("ObsProcesso")) ? null : reader.GetString(reader.GetOrdinal("ObsProcesso")),
+                                        DataFim = reader.IsDBNull(reader.GetOrdinal("DataFim")) ? DateOnly.MinValue : DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("DataFim"))),
+                                        MeioDeComunicacao = reader.IsDBNull(reader.GetOrdinal("MeioDeComunicacao")) ? null : reader.GetString(reader.GetOrdinal("MeioDeComunicacao")),
+                                        MeioDeComunicacaoData = reader.IsDBNull(reader.GetOrdinal("MeioDeComunicacaoData")) ? null : reader.GetDateTime(reader.GetOrdinal("MeioDeComunicacaoData")).ToString("yyyy-MM-dd HH:mm:ss"),
+                                        Prazo = reader.IsDBNull(reader.GetOrdinal("Prazo")) ? null : reader.GetString(reader.GetOrdinal("Prazo")),
+                                        ProximoPrazo = reader.IsDBNull(reader.GetOrdinal("ProximoPrazo")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazo")),
+                                        ProximoPrazoData = reader.IsDBNull(reader.GetOrdinal("ProximoPrazoData")) ? null : reader.GetDateTime(reader.GetOrdinal("ProximoPrazoData")).ToString("yyyy-MM-dd HH:mm:ss"),
+                                        UltimaMovimentacaoProcessual = reader.IsDBNull(reader.GetOrdinal("UltimaMovimentacaoProcessual")) ? null : reader.GetString(reader.GetOrdinal("UltimaMovimentacaoProcessual")),
+                                        UltimaMovimentacaoProcessualData = reader.IsDBNull(reader.GetOrdinal("UltimaMovimentacaoProcessualData")) ? null : reader.GetDateTime(reader.GetOrdinal("UltimaMovimentacaoProcessualData")).ToString("yyyy-MM-dd HH:mm:ss"),
+                                        AdvogadaCiente = reader.IsDBNull(reader.GetOrdinal("AdvogadaCiente")) ? null : reader.GetString(reader.GetOrdinal("AdvogadaCiente")),
+                                        Comarca = reader.IsDBNull(reader.GetOrdinal("Comarca")) ? null : reader.GetString(reader.GetOrdinal("Comarca")),
+                                        OrgaoJulgador = reader.IsDBNull(reader.GetOrdinal("OrgaoJulgador")) ? null : reader.GetString(reader.GetOrdinal("OrgaoJulgador")),
+                                        Competencia = reader.IsDBNull(reader.GetOrdinal("Competencia")) ? null : reader.GetString(reader.GetOrdinal("Competencia")),
+                                        MotivosProcesso = reader.IsDBNull(reader.GetOrdinal("MotivosProcesso")) ? null : reader.GetString(reader.GetOrdinal("MotivosProcesso")),
+                                        SegredoJustica = reader.IsDBNull(reader.GetOrdinal("SegredoJustica")) ? null : reader.GetString(reader.GetOrdinal("SegredoJustica")),
+                                        JusGratis = reader.IsDBNull(reader.GetOrdinal("JusGratis")) ? null : reader.GetString(reader.GetOrdinal("JusGratis")),
+                                        TutelaLiminar = reader.IsDBNull(reader.GetOrdinal("TutelaLiminar")) ? null : reader.GetString(reader.GetOrdinal("TutelaLiminar")),
+                                        Prioridade = reader.IsDBNull(reader.GetOrdinal("Prioridade")) ? null : reader.GetString(reader.GetOrdinal("Prioridade")),
+                                        Autuacao = reader.IsDBNull(reader.GetOrdinal("Autuacao")) ? null : reader.GetString(reader.GetOrdinal("Autuacao")),
+                                        TituloProcesso = reader.IsDBNull(reader.GetOrdinal("TituloProcesso")) ? null : reader.GetString(reader.GetOrdinal("TituloProcesso")),
+                                        PartesProcesso = reader.IsDBNull(reader.GetOrdinal("PartesProcesso")) ? null : reader.GetString(reader.GetOrdinal("PartesProcesso")),
+                                        DataAbertura = reader.IsDBNull(reader.GetOrdinal("DataAbertura")) ? DateOnly.FromDateTime(DateTime.MinValue) : DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("DataAbertura"))),
+                                        AdvogadoId = reader.IsDBNull(reader.GetOrdinal("AdvogadoId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("AdvogadoId"))
+                                    };
+                                    return ProcessoEncontrado;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Processo não encontrado.");
+                                    return null;
+                                }
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.WriteLine($"Erro na leitura de ID do processo: {codPJEC} - {ex.Message}");
+                            return null;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Erro ao ler processo: {ex.Message}");
+                            return null;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("CODPJEC não preenchido ou está inválido.");
+                return null;
+            }
+        }
+
+        //precisa ser feito primeiro a leitura dos dados na tabela de processo para ai sim proceder para salvar processo atualizacao
+        public static void SalvarProcessoAtualizacao(Processo ProcessoInicial)
+        {
+
+        }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //será inserido no final da carga ao abrir aquele menu lateral de cima com os
+        //dados do processo ( que demorei a ver que fica escondido ).
         public static Advogado LerAdvogado(int codADVOGADO)
         {
             if (codADVOGADO >= 0)

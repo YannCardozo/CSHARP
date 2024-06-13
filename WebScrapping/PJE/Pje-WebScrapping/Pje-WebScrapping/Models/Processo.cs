@@ -16,45 +16,45 @@ namespace Pje_WebScrapping.Models
         {
         
         }
-        public string Cliente { get; set; }
-        public string ClienteCPF { get; set; }
-        public string Advogada { get; set; }
-        public string AdvogadaOAB { get; set; }
-        public string AdvogadaCPF{ get; set; }
-        public string MeioDeComunicacao { get; set; }
+        public string? Cliente { get; set; }
+        public string? ClienteCPF { get; set; }
+        public string? Advogada { get; set; }
+        public string? AdvogadaOAB { get; set; }
+        public string? AdvogadaCPF { get; set; }
+        public string? MeioDeComunicacao { get; set; }
         //datetime MeioDeComunicacaoData
-        public string MeioDeComunicacaoData { get; set; }
-        public string Prazo { get; set; }
-        public string ProximoPrazo { get; set; }
-        public string ProximoPrazoData { get; set; }
-        public string CodPJEC { get; set; }
-        public string CodPJECAcao { get; set; }
-        public string UltimaMovimentacaoProcessual { get; set; }
+        public string? MeioDeComunicacaoData { get; set; }
+        public string? Prazo { get; set; }
+        public string? ProximoPrazo { get; set; }
+        public string? ProximoPrazoData { get; set; }
+        public string? CodPJEC { get; set; }
+        public string? CodPJECAcao { get; set; }
+        public string? UltimaMovimentacaoProcessual { get; set; }
         //datetime UltimaMovimentacaoProcessualData
-        public string UltimaMovimentacaoProcessualData { get; set; }
-        public string AdvogadaCiente { get; set; }
+        public string? UltimaMovimentacaoProcessualData { get; set; }
+        public string? AdvogadaCiente { get; set; }
 
 
         //detalhes:
 
-        public string Comarca { get; set; }
-        public string OrgaoJulgador { get; set; }
-        public string Competencia { get; set; }
+        public string? Comarca { get; set; }
+        public string? OrgaoJulgador { get; set; }
+        public string? Competencia { get; set; }
         //assunto
-        public string MotivosProcesso { get; set; }
-        public string ValorCausa { get; set; }
-        public string SegredoJustica { get; set; }
-        public string JusGratis { get; set; }
-        public string TutelaLiminar { get; set; }
-        public string Prioridade { get; set; }
-        public string Autuacao { get;set; }
+        public string? MotivosProcesso { get; set; }
+        public string? ValorCausa { get; set; }
+        public string? SegredoJustica { get; set; }
+        public string? JusGratis { get; set; }
+        public string? TutelaLiminar { get; set; }
+        public string? Prioridade { get; set; }
+        public string? Autuacao { get;set; }
 
 
 
 
 
-        public Polo PoloAtivo { get; set; }
-        public Polo PoloPassivo { get; set; }
+        public Polo? PoloAtivo { get; set; }
+        public Polo? PoloPassivo { get; set; }
 
 
 
@@ -62,23 +62,25 @@ namespace Pje_WebScrapping.Models
         //public bool SegredoJus { get; set; }
 
 
-        public string TituloProcesso { get; set; }
-        public string PartesProcesso { get; set; }
-        public string ComarcaInicial { get; set; }
+        public string? TituloProcesso { get; set; }
+        public string? PartesProcesso { get; set; }
+        public string? ComarcaInicial { get; set; }
 
         public string? ObsProcesso { get; set; }
         //datetime DataAbertura
-        public DateOnly DataAbertura { get; set; } = DateOnly.MinValue;
+        public DateOnly? DataAbertura { get; set; } = DateOnly.MinValue;
         //datetime DATAFIM
-        public DateOnly DataFim { get; set; } = DateOnly.MinValue;
+        public DateOnly? DataFim { get; set; } = DateOnly.MinValue;
 
         public int? AdvogadoId { get; set; }
 
 
         //tentativa de converter variaveis vindo do banco como datetime ao inves de converter no codigo para datetime.
+        //Teoricamente é como se fosse uma "DTO" para receber do banco campos especificos
         public DateTime? MeioDeComunicacaoData_DATETIME { get; set; }
         public DateTime? ProximoPrazoData_DATETIME { get; set; }
         public DateTime? UltimaMovimentacaoProcessualData_DATETIME { get; set; }
+        public DateTime? DataFim_DATETIME { get; set; } = DateTime.Now;
 
 
     }

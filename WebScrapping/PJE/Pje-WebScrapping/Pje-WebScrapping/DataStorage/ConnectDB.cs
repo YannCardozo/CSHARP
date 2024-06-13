@@ -210,14 +210,14 @@ namespace Pje_WebScrapping.DataStorage
                                         Nome = reader.GetString(reader.GetOrdinal("Nome")),
                                         CodPJEC = reader.GetString(reader.GetOrdinal("CodPJEC")),
                                         ObsProcesso = reader.IsDBNull(reader.GetOrdinal("ObsProcesso")) ? null : reader.GetString(reader.GetOrdinal("ObsProcesso")),
-                                        DataFim = reader.IsDBNull(reader.GetOrdinal("DataFim")) ? DateOnly.MinValue : DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("DataFim"))),
+                                        DataFim_DATETIME = SafeGetDateTime(reader, "DataFim"),
                                         MeioDeComunicacao = reader.IsDBNull(reader.GetOrdinal("MeioDeComunicacao")) ? null : reader.GetString(reader.GetOrdinal("MeioDeComunicacao")),
-                                        MeioDeComunicacaoData = reader.IsDBNull(reader.GetOrdinal("MeioDeComunicacaoData")) ? null : reader.GetDateTime(reader.GetOrdinal("MeioDeComunicacaoData")).ToString("yyyy-MM-dd HH:mm:ss"),
+                                        MeioDeComunicacaoData_DATETIME = SafeGetDateTime(reader, "MeioDeComunicacaoData"),
                                         Prazo = reader.IsDBNull(reader.GetOrdinal("Prazo")) ? null : reader.GetString(reader.GetOrdinal("Prazo")),
                                         ProximoPrazo = reader.IsDBNull(reader.GetOrdinal("ProximoPrazo")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazo")),
-                                        ProximoPrazoData = reader.IsDBNull(reader.GetOrdinal("ProximoPrazoData")) ? null : reader.GetDateTime(reader.GetOrdinal("ProximoPrazoData")).ToString("yyyy-MM-dd HH:mm:ss"),
+                                        ProximoPrazoData = reader.IsDBNull(reader.GetOrdinal("ProximoPrazoData")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazoData")),
                                         UltimaMovimentacaoProcessual = reader.IsDBNull(reader.GetOrdinal("UltimaMovimentacaoProcessual")) ? null : reader.GetString(reader.GetOrdinal("UltimaMovimentacaoProcessual")),
-                                        UltimaMovimentacaoProcessualData = reader.IsDBNull(reader.GetOrdinal("UltimaMovimentacaoProcessualData")) ? null : reader.GetDateTime(reader.GetOrdinal("UltimaMovimentacaoProcessualData")).ToString("yyyy-MM-dd HH:mm:ss"),
+                                        UltimaMovimentacaoProcessualData_DATETIME = SafeGetDateTime(reader, "UltimaMovimentacaoProcessualData"),
                                         AdvogadaCiente = reader.IsDBNull(reader.GetOrdinal("AdvogadaCiente")) ? null : reader.GetString(reader.GetOrdinal("AdvogadaCiente")),
                                         Comarca = reader.IsDBNull(reader.GetOrdinal("Comarca")) ? null : reader.GetString(reader.GetOrdinal("Comarca")),
                                         OrgaoJulgador = reader.IsDBNull(reader.GetOrdinal("OrgaoJulgador")) ? null : reader.GetString(reader.GetOrdinal("OrgaoJulgador")),
@@ -230,7 +230,7 @@ namespace Pje_WebScrapping.DataStorage
                                         Autuacao = reader.IsDBNull(reader.GetOrdinal("Autuacao")) ? null : reader.GetString(reader.GetOrdinal("Autuacao")),
                                         TituloProcesso = reader.IsDBNull(reader.GetOrdinal("TituloProcesso")) ? null : reader.GetString(reader.GetOrdinal("TituloProcesso")),
                                         PartesProcesso = reader.IsDBNull(reader.GetOrdinal("PartesProcesso")) ? null : reader.GetString(reader.GetOrdinal("PartesProcesso")),
-                                        DataAbertura = reader.IsDBNull(reader.GetOrdinal("DataAbertura")) ? DateOnly.FromDateTime(DateTime.MinValue) : DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("DataAbertura"))),
+                                        DataAbertura = SafeGetDateOnly(reader, "DataAbertura"),
                                         AdvogadoId = reader.IsDBNull(reader.GetOrdinal("AdvogadoId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("AdvogadoId"))
                                     };
                                     return ProcessoEncontrado;
@@ -261,6 +261,7 @@ namespace Pje_WebScrapping.DataStorage
                 return null;
             }
         }
+
 
         //precisa ser feito primeiro a leitura dos dados na tabela de processo para ai sim proceder para salvar processo atualizacao
         public static void SalvarProcessoAtualizacao(Processo ProcessoInicial)
@@ -351,6 +352,78 @@ namespace Pje_WebScrapping.DataStorage
             {
                 Console.WriteLine("ID de advogado inválido.");
                 return null;
+            }
+        }
+
+
+
+
+
+
+
+
+
+        private static DateTime? SafeGetDateTime(SqlDataReader reader, string columnName)
+        {
+            try
+            {
+                if (reader.IsDBNull(reader.GetOrdinal(columnName)))
+                    return null;
+
+                var value = reader.GetValue(reader.GetOrdinal(columnName));
+
+                if (value is DateTime dateTime)
+                    return dateTime;
+
+                if (value is string dateString)
+                {
+                    if (string.IsNullOrWhiteSpace(dateString))
+                        return null;
+
+                    if (DateTime.TryParse(dateString, out dateTime))
+                        return dateTime;
+                    else
+                        Console.WriteLine($"Erro ao converter o campo '{columnName}' para DateTime: valor '{dateString}' inválido.");
+                }
+
+                return null;
+            }
+            catch (InvalidCastException ex)
+            {
+                Console.WriteLine($"Erro ao converter o campo '{columnName}' para DateTime: {ex.Message}");
+                return null;
+            }
+        }
+
+        private static DateOnly SafeGetDateOnly(SqlDataReader reader, string columnName)
+        {
+            try
+            {
+                if (reader.IsDBNull(reader.GetOrdinal(columnName)))
+                    return DateOnly.FromDateTime(DateTime.MinValue);
+
+                var value = reader.GetValue(reader.GetOrdinal(columnName));
+
+                if (value is DateTime dateTime)
+                    return DateOnly.FromDateTime(dateTime);
+
+                if (value is string dateString)
+                {
+                    if (string.IsNullOrWhiteSpace(dateString))
+                        return DateOnly.FromDateTime(DateTime.MinValue);
+
+                    if (DateTime.TryParse(dateString, out dateTime))
+                        return DateOnly.FromDateTime(dateTime);
+                    else
+                        Console.WriteLine($"Erro ao converter o campo '{columnName}' para DateOnly: valor '{dateString}' inválido.");
+                }
+
+                return DateOnly.FromDateTime(DateTime.MinValue);
+            }
+            catch (InvalidCastException ex)
+            {
+                Console.WriteLine($"Erro ao converter o campo '{columnName}' para DateOnly: {ex.Message}");
+                return DateOnly.FromDateTime(DateTime.MinValue);
             }
         }
     }

@@ -130,7 +130,15 @@ namespace Pje_WebScrapping.DataStorage
                 ProcessoEntidade.MeioDeComunicacaoData = MeioDeComunicacaoData;
                 ProcessoEntidade.AdvogadaCiente = DataCienciaProcesso;
                 ProcessoEntidade.ProximoPrazo = DataPrevistaLimiteManifestacao;
-                ProcessoEntidade.ProximoPrazoData = dataLimite;
+                if(string.IsNullOrEmpty(dataLimite))
+                {
+                    ProcessoEntidade.ProximoPrazoData = "Sem data próximo prazo";
+                }
+                else
+                {
+                    ProcessoEntidade.ProximoPrazoData = dataLimite;
+                }
+
                 ProcessoEntidade.Prazo = PrazoManifestacao;
                 ProcessoEntidade.CodPJEC = NumProcesso.Text;
             }
@@ -227,7 +235,7 @@ namespace Pje_WebScrapping.DataStorage
             //}
 
             ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
-            var ProcessoVerifica = ConnectDB.LerProcesso("PJEC12345"); 
+            var ProcessoVerifica = ConnectDB.LerProcesso("PJEC 0808829-86.2024.8.19.0002"); 
             if(ProcessoVerifica != null)
             {
                 Console.WriteLine($"Funcionei e meu processo é: {ProcessoVerifica.CodPJEC}");

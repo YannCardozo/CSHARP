@@ -195,6 +195,19 @@ namespace Pje_WebScrapping.Actions
             return dataConvertida;
         }
 
+        public static DateTime ConverterFormatoStringParaDatetime(string dataString)
+        {
+            string[] partes = dataString.Split(' ');
+            int dia = int.Parse(partes[0]);
+            int mes = MesParaNumero(partes[1]);
+            int ano = int.Parse(partes[2]);
+
+            // Formando a data no formato desejado
+            DateTime dataConvertida = new DateTime(ano, mes, dia);
+
+            return dataConvertida;
+        }
+
         public static int MesParaNumero(string mes)
         {
             switch (mes.ToLower())

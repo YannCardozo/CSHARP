@@ -156,8 +156,11 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
 
                                     }
+                                    //aqui chama o método para fazer toda a LEITURA dos dados na tela para enviar ao método,
+                                    //e dentro desse método chamará ConnectDB.SalvarProcessoInicial que irá enviar a tabela Processo
+                                    //os dados.
                                     Processo ProcessoRetornado = SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
-                                    ActionsPJE.EncerrarConsole();
+                                    //ActionsPJE.EncerrarConsole();
                                     Console.WriteLine("\n\n///////////////////////////////////////////\n\n");
 
                                     foreach (PropertyInfo prop in ProcessoRetornado.GetType().GetProperties())
@@ -207,6 +210,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                                 Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
 
+                                                //aqui inicia o webscrapping para armazenar a movimentação processual do processo.
                                                 SalvarDados.SalvarMovimentacaoProcessual(driver, ProcessoRetornado);
 
 

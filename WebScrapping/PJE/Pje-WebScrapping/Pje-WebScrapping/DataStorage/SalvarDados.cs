@@ -235,6 +235,7 @@ namespace Pje_WebScrapping.DataStorage
             //}
 
             ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
+            dar continuidade a partir da verificao  do metodo LerProcesso
             var ProcessoVerifica = ConnectDB.LerProcesso("PJEC 0808829-86.2024.8.19.0002"); 
             if(ProcessoVerifica != null)
             {
@@ -246,7 +247,7 @@ namespace Pje_WebScrapping.DataStorage
 
             }
             //parei aqui
-            ActionsPJE.EncerrarConsole();
+            //ActionsPJE.EncerrarConsole();
 
 
             return ProcessoEntidade;
@@ -432,8 +433,8 @@ namespace Pje_WebScrapping.DataStorage
 
                             try
                             {
-                                //DateOnly data = DateOnly.ParseExact(dataString, "dd MMM yyyy", CultureInfo.CreateSpecificCulture("pt-br"));
-                                DateOnly dataConvertida = ActionsPJE.ConverterFormatoData(dataString);
+                                //DateOnly dataConvertida = ActionsPJE.ConverterFormatoData(dataString);
+                                DateTime dataConvertida = ActionsPJE.ConverterFormatoStringParaDatetime(dataString);
                                 //Console.WriteLine("Data é: " + dataString);
                                 Console.WriteLine("Data é: " + dataConvertida);
                                 ProcessoAtualizado.DataMovimentacao = dataConvertida;
@@ -522,8 +523,8 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-
-
+                        //inserindo a chave estrangeira de processo em processo atualizacao
+                        ProcessoAtualizado.ProcessoId = ProcessoEntidadeRetornado.Id;
 
                         Console.WriteLine("Elemento: " + j + " :  " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
 

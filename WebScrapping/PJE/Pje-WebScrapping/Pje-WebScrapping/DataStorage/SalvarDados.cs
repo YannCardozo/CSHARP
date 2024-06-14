@@ -59,6 +59,9 @@ namespace Pje_WebScrapping.DataStorage
             string NumProcessoSegundaColDados = NumProcesso.Text;
             string UltimaMovimentacaoProcessualData = "";
 
+            //variavel para converter formato
+            DateTime? UltimaMovimentacaoProcessualDataDateTime = null;
+
 
 
 
@@ -188,6 +191,7 @@ namespace Pje_WebScrapping.DataStorage
                 }
                 if(elemento.Text.Contains("Último movimento: ") || elemento.Text.Contains("Publicado") || elemento.Text.Contains("Decorrido prazo de"))
                 {
+
                     UltimaMovimentacao = elemento.Text;
                     UltimaMovimentacaoProcessualData = UltimaMovimentacao;
                     UltimaMovimentacaoProcessualData = UltimaMovimentacaoProcessualData.Replace("Último movimento: ", "");
@@ -196,6 +200,21 @@ namespace Pje_WebScrapping.DataStorage
                     {
                         UltimaMovimentacaoProcessualData = UltimaMovimentacaoProcessualData.Substring(0, index);
                     }
+
+                    //if (DateTime.TryParseExact(UltimaMovimentacaoProcessualData.Trim(), "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime ultimaMovimentacaoData))
+                    //{
+                    //    // Conversão bem-sucedida
+                    //    UltimaMovimentacaoProcessualDataDateTime = ultimaMovimentacaoData;
+                    //    Console.WriteLine($"Data convertida: {UltimaMovimentacaoProcessualDataDateTime}");
+
+                    //}
+                    //else
+                    //{
+                    //    // Conversão falhou, trate o erro ou defina um valor padrão
+                    //    Console.WriteLine("Erro ao converter a data: " + UltimaMovimentacaoProcessualData);
+                    //    UltimaMovimentacaoProcessualDataDateTime = DateTime.MinValue; // ou atribua um valor padrão adequado
+                    //}
+                    //ActionsPJE.EncerrarConsole();
                 }
 
                 ProcessoEntidade.TituloProcesso = TituloProcesso;
@@ -204,6 +223,22 @@ namespace Pje_WebScrapping.DataStorage
                 ProcessoEntidade.UltimaMovimentacaoProcessual = UltimaMovimentacao;
                 ProcessoEntidade.UltimaMovimentacaoProcessualData = UltimaMovimentacaoProcessualData;
 
+                //obtém a data da ultima movimentação processual para verificar no banco e comparar os valores.
+                try
+                {
+                    DateTime.TryParseExact(UltimaMovimentacaoProcessualData.Trim(), "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None,out DateTime ultimaMovimentacaoData);
+                    if(ultimaMovimentacaoData != null && ultimaMovimentacaoData != DateTime.MinValue)
+                    {
+                        UltimaMovimentacaoProcessualDataDateTime = ultimaMovimentacaoData;
+                        Console.WriteLine($"Data convertida: {UltimaMovimentacaoProcessualDataDateTime}");
+                    }
+
+                }
+                catch
+                {
+
+                }
+                //ActionsPJE.EncerrarConsole();
             }
 
             Console.WriteLine("\n SegundaColDados");
@@ -225,7 +260,6 @@ namespace Pje_WebScrapping.DataStorage
             UltimaMovimentacao = "";
             UltimaMovimentacaoProcessualData = "";
 
-
             //método de ler advogado esta funcionando
             //var AdvogadoVerifica = ConnectDB.LerAdvogado(28);
 
@@ -234,22 +268,38 @@ namespace Pje_WebScrapping.DataStorage
             //    Console.WriteLine($"{AdvogadoVerifica.Id} : {AdvogadoVerifica.Nome}");
             //}
 
-            ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
-            dar continuidade a partir da verificao  do metodo LerProcesso
-            var ProcessoVerifica = ConnectDB.LerProcesso("PJEC 0808829-86.2024.8.19.0002"); 
+            var VerificaSeProcessoEstaSalvo = ConnectDB.LerProcesso(NumProcessoSegundaColDados);
+            if (VerificaSeProcessoEstaSalvo != null)
+            {
+                //precisa verificar update caso já esteja cadastrado no banco o processo em connectdb
+            }
+            else
+            {
+                ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
+            }
+
+            //if(VerificaSeProcessoEstaSalvo.UltimaMovimentacaoProcessualData_DATETIME != UltimaMovimentacaoProcessualDataDateTime)
+            //{
+            //    //botar para dar continuidadade a salvar movimentacao processual aqui
+            //}
+            //if (!string.IsNullOrEmpty(UltimaMovimentacaoProcessualData))
+            //{
+
+            //}
+
+            //dar continuidade a partir da verificao  do metodo LerProcesso
+            var ProcessoVerifica = ConnectDB.LerProcesso(NumProcessoSegundaColDados); 
             if(ProcessoVerifica != null)
             {
-                Console.WriteLine($"Funcionei e meu processo é: {ProcessoVerifica.CodPJEC}");
+                Console.WriteLine($"Inseri o processo no banco: {ProcessoVerifica.CodPJEC}");
             }
             else
             {
                 Console.WriteLine($"{ProcessoEntidade.CodPJEC}");
 
             }
-            //parei aqui
+            UltimaMovimentacaoProcessualDataDateTime = null;
             //ActionsPJE.EncerrarConsole();
-
-
             return ProcessoEntidade;
  
         }
@@ -498,7 +548,8 @@ namespace Pje_WebScrapping.DataStorage
                         }
 
 
-
+                        //inserindo a chave estrangeira de processo em processo atualizacao
+                        ProcessoAtualizado.ProcessoId = ProcessoEntidadeRetornado.Id;
                         //atualizando entidade base:
                         ProcessoAtualizado.DataCadastro = DateTime.Now;
                         ProcessoAtualizado.CadastradoPor = 5;
@@ -508,7 +559,10 @@ namespace Pje_WebScrapping.DataStorage
 
 
                         //insere o objeto na lista
-                        ListaProcessosAtualizados.Add(ProcessoAtualizado);
+
+
+                        ConnectDB.SalvarProcessoMovimentacaoProcessual(ProcessoAtualizado);
+                        //ListaProcessosAtualizados.Add(ProcessoAtualizado);
 
 
 
@@ -523,22 +577,21 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-                        //inserindo a chave estrangeira de processo em processo atualizacao
-                        ProcessoAtualizado.ProcessoId = ProcessoEntidadeRetornado.Id;
+
 
                         Console.WriteLine("Elemento: " + j + " :  " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
 
-                        Console.WriteLine("\n\n\n\n Lendo Processo atualizado");
+                        //Console.WriteLine("\n\n\n\n Lendo Processo atualizado");
 
-                        foreach (var propriedade in typeof(ProcessoAtualizacao).GetProperties())
-                        {
-                            var valor = propriedade.GetValue(ProcessoAtualizado);
-                            Console.WriteLine($"{propriedade.Name}: {valor}");
+                        //foreach (var propriedade in typeof(ProcessoAtualizacao).GetProperties())
+                        //{
+                        //    var valor = propriedade.GetValue(ProcessoAtualizado);
+                        //    Console.WriteLine($"{propriedade.Name}: {valor}");
 
 
-                        }
+                        //}
 
-                        Console.WriteLine("Acabei de ler: " + ProcessoAtualizado.CodPJEC + " atualizados agora!");
+                        //Console.WriteLine("Acabei de ler: " + ProcessoAtualizado.CodPJEC + " atualizados agora!");
 
                     }
                     posicao_inicial = proximaPosicaoMediaData;
@@ -571,7 +624,7 @@ namespace Pje_WebScrapping.DataStorage
 
             //implementar aqui testes para abrir o menu
 
-
+            //AQUI SERÁ LIDO OS DETALHES DO PROCESSO EM MOVIMENTACAO PROCESSUAL.
             IWebElement LinkDetalhesMovimentacaoProcessual = driver.FindElement(By.ClassName("titulo-topo"));
 
 

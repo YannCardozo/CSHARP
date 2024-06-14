@@ -1,4 +1,5 @@
 ﻿using Justo.Entities.Entidades;
+using Microsoft.IdentityModel.Tokens;
 using OpenQA.Selenium;
 using Pje_WebScrapping.Actions;
 using Pje_WebScrapping.Models;
@@ -262,11 +263,224 @@ namespace Pje_WebScrapping.DataStorage
             }
         }
 
-
-        //precisa ser feito primeiro a leitura dos dados na tabela de processo para ai sim proceder para salvar processo atualizacao
-        public static void SalvarProcessoAtualizacao(Processo ProcessoInicial)
+        public static void AtualizarProcessoInicial(Processo ProcessoInicial)
         {
+            if (!string.IsNullOrEmpty(ProcessoInicial.CodPJEC))
+            {
+                string StringConexao = ConnectDB.EstabelecerConexao();
+                using (var ConexaoAoBanco = new SqlConnection(StringConexao))
+                {
+                    string QueryAtualizada = @"
+                UPDATE Processo
+                SET
+                    Nome = @Nome,
+                    ObsProcesso = @ObsProcesso,
+                    DataFim = @DataFim,
+                    MeioDeComunicacao = @MeioDeComunicacao,
+                    MeioDeComunicacaoData = @MeioDeComunicacaoData,
+                    Prazo = @Prazo,
+                    ProximoPrazo = @ProximoPrazo,
+                    ProximoPrazoData = @ProximoPrazoData,
+                    UltimaMovimentacaoProcessual = @UltimaMovimentacaoProcessual,
+                    UltimaMovimentacaoProcessualData = @UltimaMovimentacaoProcessualData,
+                    AdvogadaCiente = @AdvogadaCiente,
+                    Comarca = @Comarca,
+                    OrgaoJulgador = @OrgaoJulgador,
+                    Competencia = @Competencia,
+                    MotivosProcesso = @MotivosProcesso,
+                    SegredoJustica = @SegredoJustica,
+                    JusGratis = @JusGratis,
+                    TutelaLiminar = @TutelaLiminar,
+                    Prioridade = @Prioridade,
+                    Autuacao = @Autuacao,
+                    TituloProcesso = @TituloProcesso,
+                    PartesProcesso = @PartesProcesso,
+                    DataAbertura = @DataAbertura,
+                    ValorDaCausa = @ValorDaCausa,
+                    AdvogadoId = @AdvogadoId,
+                    CadastradoPor = @CadastradoPor,
+                    DataAtualizacao = @DataAtualizacao,
+                    AtualizadoPor = @AtualizadoPor
+                WHERE CodPJEC = @CodPJEC";
 
+                    using (var ComandoAoBanco = new SqlCommand(QueryAtualizada, ConexaoAoBanco))
+                    {
+                        try
+                        {
+                            // Adicionando os parâmetros de forma segura para evitar SQL Injection
+                            ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoInicial.Nome ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
+
+                            DateTime? dataFim = ActionsPJE.DateOnlyToDateTime(ProcessoInicial.DataFim);
+                            if (dataFim == null || dataFim < SqlDateTime.MinValue.Value)
+                            {
+                                dataFim = SqlDateTime.MinValue.Value;
+                            }
+                            ComandoAoBanco.Parameters.AddWithValue("@DataFim", dataFim);
+
+                            ComandoAoBanco.Parameters.AddWithValue("@MeioDeComunicacao", (object)ProcessoInicial.MeioDeComunicacao ?? DBNull.Value);
+
+                            DateTime? meioDeComunicacaoData = ActionsPJE.AjustarDataParaSql(ActionsPJE.StringParaDatetime(ProcessoInicial.MeioDeComunicacaoData));
+                            ComandoAoBanco.Parameters.AddWithValue("@MeioDeComunicacaoData", meioDeComunicacaoData);
+
+                            ComandoAoBanco.Parameters.AddWithValue("@Prazo", (object)ProcessoInicial.Prazo ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ProximoPrazo", (object)ProcessoInicial.ProximoPrazo ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ProximoPrazoData", (object)ProcessoInicial.ProximoPrazoData ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@UltimaMovimentacaoProcessual", (object)ProcessoInicial.UltimaMovimentacaoProcessual ?? DBNull.Value);
+
+                            DateTime? ultimaMovimentacaoProcessualData = ActionsPJE.AjustarDataParaSql(ActionsPJE.StringParaDatetime(ProcessoInicial.UltimaMovimentacaoProcessualData));
+                            ComandoAoBanco.Parameters.AddWithValue("@UltimaMovimentacaoProcessualData", ultimaMovimentacaoProcessualData);
+
+                            ComandoAoBanco.Parameters.AddWithValue("@AdvogadaCiente", (object)ProcessoInicial.AdvogadaCiente ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@Comarca", (object)ProcessoInicial.Comarca ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@OrgaoJulgador", (object)ProcessoInicial.OrgaoJulgador ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@Competencia", (object)ProcessoInicial.Competencia ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@MotivosProcesso", (object)ProcessoInicial.MotivosProcesso ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ValorDaCausa", (object)ProcessoInicial.ValorCausa ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@SegredoJustica", (object)ProcessoInicial.SegredoJustica ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@JusGratis", (object)ProcessoInicial.JusGratis ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@TutelaLiminar", (object)ProcessoInicial.TutelaLiminar ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@Prioridade", (object)ProcessoInicial.Prioridade ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@Autuacao", (object)ProcessoInicial.Autuacao ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@TituloProcesso", (object)ProcessoInicial.TituloProcesso ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@PartesProcesso", (object)ProcessoInicial.PartesProcesso ?? DBNull.Value);
+
+                            DateTime? dataAbertura = ActionsPJE.DateOnlyToDateTime(ProcessoInicial.DataAbertura);
+                            if (dataAbertura == null || dataAbertura < SqlDateTime.MinValue.Value)
+                            {
+                                dataAbertura = SqlDateTime.MinValue.Value;
+                            }
+                            ComandoAoBanco.Parameters.AddWithValue("@DataAbertura", dataAbertura);
+
+                            ComandoAoBanco.Parameters.AddWithValue("@CadastradoPor", (object)ProcessoInicial.CadastradoPor ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@DataAtualizacao", (object)ProcessoInicial.DataAtualizacao ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@AtualizadoPor", (object)ProcessoInicial.AtualizadoPor ?? DBNull.Value);
+
+                            ConexaoAoBanco.Open();
+                            int result = ComandoAoBanco.ExecuteNonQuery();
+
+                            if (result > 0)
+                            {
+                                Console.WriteLine("Processo atualizado com sucesso.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Falha ao atualizar o processo.");
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            if (ex.Number == 2627) // Código de erro para violação de chave única/primária
+                            {
+                                Console.WriteLine($"Erro: O processo com o CodPJEC:{ProcessoInicial.CodPJEC} fornecido já está cadastrado no banco.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Erro: O processo com o CodPJEC:{ProcessoInicial.CodPJEC} teve o problema {ex.Message}.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Erro ao adicionar parâmetro: " + ex.Message);
+                            throw;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("CODPJEC não preenchido ou está inválido.");
+            }
+        }
+
+        public static void SalvarProcessoMovimentacaoProcessual(ProcessoAtualizacao ProcessoMovimentacao)
+        {
+            if (!string.IsNullOrEmpty(ProcessoMovimentacao.CodPJEC))
+            {
+                string StringConexao = ConnectDB.EstabelecerConexao();
+                using (var ConexaoAoBanco = new SqlConnection(StringConexao))
+                {
+                    string QueryMovimentacao = @"
+                INSERT INTO ProcessosAtualizacao (
+                    ProcessoId,
+                    CodPJEC, 
+                    ConteudoAtualizacao, 
+                    TituloMovimento, 
+                    DataMovimentacao, 
+                    Nome, 
+                    DataCadastro, 
+                    DataAtualizacao, 
+                    AtualizadoPor
+                ) VALUES (
+                    @ProcessoId,
+                    @CodPJEC, 
+                    @ConteudoAtualizacao, 
+                    @TituloMovimento, 
+                    @DataMovimentacao, 
+                    @Nome, 
+                    @DataCadastro, 
+                    @DataAtualizacao, 
+                    @AtualizadoPor
+                )";
+
+                    using (var ComandoAoBanco = new SqlCommand(QueryMovimentacao, ConexaoAoBanco))
+                    {
+                        try
+                        {
+                            // Adicionando os parâmetros de forma segura para evitar SQL Injection
+                            ComandoAoBanco.Parameters.AddWithValue("@ProcessoId", (object)ProcessoMovimentacao.ProcessoId ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)ProcessoMovimentacao.CodPJEC ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ConteudoAtualizacao", (object)ProcessoMovimentacao.ConteudoAtualizacao ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@TituloMovimento", (object)ProcessoMovimentacao.TituloMovimento ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@DataMovimentacao", (object)ProcessoMovimentacao.DataMovimentacao ?? DBNull.Value);
+                            if(!string.IsNullOrEmpty(ProcessoMovimentacao.Nome))
+                            {
+                                aqui, TESTAR PRIMEIRO acho que resolveu.
+                                ProcessoMovimentacao.Nome = "Não preenchido";
+                                ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoMovimentacao.Nome);
+                            }
+                            else
+                            {
+                                ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoMovimentacao.Nome);
+                            }
+                            ComandoAoBanco.Parameters.AddWithValue("@DataCadastro", (object)ProcessoMovimentacao.DataCadastro ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@DataAtualizacao", (object)ProcessoMovimentacao.DataAtualizacao ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@AtualizadoPor", (object)ProcessoMovimentacao.AtualizadoPor ?? DBNull.Value);
+
+                            ConexaoAoBanco.Open();
+                            int result = ComandoAoBanco.ExecuteNonQuery();
+                            if (result > 0)
+                            {
+                                Console.WriteLine("Processo atualizado com sucesso.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Falha ao atualizar o processo.");
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            if (ex.Number == 2627) // Código de erro para violação de chave única/primária
+                            {
+                                Console.WriteLine($"Erro: O processo com o CodPJEC:{ProcessoMovimentacao.CodPJEC} não pode ser atualizado.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Erro: O processo com o CodPJEC:{ProcessoMovimentacao.CodPJEC} teve o problema {ex.Message}.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Erro ao adicionar parâmetro: " + ex.Message);
+                            throw;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("CodPJEC não preenchido ou está inválido.");
+            }
         }
 
 

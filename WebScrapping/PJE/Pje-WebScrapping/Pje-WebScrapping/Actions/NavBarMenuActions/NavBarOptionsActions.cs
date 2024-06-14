@@ -20,6 +20,9 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
         public static void PAINELACTION(IWebDriver driver)
         {
+            //data para verificar ultima atualizacao do processo em salvar movimentacao processual.
+            DateTime? UltimaMovimentacaoProcessualDataDateTime = null;
+
             //PAINEL -> PAINEL DO REPRESENTANTE PROCESSUAL
             Console.WriteLine("Redirecionando para painel do representante processual, carregando página...");
             ActionsPJE.AguardarPje("Baixo");
@@ -160,7 +163,7 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
                                     //e dentro desse método chamará ConnectDB.SalvarProcessoInicial que irá enviar a tabela Processo
                                     //os dados.
                                     Processo ProcessoRetornado = SalvarDados.SalvarDadosProcesso(ElementosTDColMD4[controleMD4], ElementosTDColMD8[controleMD8], linkprocesso);
-                                    //ActionsPJE.EncerrarConsole();
+
                                     Console.WriteLine("\n\n///////////////////////////////////////////\n\n");
 
                                     foreach (PropertyInfo prop in ProcessoRetornado.GetType().GetProperties())
@@ -174,11 +177,13 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
                                     controleMD4++;
                                     controleMD8++;
-
                                     //ActionsPJE.EncerrarConsole();
 
                                     Console.WriteLine("LinkProcesso: " + linkprocesso.Text);
                                     Console.WriteLine("LinkPRocesso TAG: " + linkprocesso.TagName);
+
+
+                                    //aqui entra na tela de movimentação processual
                                     linkprocesso.Click();
                                     ActionsPJE.AguardarPje("Baixo");
                                     Console.WriteLine(Janela_Principal);
@@ -209,10 +214,15 @@ namespace Pje_WebScrapping.Actions.NavBarMenuActions
 
 
                                                 Console.WriteLine("\n\n\n\n\n O que é movimentação processual: \n\n");
-
                                                 //aqui inicia o webscrapping para armazenar a movimentação processual do processo.
                                                 SalvarDados.SalvarMovimentacaoProcessual(driver, ProcessoRetornado);
+                                                //ActionsPJE.EncerrarConsole();
+                                                //Processo VerificaProcesso = new();
+                                                //VerificaProcesso = ConnectDB.LerProcesso(ProcessoRetornado.CodPJEC);
+                                                //if (VerificaProcesso != null)
+                                                //{
 
+                                                //}
 
 
 

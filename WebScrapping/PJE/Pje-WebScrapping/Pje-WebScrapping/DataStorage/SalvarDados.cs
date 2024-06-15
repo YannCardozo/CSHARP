@@ -549,7 +549,18 @@ namespace Pje_WebScrapping.DataStorage
 
 
                         //inserindo a chave estrangeira de processo em processo atualizacao
-                        ProcessoAtualizado.ProcessoId = ProcessoEntidadeRetornado.Id;
+
+                        var testeprocesso = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+
+                        if(testeprocesso != null)
+                        {
+                            Console.WriteLine($"Processo encontrado e meu id é: {testeprocesso.CodPJEC} : {testeprocesso.Id}");
+                        
+                        }
+
+                        //recebe o ID DIRETAMENTE DO BANCO da chave estrangeira da tabela processo em processoatualizacao
+                        ProcessoAtualizado.ProcessoId = testeprocesso.Id;
+                        ProcessoAtualizado.Nome = "Vazio";
                         //atualizando entidade base:
                         ProcessoAtualizado.DataCadastro = DateTime.Now;
                         ProcessoAtualizado.CadastradoPor = 5;

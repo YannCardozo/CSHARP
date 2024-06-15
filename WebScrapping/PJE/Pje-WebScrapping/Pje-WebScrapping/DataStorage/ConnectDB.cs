@@ -393,61 +393,71 @@ namespace Pje_WebScrapping.DataStorage
             }
         }
 
-        public static void SalvarProcessoMovimentacaoProcessual(ProcessoAtualizacao ProcessoMovimentacao)
+        public static void SalvarProcessoMovimentacaoProcessual(ProcessoAtualizacao processoMovimentacao)
         {
-            if (!string.IsNullOrEmpty(ProcessoMovimentacao.CodPJEC))
+            if (!string.IsNullOrEmpty(processoMovimentacao.CodPJEC))
             {
                 string StringConexao = ConnectDB.EstabelecerConexao();
                 using (var ConexaoAoBanco = new SqlConnection(StringConexao))
                 {
+                    ConexaoAoBanco.Open();
+
+                    // Verifica se o ProcessoId existe na tabela Processo
+                    string VerificaProcessoQuery = "SELECT COUNT(1) FROM Processo WHERE Id = @ProcessoId";
+                    using (var ComandoVerificaProcesso = new SqlCommand(VerificaProcessoQuery, ConexaoAoBanco))
+                    {
+                        ComandoVerificaProcesso.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
+
+                        int count = (int)ComandoVerificaProcesso.ExecuteScalar();
+
+                        if (count == 0)
+                        {
+                            Console.WriteLine($"Erro: O ProcessoId {processoMovimentacao.ProcessoId} não existe na tabela Processo.");
+                            return;
+                        }
+                    }
                     string QueryMovimentacao = @"
-                INSERT INTO ProcessosAtualizacao (
-                    ProcessoId,
-                    CodPJEC, 
-                    ConteudoAtualizacao, 
-                    TituloMovimento, 
-                    DataMovimentacao, 
-                    Nome, 
-                    DataCadastro, 
-                    DataAtualizacao, 
-                    AtualizadoPor
-                ) VALUES (
-                    @ProcessoId,
-                    @CodPJEC, 
-                    @ConteudoAtualizacao, 
-                    @TituloMovimento, 
-                    @DataMovimentacao, 
-                    @Nome, 
-                    @DataCadastro, 
-                    @DataAtualizacao, 
-                    @AtualizadoPor
-                )";
+                    INSERT INTO ProcessosAtualizacao (
+                        ProcessoId,
+                        CodPJEC, 
+                        ConteudoAtualizacao, 
+                        TituloMovimento, 
+                        DataMovimentacao, 
+                        Nome,
+                        CadastradoPor,
+                        DataCadastro, 
+                        DataAtualizacao, 
+                        AtualizadoPor
+                    ) VALUES (
+                        @ProcessoId,
+                        @CodPJEC, 
+                        @ConteudoAtualizacao, 
+                        @TituloMovimento, 
+                        @DataMovimentacao, 
+                        @Nome,
+                        @CadastradoPor, 
+                        @DataCadastro, 
+                        @DataAtualizacao, 
+                        @AtualizadoPor
+                    )";
+
 
                     using (var ComandoAoBanco = new SqlCommand(QueryMovimentacao, ConexaoAoBanco))
                     {
                         try
                         {
                             // Adicionando os parâmetros de forma segura para evitar SQL Injection
-                            ComandoAoBanco.Parameters.AddWithValue("@ProcessoId", (object)ProcessoMovimentacao.ProcessoId ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)ProcessoMovimentacao.CodPJEC ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@ConteudoAtualizacao", (object)ProcessoMovimentacao.ConteudoAtualizacao ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@TituloMovimento", (object)ProcessoMovimentacao.TituloMovimento ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@DataMovimentacao", (object)ProcessoMovimentacao.DataMovimentacao ?? DBNull.Value);
-                            if(!string.IsNullOrEmpty(ProcessoMovimentacao.Nome))
-                            {
-                                aqui, TESTAR PRIMEIRO acho que resolveu.
-                                ProcessoMovimentacao.Nome = "Não preenchido";
-                                ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoMovimentacao.Nome);
-                            }
-                            else
-                            {
-                                ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoMovimentacao.Nome);
-                            }
-                            ComandoAoBanco.Parameters.AddWithValue("@DataCadastro", (object)ProcessoMovimentacao.DataCadastro ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@DataAtualizacao", (object)ProcessoMovimentacao.DataAtualizacao ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@AtualizadoPor", (object)ProcessoMovimentacao.AtualizadoPor ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)processoMovimentacao.CodPJEC ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ConteudoAtualizacao", (object)processoMovimentacao.ConteudoAtualizacao ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@TituloMovimento", (object)processoMovimentacao.TituloMovimento ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@DataMovimentacao", (object)processoMovimentacao.DataMovimentacao ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)processoMovimentacao.Nome ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@CadastradoPor", (object)processoMovimentacao.CadastradoPor ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@DataCadastro", (object)processoMovimentacao.DataCadastro ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@DataAtualizacao", (object)processoMovimentacao.DataAtualizacao ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@AtualizadoPor", (object)processoMovimentacao.AtualizadoPor ?? DBNull.Value);
 
-                            ConexaoAoBanco.Open();
                             int result = ComandoAoBanco.ExecuteNonQuery();
                             if (result > 0)
                             {
@@ -462,11 +472,11 @@ namespace Pje_WebScrapping.DataStorage
                         {
                             if (ex.Number == 2627) // Código de erro para violação de chave única/primária
                             {
-                                Console.WriteLine($"Erro: O processo com o CodPJEC:{ProcessoMovimentacao.CodPJEC} não pode ser atualizado.");
+                                Console.WriteLine($"Erro: O processo com o CodPJEC:{processoMovimentacao.CodPJEC} não pode ser atualizado.");
                             }
                             else
                             {
-                                Console.WriteLine($"Erro: O processo com o CodPJEC:{ProcessoMovimentacao.CodPJEC} teve o problema {ex.Message}.");
+                                Console.WriteLine($"Erro: O processo com o CodPJEC:{processoMovimentacao.CodPJEC} teve o problema {ex.Message}.");
                             }
                         }
                         catch (Exception ex)

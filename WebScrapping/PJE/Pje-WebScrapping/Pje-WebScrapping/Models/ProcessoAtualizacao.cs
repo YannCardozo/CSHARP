@@ -20,6 +20,7 @@ namespace Pje_WebScrapping.Models
 
         public int? ProcessoId { get; set; }
         public string CodPJEC { get; set; }
+        public string? PJECAcao { get; set; }
 
         //as vezes só vai ter um titulo e não um conteudo, verificar "media interno tipo-D"
         public string? ConteudoAtualizacao { get; set; }

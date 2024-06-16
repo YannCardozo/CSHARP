@@ -560,20 +560,31 @@ namespace Pje_WebScrapping.DataStorage
 
                         //recebe o ID DIRETAMENTE DO BANCO da chave estrangeira da tabela processo em processoatualizacao
                         ProcessoAtualizado.ProcessoId = testeprocesso.Id;
+                        ProcessoAtualizado.PJECAcao = testeprocesso.CodPJECAcao;
                         ProcessoAtualizado.Nome = "Vazio";
                         //atualizando entidade base:
                         ProcessoAtualizado.DataCadastro = DateTime.Now;
                         ProcessoAtualizado.CadastradoPor = 5;
                         ProcessoAtualizado.DataAtualizacao = DateTime.Now;
                         ProcessoAtualizado.AtualizadoPor = 5;
+                        ListaProcessosAtualizados.Add(ProcessoAtualizado);
+
                         //5 será o numero para o webscrapping
+
+                        //foreach (var propriedade in typeof(Processo).GetProperties())
+                        //{
+                        //    var valor = propriedade.GetValue(testeprocesso);
+                        //    Console.WriteLine($"{propriedade.Name}: {valor}");
+
+
+                        //}
+                        //Console.WriteLine("teste");
 
 
                         //insere o objeto na lista
 
 
-                        ConnectDB.SalvarProcessoMovimentacaoProcessual(ProcessoAtualizado);
-                        //ListaProcessosAtualizados.Add(ProcessoAtualizado);
+                        //ConnectDB.SalvarProcessoMovimentacaoProcessual(ListaProcessosAtualizados);
 
 
 
@@ -611,6 +622,11 @@ namespace Pje_WebScrapping.DataStorage
                 posicao++;
                 LocalizadorElementoMediaData++;
 
+                // Verifica se é o último elemento
+                if (i == ElementosDentroDeMovimentacaoProcessualINVERTIDO.Count - 1)
+                {
+                    ConnectDB.SalvarProcessoMovimentacaoProcessual(ListaProcessosAtualizados);
+                }
 
                 //for para verificar as proximas elementos datas no vetor
                 if (proximaPosicaoMediaData == -1)

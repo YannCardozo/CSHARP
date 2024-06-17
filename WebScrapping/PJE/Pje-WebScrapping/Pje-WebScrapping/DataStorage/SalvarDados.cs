@@ -654,7 +654,7 @@ namespace Pje_WebScrapping.DataStorage
             //AQUI SERÁ LIDO OS DETALHES DO PROCESSO EM MOVIMENTACAO PROCESSUAL.
             IWebElement LinkDetalhesMovimentacaoProcessual = driver.FindElement(By.ClassName("titulo-topo"));
 
-
+            //aqui abre o menu de detalhes ( acima da movimentacao processual )
             LinkDetalhesMovimentacaoProcessual.Click();
             ActionsPJE.AguardarPje("Baixo");
             IWebElement Detalhes = driver.FindElement(By.Id("maisDetalhes"));
@@ -1019,6 +1019,10 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
+            //fazer o UPDATE AQUI dos dados de detalhes.
+
+
+
             ElementosPoloAtivoUNICOS.Clear();
             ElementosPoloPassivoUNICOS.Clear();
 
@@ -1035,6 +1039,9 @@ namespace Pje_WebScrapping.DataStorage
                 Console.WriteLine($"{propriedade.Name}: {valor}");
 
             }
+
+            fazer update aqui de tudo que foi obtido, verificar dentro do for se as variaveis estao chegando normalmente
+            e tal.
 
 
                 Console.WriteLine("\n\n\n\n Listando POLO ATIVO");
@@ -1053,6 +1060,10 @@ namespace Pje_WebScrapping.DataStorage
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado}");
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado}");
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.OAB}");
+
+
+            fazer aqui o insert na tabela POLO com esses dados, n esquecer de inserir as chaves estrangeiras
+            nos locais certos.
 
 
             Console.WriteLine("Encerrei");

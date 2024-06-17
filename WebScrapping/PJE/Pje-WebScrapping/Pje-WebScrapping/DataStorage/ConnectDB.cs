@@ -272,37 +272,38 @@ namespace Pje_WebScrapping.DataStorage
                 using (var ConexaoAoBanco = new SqlConnection(StringConexao))
                 {
                     string QueryAtualizada = @"
-                UPDATE Processo
-                SET
-                    Nome = @Nome,
-                    ObsProcesso = @ObsProcesso,
-                    DataFim = @DataFim,
-                    MeioDeComunicacao = @MeioDeComunicacao,
-                    MeioDeComunicacaoData = @MeioDeComunicacaoData,
-                    Prazo = @Prazo,
-                    ProximoPrazo = @ProximoPrazo,
-                    ProximoPrazoData = @ProximoPrazoData,
-                    UltimaMovimentacaoProcessual = @UltimaMovimentacaoProcessual,
-                    UltimaMovimentacaoProcessualData = @UltimaMovimentacaoProcessualData,
-                    AdvogadaCiente = @AdvogadaCiente,
-                    Comarca = @Comarca,
-                    OrgaoJulgador = @OrgaoJulgador,
-                    Competencia = @Competencia,
-                    MotivosProcesso = @MotivosProcesso,
-                    SegredoJustica = @SegredoJustica,
-                    JusGratis = @JusGratis,
-                    TutelaLiminar = @TutelaLiminar,
-                    Prioridade = @Prioridade,
-                    Autuacao = @Autuacao,
-                    TituloProcesso = @TituloProcesso,
-                    PartesProcesso = @PartesProcesso,
-                    DataAbertura = @DataAbertura,
-                    ValorDaCausa = @ValorDaCausa,
-                    AdvogadoId = @AdvogadoId,
-                    CadastradoPor = @CadastradoPor,
-                    DataAtualizacao = @DataAtualizacao,
-                    AtualizadoPor = @AtualizadoPor
-                WHERE CodPJEC = @CodPJEC";
+                    UPDATE Processo
+                    SET
+                        Nome = @Nome,
+                        ObsProcesso = @ObsProcesso,
+                        DataFim = @DataFim,
+                        MeioDeComunicacao = @MeioDeComunicacao,
+                        MeioDeComunicacaoData = @MeioDeComunicacaoData,
+                        Prazo = @Prazo,
+                        ProximoPrazo = @ProximoPrazo,
+                        ProximoPrazoData = @ProximoPrazoData,
+                        UltimaMovimentacaoProcessual = @UltimaMovimentacaoProcessual,
+                        UltimaMovimentacaoProcessualData = @UltimaMovimentacaoProcessualData,
+                        AdvogadaCiente = @AdvogadaCiente,
+                        Comarca = @Comarca,
+                        OrgaoJulgador = @OrgaoJulgador,
+                        Competencia = @Competencia,
+                        MotivosProcesso = @MotivosProcesso,
+                        SegredoJustica = @SegredoJustica,
+                        JusGratis = @JusGratis,
+                        TutelaLiminar = @TutelaLiminar,
+                        Prioridade = @Prioridade,
+                        Autuacao = @Autuacao,
+                        TituloProcesso = @TituloProcesso,
+                        PartesProcesso = @PartesProcesso,
+                        DataAbertura = @DataAbertura,
+                        ValorDaCausa = @ValorDaCausa,
+                        AdvogadoId = @AdvogadoId,
+                        CadastradoPor = @CadastradoPor,
+                        DataAtualizacao = @DataAtualizacao,
+                        AtualizadoPor = @AtualizadoPor
+                    WHERE CodPJEC = @CodPJEC
+                    and CodPJECAcao = @CodPJECAcao";
 
                     using (var ComandoAoBanco = new SqlCommand(QueryAtualizada, ConexaoAoBanco))
                     {
@@ -394,176 +395,6 @@ namespace Pje_WebScrapping.DataStorage
             }
         }
 
-
-
-
-        public static void RemoverMesmoProcessoIdMovimentacaoProcessual(ProcessoAtualizacao processoMovimentacao)
-        {
-            if (!string.IsNullOrEmpty(processoMovimentacao.CodPJEC))
-            {
-                string StringConexao = ConnectDB.EstabelecerConexao();
-                using (var ConexaoAoBanco = new SqlConnection(StringConexao))
-                {
-                    // Apaga todas as entradas existentes com o mesmo ProcessoId
-                    string DeleteQuery = "DELETE FROM ProcessosAtualizacao WHERE ProcessoId = @ProcessoId";
-                    using (var ComandoDelete = new SqlCommand(DeleteQuery, ConexaoAoBanco))
-                    {
-                        ComandoDelete.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
-                        ComandoDelete.ExecuteNonQuery();
-                    }
-                }
-
-            }
-
-
-        }
-
-        //verificar se o processo esta populado antes ou não, caso esteja populado em processo atualizacao:
-        //-caso não tenha nenhum registro anterior em processo atualizacao, inserir tudo de uma vez.
-        //-caso já tenha outros registros anteriormente, deletar todos os registros anteriores que tenham
-        //codpjec e codpjecacao IGUAIS as em processo.
-
-        //public static void SalvarProcessoMovimentacaoProcessual(ProcessoAtualizacao processoMovimentacao)
-        //{
-        //    if (!string.IsNullOrEmpty(processoMovimentacao.CodPJEC))
-        //    {
-        //        string StringConexao = ConnectDB.EstabelecerConexao();
-        //        using (var ConexaoAoBanco = new SqlConnection(StringConexao))
-        //        {
-        //            ConexaoAoBanco.Open();
-
-        //            // Verifica se o ProcessoId existe na tabela Processo e busca pelo processoid igual na tabela  processo
-        //            //para iniciar salvando as atualizacoes do processo.
-
-
-        //            //essa query verifica se o PROCESSO EXISTE na tabela processo, ou seja:
-        //            //se foi populado em ProcessoInicial corretamente.
-        //            string VerificaProcessoQuery = "SELECT COUNT(1) FROM Processo WHERE Id = @ProcessoId";
-        //            using (var ComandoVerificaProcesso = new SqlCommand(VerificaProcessoQuery, ConexaoAoBanco))
-        //            {
-        //                ComandoVerificaProcesso.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
-        //                int count = (int)ComandoVerificaProcesso.ExecuteScalar();
-        //                if (count == 0)
-        //                {
-        //                    Console.WriteLine($"Erro: O ProcessoId {processoMovimentacao.ProcessoId} não existe na tabela Processo.");
-        //                    return;
-        //                }
-        //                Console.WriteLine($"Processo {processoMovimentacao.ProcessoId} existe e foi localizado, verificando se existem registros duplicados.");
-        //            }
-
-        //            // Verifica se já existe uma movimentação com o mesmo ProcessoId e CodPJEC
-        //            string VerificaDuplicadoQuery = @"
-        //            SELECT COUNT(1) 
-        //            FROM ProcessosAtualizacao 
-        //            WHERE ProcessoId = @ProcessoId 
-        //            AND CodPJEC = @CodPJEC
-        //            AND PJECAcao = @PJECAcao";
-        //            using (var ComandoVerificaDuplicado = new SqlCommand(VerificaDuplicadoQuery, ConexaoAoBanco))
-        //            {
-        //                ComandoVerificaDuplicado.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
-        //                ComandoVerificaDuplicado.Parameters.AddWithValue("@CodPJEC", (object)processoMovimentacao.CodPJEC ?? DBNull.Value);
-        //                ComandoVerificaDuplicado.Parameters.AddWithValue("@PJECAcao", (object)processoMovimentacao.PJECAcao ?? DBNull.Value);
-
-        //                int count = (int)ComandoVerificaDuplicado.ExecuteScalar();
-
-        //                if (count > 0)
-        //                {
-        //                    Console.WriteLine($"Apagando registros anteriores de: {processoMovimentacao.ProcessoId}, CodPJEC {processoMovimentacao.CodPJEC} e PJECAcao {processoMovimentacao.PJECAcao}. e inserindo novas atualizações.");
-        //                    string DeleteQuery = @"
-        //                        DELETE FROM ProcessosAtualizacao 
-        //                        WHERE ProcessoId = @ProcessoId 
-        //                        AND CodPJEC = @CodPJEC
-        //                        AND PJECAcao = @PJECAcao";
-        //                        using (var ComandoDelete = new SqlCommand(DeleteQuery, ConexaoAoBanco))
-        //                        {
-        //                            ComandoDelete.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
-        //                            ComandoDelete.Parameters.AddWithValue("@CodPJEC", (object)processoMovimentacao.CodPJEC ?? DBNull.Value);
-        //                            ComandoDelete.Parameters.AddWithValue("@PJECAcao", (object)processoMovimentacao.PJECAcao ?? DBNull.Value);
-        //                            ComandoDelete.ExecuteNonQuery();
-        //                        }
-        //                }
-        //            }
-
-        //            string QueryMovimentacao = @"
-        //            INSERT INTO ProcessosAtualizacao (
-        //                ProcessoId,
-        //                CodPJEC,
-        //                PJECAcao,
-        //                ConteudoAtualizacao, 
-        //                TituloMovimento, 
-        //                DataMovimentacao, 
-        //                Nome,
-        //                CadastradoPor,
-        //                DataCadastro, 
-        //                DataAtualizacao, 
-        //                AtualizadoPor
-        //            ) VALUES (
-        //                @ProcessoId,
-        //                @CodPJEC,
-        //                @PJECAcao,
-        //                @ConteudoAtualizacao, 
-        //                @TituloMovimento, 
-        //                @DataMovimentacao, 
-        //                @Nome,
-        //                @CadastradoPor, 
-        //                @DataCadastro, 
-        //                @DataAtualizacao, 
-        //                @AtualizadoPor
-        //            )";
-
-
-        //            using (var ComandoAoBanco = new SqlCommand(QueryMovimentacao, ConexaoAoBanco))
-        //            {
-        //                try
-        //                {
-        //                    // Adicionando os parâmetros de forma segura para evitar SQL Injection
-        //                    ComandoAoBanco.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)processoMovimentacao.CodPJEC ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@PJECAcao", (object)processoMovimentacao.PJECAcao ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@ConteudoAtualizacao", (object)processoMovimentacao.ConteudoAtualizacao ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@TituloMovimento", (object)processoMovimentacao.TituloMovimento ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@DataMovimentacao", (object)processoMovimentacao.DataMovimentacao ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)processoMovimentacao.Nome ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@CadastradoPor", (object)processoMovimentacao.CadastradoPor ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@DataCadastro", (object)processoMovimentacao.DataCadastro ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@DataAtualizacao", (object)processoMovimentacao.DataAtualizacao ?? DBNull.Value);
-        //                    ComandoAoBanco.Parameters.AddWithValue("@AtualizadoPor", (object)processoMovimentacao.AtualizadoPor ?? DBNull.Value);
-
-        //                    int result = ComandoAoBanco.ExecuteNonQuery();
-        //                    if (result > 0)
-        //                    {
-        //                        Console.WriteLine("ProcessoAtualizacao inserido com sucesso.");
-        //                    }
-        //                    else
-        //                    {
-        //                        Console.WriteLine("Falha ao inserir ProcessoAtualizacao.");
-        //                    }
-        //                }
-        //                catch (SqlException ex)
-        //                {
-        //                    if (ex.Number == 2627) // Código de erro para violação de chave única/primária
-        //                    {
-        //                        Console.WriteLine($"Erro: O processo com o CodPJEC:{processoMovimentacao.CodPJEC} não pode ser atualizado.");
-        //                    }
-        //                    else
-        //                    {
-        //                        Console.WriteLine($"Erro: O processo com o CodPJEC:{processoMovimentacao.CodPJEC} teve o problema {ex.Message}.");
-        //                    }
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    Console.WriteLine("Erro ao adicionar parâmetro: " + ex.Message);
-        //                    throw;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("CodPJEC não preenchido ou está inválido.");
-        //    }
-        //}
-
         //testando lista agora:
         public static void SalvarProcessoMovimentacaoProcessual(List<ProcessoAtualizacao> listaProcessosMovimentacao)
         {
@@ -595,11 +426,11 @@ namespace Pje_WebScrapping.DataStorage
 
                 // Verifica e apaga registros duplicados uma vez
                 string VerificaDuplicadoQuery = @"
-            SELECT COUNT(1) 
-            FROM ProcessosAtualizacao 
-            WHERE ProcessoId = @ProcessoId 
-            AND CodPJEC = @CodPJEC
-            AND PJECAcao = @PJECAcao";
+                SELECT COUNT(1) 
+                FROM ProcessosAtualizacao 
+                WHERE ProcessoId = @ProcessoId 
+                AND CodPJEC = @CodPJEC
+                AND PJECAcao = @PJECAcao";
                 using (var ComandoVerificaDuplicado = new SqlCommand(VerificaDuplicadoQuery, ConexaoAoBanco))
                 {
                     ComandoVerificaDuplicado.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);
@@ -612,10 +443,10 @@ namespace Pje_WebScrapping.DataStorage
                     {
                         Console.WriteLine($"Apagando registros anteriores de: {processoMovimentacao.ProcessoId}, CodPJEC {processoMovimentacao.CodPJEC} e PJECAcao {processoMovimentacao.PJECAcao}. e inserindo novas atualizações.");
                         string DeleteQuery = @"
-                    DELETE FROM ProcessosAtualizacao 
-                    WHERE ProcessoId = @ProcessoId 
-                    AND CodPJEC = @CodPJEC
-                    AND PJECAcao = @PJECAcao";
+                        DELETE FROM ProcessosAtualizacao 
+                        WHERE ProcessoId = @ProcessoId 
+                        AND CodPJEC = @CodPJEC
+                        AND PJECAcao = @PJECAcao";
                         using (var ComandoDelete = new SqlCommand(DeleteQuery, ConexaoAoBanco))
                         {
                             ComandoDelete.Parameters.AddWithValue("@ProcessoId", (object)processoMovimentacao.ProcessoId ?? DBNull.Value);

@@ -275,6 +275,9 @@ namespace Pje_WebScrapping.DataStorage
                     UPDATE Processo
                     SET
                         Nome = @Nome,
+                        CodPJEC = @CodPJEC,
+                        PJECAcao = @CodPJECAcao,
+                        AdvogadoId = @AdvogadoId,
                         ObsProcesso = @ObsProcesso,
                         DataFim = @DataFim,
                         MeioDeComunicacao = @MeioDeComunicacao,
@@ -298,12 +301,11 @@ namespace Pje_WebScrapping.DataStorage
                         PartesProcesso = @PartesProcesso,
                         DataAbertura = @DataAbertura,
                         ValorDaCausa = @ValorDaCausa,
-                        AdvogadoId = @AdvogadoId,
                         CadastradoPor = @CadastradoPor,
                         DataAtualizacao = @DataAtualizacao,
                         AtualizadoPor = @AtualizadoPor
                     WHERE CodPJEC = @CodPJEC
-                    and CodPJECAcao = @CodPJECAcao";
+                    and PJECAcao = @CodPJECAcao";
 
                     using (var ComandoAoBanco = new SqlCommand(QueryAtualizada, ConexaoAoBanco))
                     {
@@ -311,7 +313,10 @@ namespace Pje_WebScrapping.DataStorage
                         {
                             // Adicionando os parâmetros de forma segura para evitar SQL Injection
                             ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoInicial.Nome ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@AdvogadoId", (object)ProcessoInicial.AdvogadoId ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)ProcessoInicial.CodPJEC ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@CodPJECAcao", (object)ProcessoInicial.CodPJECAcao ?? DBNull.Value);
 
                             DateTime? dataFim = ActionsPJE.DateOnlyToDateTime(ProcessoInicial.DataFim);
                             if (dataFim == null || dataFim < SqlDateTime.MinValue.Value)
@@ -534,31 +539,6 @@ namespace Pje_WebScrapping.DataStorage
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //será inserido no final da carga ao abrir aquele menu lateral de cima com os
         //dados do processo ( que demorei a ver que fica escondido ).
         public static Advogado LerAdvogado(int codADVOGADO)
@@ -618,9 +598,189 @@ namespace Pje_WebScrapping.DataStorage
                 return null;
             }
         }
+        public static void InserirPolosPartes(List<Polo> ProcessoComPolo)
+        {
+            string StringDeConexaoAtiva = EstabelecerConexao();
+            using (var connectionBanco = new SqlConnection(StringDeConexaoAtiva))
+            {
+                connectionBanco.Open();
+                using (var transaction = connectionBanco.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var polo in ProcessoComPolo)
+                        {
+                            // Verificar se o registro já existe
+                            string checkQuery = @"
+                    SELECT COUNT(*) 
+                    FROM Polo 
+                    WHERE ProcessoId = @ProcessoId AND NomeParte = @NomeParte AND TipoParte = @TipoParte";
+                            using (var checkCommand = new SqlCommand(checkQuery, connectionBanco, transaction))
+                            {
+                                checkCommand.Parameters.AddWithValue("@ProcessoId", polo.ProcessoId);
+                                checkCommand.Parameters.AddWithValue("@NomeParte", polo.NomeParte);
+                                checkCommand.Parameters.AddWithValue("@TipoParte", polo.TipoParte);
+                                int count = (int)checkCommand.ExecuteScalar();
 
+                                if (count > 0)
+                                {
+                                    // Registro existe, fazer UPDATE
+                                    string updateQuery = @"
+                            UPDATE Polo
+                            SET
+                                CPFCNPJParte = @CPFCNPJParte,
+                                NomeAdvogado = @NomeAdvogado,
+                                CPFAdvogado = @CPFAdvogado,
+                                OAB = @OAB,
+                                Nome = @Nome,
+                                DataCadastro = @DataCadastro,
+                                CadastradoPor = @CadastradoPor,
+                                DataAtualizacao = @DataAtualizacao,
+                                AtualizadoPor = @AtualizadoPor
+                            WHERE ProcessoId = @ProcessoId AND NomeParte = @NomeParte AND TipoParte = @TipoParte";
+                                    using (var updateCommand = new SqlCommand(updateQuery, connectionBanco, transaction))
+                                    {
+                                        updateCommand.Parameters.AddWithValue("@ProcessoId", polo.ProcessoId);
+                                        updateCommand.Parameters.AddWithValue("@NomeParte", polo.NomeParte);
+                                        updateCommand.Parameters.AddWithValue("@TipoParte", polo.TipoParte);
+                                        updateCommand.Parameters.AddWithValue("@CPFCNPJParte", polo.CPFCNPJParte);
+                                        updateCommand.Parameters.AddWithValue("@NomeAdvogado", polo.NomeAdvogado);
+                                        updateCommand.Parameters.AddWithValue("@CPFAdvogado", polo.CPFAdvogado);
+                                        updateCommand.Parameters.AddWithValue("@OAB", polo.OAB);
+                                        updateCommand.Parameters.AddWithValue("@Nome", polo.Nome);
+                                        updateCommand.Parameters.AddWithValue("@DataCadastro", polo.DataCadastro);
+                                        updateCommand.Parameters.AddWithValue("@CadastradoPor", polo.CadastradoPor);
+                                        updateCommand.Parameters.AddWithValue("@DataAtualizacao", polo.DataAtualizacao);
+                                        updateCommand.Parameters.AddWithValue("@AtualizadoPor", polo.AtualizadoPor);
 
+                                        updateCommand.ExecuteNonQuery();
+                                        Console.WriteLine($"Polo atualizado com sucesso.");
+                                    }
+                                }
+                                else
+                                {
+                                    // Registro não existe, fazer INSERT
+                                    string insertQuery = @"
+                            INSERT INTO Polo (
+                                ProcessoId, NomeParte, TipoParte, 
+                                CPFCNPJParte, NomeAdvogado, CPFAdvogado, OAB, Nome, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor)
+                            VALUES (
+                                @ProcessoId, @NomeParte, @TipoParte, 
+                                @CPFCNPJParte, @NomeAdvogado, @CPFAdvogado, @OAB, @Nome, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
+                                    using (var insertCommand = new SqlCommand(insertQuery, connectionBanco, transaction))
+                                    {
+                                        insertCommand.Parameters.AddWithValue("@ProcessoId", polo.ProcessoId);
+                                        insertCommand.Parameters.AddWithValue("@NomeParte", polo.NomeParte);
+                                        insertCommand.Parameters.AddWithValue("@TipoParte", polo.TipoParte);
+                                        insertCommand.Parameters.AddWithValue("@CPFCNPJParte", polo.CPFCNPJParte);
+                                        insertCommand.Parameters.AddWithValue("@NomeAdvogado", polo.NomeAdvogado);
+                                        insertCommand.Parameters.AddWithValue("@CPFAdvogado", polo.CPFAdvogado);
+                                        insertCommand.Parameters.AddWithValue("@OAB", polo.OAB);
+                                        insertCommand.Parameters.AddWithValue("@Nome", polo.Nome);
+                                        insertCommand.Parameters.AddWithValue("@DataCadastro", polo.DataCadastro);
+                                        insertCommand.Parameters.AddWithValue("@CadastradoPor", polo.CadastradoPor);
+                                        insertCommand.Parameters.AddWithValue("@DataAtualizacao", polo.DataAtualizacao);
+                                        insertCommand.Parameters.AddWithValue("@AtualizadoPor", polo.AtualizadoPor);
 
+                                        insertCommand.ExecuteNonQuery();
+                                        Console.WriteLine($"Polo inserido com sucesso.");
+                                    }
+                                }
+                            }
+                        }
+                        transaction.Commit();
+                    }
+                    catch (SqlException ex)
+                    {
+                        transaction.Rollback();
+                        if (ex.Number == 2627) // Código de erro para violação de chave única/primária
+                        {
+                            Console.WriteLine($"Erro: Polo nao pode ser inserido: {ex.Message}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Erro: O Polo teve o problema {ex.Message}.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Console.WriteLine("Erro ao adicionar parâmetro: " + ex.Message);
+                        throw;
+                    }
+                }
+            }
+        }
+        //funcionando inserir POLOS:
+
+        //public static void InserirPolosPartes(List<Polo> ProcessoComPolo)
+        //{
+        //    string StringDeConexaoAtiva = EstabelecerConexao();
+        //    using (var connectionBanco = new SqlConnection(StringDeConexaoAtiva))
+        //    {
+        //        connectionBanco.Open();
+        //        string insertQuery = @"
+        //    INSERT INTO Polo (
+        //        ProcessoId, NomeParte, TipoParte, CPFCNPJParte, NomeAdvogado, CPFAdvogado, OAB, Nome, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor)
+        //    VALUES (
+        //        @ProcessoId, @NomeParte, @TipoParte, @CPFCNPJParte, @NomeAdvogado, @CPFAdvogado, @OAB, @Nome, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
+
+        //        using (var transaction = connectionBanco.BeginTransaction())
+        //        {
+        //            try
+        //            {
+        //                foreach (var polo in ProcessoComPolo)
+        //                {
+        //                    using (var ComandoAoBanco = new SqlCommand(insertQuery, connectionBanco, transaction))
+        //                    {
+        //                        // Adicionando os parâmetros de forma segura para evitar SQL Injection
+        //                        ComandoAoBanco.Parameters.AddWithValue("@ProcessoId", (object)polo.ProcessoId ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@NomeParte", (object)polo.NomeParte ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@TipoParte", (object)polo.TipoParte ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@CPFCNPJParte", (object)polo.CPFCNPJParte ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@NomeAdvogado", (object)polo.NomeAdvogado ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@CPFAdvogado", (object)polo.CPFAdvogado ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@OAB", (object)polo.OAB ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)polo.Nome ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@CadastradoPor", (object)polo.CadastradoPor ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@DataCadastro", (object)polo.DataCadastro ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@DataAtualizacao", (object)polo.DataAtualizacao ?? DBNull.Value);
+        //                        ComandoAoBanco.Parameters.AddWithValue("@AtualizadoPor", (object)polo.AtualizadoPor ?? DBNull.Value);
+
+        //                        int result = ComandoAoBanco.ExecuteNonQuery();
+        //                        if (result > 0)
+        //                        {
+        //                            Console.WriteLine($"Polo inserido com sucesso.");
+        //                        }
+        //                        else
+        //                        {
+        //                            Console.WriteLine($"Falha ao inserir Polo.");
+        //                        }
+        //                    }
+        //                }
+        //                transaction.Commit();
+        //            }
+        //            catch (SqlException ex)
+        //            {
+        //                transaction.Rollback();
+        //                if (ex.Number == 2627) // Código de erro para violação de chave única/primária
+        //                {
+        //                    Console.WriteLine($"Erro: Polo nao pode ser inserido: {ex.Message}.");
+        //                }
+        //                else
+        //                {
+        //                    Console.WriteLine($"Erro: O Polo teve o problema {ex.Message}.");
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                transaction.Rollback();
+        //                Console.WriteLine("Erro ao adicionar parâmetro: " + ex.Message);
+        //                throw;
+        //            }
+        //        }
+        //    }
+        //}
 
 
 

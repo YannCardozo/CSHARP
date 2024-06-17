@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+using Microsoft.Identity.Client;
 using Microsoft.Win32;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -1040,8 +1041,8 @@ namespace Pje_WebScrapping.DataStorage
 
             }
 
-            fazer update aqui de tudo que foi obtido, verificar dentro do for se as variaveis estao chegando normalmente
-            e tal.
+            //fazer update aqui de tudo que foi obtido, verificar dentro do for se as variaveis estao chegando normalmente
+            //e tal.
 
 
                 Console.WriteLine("\n\n\n\n Listando POLO ATIVO");
@@ -1056,14 +1057,65 @@ namespace Pje_WebScrapping.DataStorage
 
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.NomeParte}");
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.TipoParte}");
-                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte}");
+                Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte}");
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado}");
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado}");
                 Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.OAB}");
+                if(string.IsNullOrEmpty(ProcessoEntidadeRetornado.Nome))
+                {
+                    ProcessoEntidadeRetornado.Nome = "Sem nome";
+                }
+
+                var LocalizaProcessoComId = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+
+                if(LocalizaProcessoComId != null)
+                {
+                    Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");
+                        
+                }
+
+                //recebe o ID DIRETAMENTE DO BANCO da chave estrangeira da tabela processo em processoatualizacao
+                //ProcessoAtualizado.ProcessoId = testeprocesso.Id;
 
 
-            fazer aqui o insert na tabela POLO com esses dados, n esquecer de inserir as chaves estrangeiras
-            nos locais certos.
+                Polo PoloAtivoDTO = new Polo 
+                {
+                    ProcessoId = LocalizaProcessoComId.Id,
+                    NomeParte = ProcessoEntidadeRetornado.PoloAtivo.NomeParte,
+                    CPFCNPJParte = ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte,
+                    NomeAdvogado = ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado,
+                    CPFAdvogado = ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado,
+                    OAB = ProcessoEntidadeRetornado.PoloAtivo.OAB,
+                    Nome = ProcessoEntidadeRetornado.Nome,
+                    CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                    DataCadastro = DateTime.Now,
+                    DataAtualizacao = DateTime.Now,
+                    AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+                };
+                Polo PoloPassivoDTO = new Polo
+                {
+                    ProcessoId = LocalizaProcessoComId.Id,
+                    NomeParte = ProcessoEntidadeRetornado.PoloPassivo.NomeParte,
+                    CPFCNPJParte = ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte,
+                    NomeAdvogado = ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado,
+                    CPFAdvogado = ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado,
+                    OAB = ProcessoEntidadeRetornado.PoloPassivo.OAB,
+                    Nome = ProcessoEntidadeRetornado.Nome,
+                    CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                    DataCadastro = DateTime.Now,
+                    DataAtualizacao = DateTime.Now,
+                    AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+                };
+
+                List<Polo> PolosDoProcesso = new();
+                PolosDoProcesso.Add(PoloAtivoDTO);
+                PolosDoProcesso.Add(PoloPassivoDTO);
+                ConnectDB.InserirPolosPartes(PolosDoProcesso);
+                ConnectDB.AtualizarProcessoInicial(ProcessoEntidadeRetornado);
+
+
+            //fazer aqui o insert na tabela POLO com esses dados, n esquecer de inserir as chaves estrangeiras
+            //nos locais certos.
 
 
             Console.WriteLine("Encerrei");

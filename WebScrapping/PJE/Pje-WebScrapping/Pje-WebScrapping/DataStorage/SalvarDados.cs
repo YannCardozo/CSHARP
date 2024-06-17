@@ -261,13 +261,7 @@ namespace Pje_WebScrapping.DataStorage
             UltimaMovimentacao = "";
             UltimaMovimentacaoProcessualData = "";
 
-            //método de ler advogado esta funcionando
-            //var AdvogadoVerifica = ConnectDB.LerAdvogado(28);
 
-            //if(AdvogadoVerifica != null)
-            //{
-            //    Console.WriteLine($"{AdvogadoVerifica.Id} : {AdvogadoVerifica.Nome}");
-            //}
 
             var VerificaSeProcessoEstaSalvo = ConnectDB.LerProcesso(NumProcessoSegundaColDados);
             if (VerificaSeProcessoEstaSalvo != null)
@@ -1112,7 +1106,13 @@ namespace Pje_WebScrapping.DataStorage
                 PolosDoProcesso.Add(PoloPassivoDTO);
                 ConnectDB.InserirPolosPartes(PolosDoProcesso);
                 ConnectDB.AtualizarProcessoInicial(ProcessoEntidadeRetornado);
+                //método de ler advogado esta funcionando
+                //var AdvogadoVerifica = ConnectDB.LerAdvogado(28);
 
+                //if(AdvogadoVerifica != null)
+                //{
+                //    Console.WriteLine($"{AdvogadoVerifica.Id} : {AdvogadoVerifica.Nome}");
+                //}
 
             //fazer aqui o insert na tabela POLO com esses dados, n esquecer de inserir as chaves estrangeiras
             //nos locais certos.

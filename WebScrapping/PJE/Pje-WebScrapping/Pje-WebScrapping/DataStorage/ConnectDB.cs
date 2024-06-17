@@ -598,6 +598,34 @@ namespace Pje_WebScrapping.DataStorage
                 return null;
             }
         }
+
+        public static void InserirAdvogados(Advogado AdvogadoaSerInserido)
+        {
+            string StringDeConexaoAtiva = EstabelecerConexao();
+            using (var connectionBanco = new SqlConnection(StringDeConexaoAtiva))
+            {
+                connectionBanco.Open();
+                string querysqlverificaadvogado = @"select COUNT(1) from Processo where Id = @AdvogadoId";
+                using (var ComandoVerificaProcesso = new SqlCommand(querysqlverificaadvogado, connectionBanco))
+                {
+                    //esta errado
+                    ComandoVerificaProcesso.Parameters.AddWithValue("@AdvogadoId", (object)AdvogadoaSerInserido.Cpf ?? DBNull.Value);
+                    int count = (int)ComandoVerificaProcesso.ExecuteScalar();
+                    if (count == 0)
+                    {
+                        Console.WriteLine($"Erro: Advogado {AdvogadoaSerInserido.Id} não existe na tabela Advogado.");
+                        botar aqui para adicionar novos advogados.
+                        //return;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Advogado {AdvogadoaSerInserido.Nome} já está cadastrado no banco de dados.");
+                        return;
+                    }
+
+                }
+            }
+        }
         public static void InserirPolosPartes(List<Polo> ProcessoComPolo)
         {
             string StringDeConexaoAtiva = EstabelecerConexao();
@@ -711,81 +739,6 @@ namespace Pje_WebScrapping.DataStorage
                 }
             }
         }
-        //funcionando inserir POLOS:
-
-        //public static void InserirPolosPartes(List<Polo> ProcessoComPolo)
-        //{
-        //    string StringDeConexaoAtiva = EstabelecerConexao();
-        //    using (var connectionBanco = new SqlConnection(StringDeConexaoAtiva))
-        //    {
-        //        connectionBanco.Open();
-        //        string insertQuery = @"
-        //    INSERT INTO Polo (
-        //        ProcessoId, NomeParte, TipoParte, CPFCNPJParte, NomeAdvogado, CPFAdvogado, OAB, Nome, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor)
-        //    VALUES (
-        //        @ProcessoId, @NomeParte, @TipoParte, @CPFCNPJParte, @NomeAdvogado, @CPFAdvogado, @OAB, @Nome, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
-
-        //        using (var transaction = connectionBanco.BeginTransaction())
-        //        {
-        //            try
-        //            {
-        //                foreach (var polo in ProcessoComPolo)
-        //                {
-        //                    using (var ComandoAoBanco = new SqlCommand(insertQuery, connectionBanco, transaction))
-        //                    {
-        //                        // Adicionando os parâmetros de forma segura para evitar SQL Injection
-        //                        ComandoAoBanco.Parameters.AddWithValue("@ProcessoId", (object)polo.ProcessoId ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@NomeParte", (object)polo.NomeParte ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@TipoParte", (object)polo.TipoParte ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@CPFCNPJParte", (object)polo.CPFCNPJParte ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@NomeAdvogado", (object)polo.NomeAdvogado ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@CPFAdvogado", (object)polo.CPFAdvogado ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@OAB", (object)polo.OAB ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)polo.Nome ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@CadastradoPor", (object)polo.CadastradoPor ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@DataCadastro", (object)polo.DataCadastro ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@DataAtualizacao", (object)polo.DataAtualizacao ?? DBNull.Value);
-        //                        ComandoAoBanco.Parameters.AddWithValue("@AtualizadoPor", (object)polo.AtualizadoPor ?? DBNull.Value);
-
-        //                        int result = ComandoAoBanco.ExecuteNonQuery();
-        //                        if (result > 0)
-        //                        {
-        //                            Console.WriteLine($"Polo inserido com sucesso.");
-        //                        }
-        //                        else
-        //                        {
-        //                            Console.WriteLine($"Falha ao inserir Polo.");
-        //                        }
-        //                    }
-        //                }
-        //                transaction.Commit();
-        //            }
-        //            catch (SqlException ex)
-        //            {
-        //                transaction.Rollback();
-        //                if (ex.Number == 2627) // Código de erro para violação de chave única/primária
-        //                {
-        //                    Console.WriteLine($"Erro: Polo nao pode ser inserido: {ex.Message}.");
-        //                }
-        //                else
-        //                {
-        //                    Console.WriteLine($"Erro: O Polo teve o problema {ex.Message}.");
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                transaction.Rollback();
-        //                Console.WriteLine("Erro ao adicionar parâmetro: " + ex.Message);
-        //                throw;
-        //            }
-        //        }
-        //    }
-        //}
-
-
-
-
-
 
         private static DateTime? SafeGetDateTime(SqlDataReader reader, string columnName)
         {

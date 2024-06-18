@@ -541,18 +541,18 @@ namespace Pje_WebScrapping.DataStorage
         }
         //será inserido no final da carga ao abrir aquele menu lateral de cima com os
         //dados do processo ( que demorei a ver que fica escondido ).
-        public static Advogado LerAdvogado(int codADVOGADO)
+        public static Advogado LerAdvogado(string cpfAdvogado)
         {
-            if (codADVOGADO >= 0)
+            if (!string.IsNullOrEmpty(cpfAdvogado))
             {
                 string StringDeConexaoAtiva = EstabelecerConexao();
 
                 using (var connectionBanco = new SqlConnection(StringDeConexaoAtiva))
                 {
-                    string LeituraQueryAdvogado = @"SELECT * FROM Advogado WHERE id = @codAdvogado";
+                    string LeituraQueryAdvogado = @"SELECT * FROM Advogado WHERE Cpf = @cpfAdvogado";
                     using (var command = new SqlCommand(LeituraQueryAdvogado, connectionBanco))
                     {
-                        command.Parameters.AddWithValue("@codAdvogado", codADVOGADO);
+                        command.Parameters.AddWithValue("@cpfAdvogado", cpfAdvogado);
 
                         try
                         {
@@ -581,12 +581,12 @@ namespace Pje_WebScrapping.DataStorage
                         }
                         catch (SqlException ex)
                         {
-                            Console.WriteLine($"Erro na leitura de ID de advogado: {codADVOGADO} - {ex.Message}");
+                            Console.WriteLine($"Erro na busca de Advogado, cpf : {cpfAdvogado} - {ex.Message}");
                             return null;
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"Erro ao ler advogado: {ex.Message}");
+                            Console.WriteLine($"Erro ao buscar advogado: {ex.Message}");
                             return null;
                         }
                     }
@@ -605,24 +605,59 @@ namespace Pje_WebScrapping.DataStorage
             using (var connectionBanco = new SqlConnection(StringDeConexaoAtiva))
             {
                 connectionBanco.Open();
-                string querysqlverificaadvogado = @"select COUNT(1) from Processo where Id = @AdvogadoId";
+                string querysqlverificaadvogado = @"select COUNT(1) from Advogado where Id = @Id";
                 using (var ComandoVerificaProcesso = new SqlCommand(querysqlverificaadvogado, connectionBanco))
                 {
-                    //esta errado
-                    ComandoVerificaProcesso.Parameters.AddWithValue("@AdvogadoId", (object)AdvogadoaSerInserido.Cpf ?? DBNull.Value);
-                    int count = (int)ComandoVerificaProcesso.ExecuteScalar();
-                    if (count == 0)
+                    try
                     {
-                        Console.WriteLine($"Erro: Advogado {AdvogadoaSerInserido.Id} não existe na tabela Advogado.");
-                        botar aqui para adicionar novos advogados.
-                        //return;
+                        ComandoVerificaProcesso.Parameters.AddWithValue("@Id", (object)AdvogadoaSerInserido.Id ?? DBNull.Value);
+                        int count = (int)ComandoVerificaProcesso.ExecuteScalar();
+                        if (count == 0)
+                        {
+                            Console.WriteLine($"Erro: Advogado {AdvogadoaSerInserido.Id} não existe na tabela Advogado.");
+
+                            string QueryInserirAdvogado =
+                            @"INSERT INTO Advogado
+                        (Nome, Oab, Cpf, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor)
+                        VALUES
+                        (@Nome, @Oab, @Cpf, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
+
+                            using (var ComandoInserirAdvogado = new SqlCommand(QueryInserirAdvogado, connectionBanco))
+                            {
+                                ComandoInserirAdvogado.Parameters.AddWithValue("@Nome", AdvogadoaSerInserido.Nome);
+                                ComandoInserirAdvogado.Parameters.AddWithValue("@Oab", AdvogadoaSerInserido.Oab);
+                                ComandoInserirAdvogado.Parameters.AddWithValue("@Cpf", AdvogadoaSerInserido.Cpf);
+                                ComandoInserirAdvogado.Parameters.AddWithValue("@DataCadastro", AdvogadoaSerInserido.DataCadastro);
+                                ComandoInserirAdvogado.Parameters.AddWithValue("@CadastradoPor", AdvogadoaSerInserido.CadastradoPor);
+                                ComandoInserirAdvogado.Parameters.AddWithValue("@DataAtualizacao", AdvogadoaSerInserido.DataAtualizacao);
+                                ComandoInserirAdvogado.Parameters.AddWithValue("@AtualizadoPor", AdvogadoaSerInserido.AtualizadoPor);
+
+                                ComandoInserirAdvogado.ExecuteNonQuery();
+                                Console.WriteLine($"Advogado {AdvogadoaSerInserido.Nome} inserido com sucesso.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Advogado {AdvogadoaSerInserido.Nome} já está cadastrado no banco de dados.");
+                            return;
+                        }
                     }
-                    else
+                    catch (SqlException ex)
                     {
-                        Console.WriteLine($"Advogado {AdvogadoaSerInserido.Nome} já está cadastrado no banco de dados.");
+                        if (ex.Number == 2627) // Código de erro para violação de chave única/primária
+                        {
+                            Console.WriteLine($"Erro: O Advogado de cpf:{AdvogadoaSerInserido.Cpf} não pode ser inserido : {ex.Message}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Erro: O Advogado de oab:{AdvogadoaSerInserido.Oab} teve o problema {ex.Message}.");
+                        }
+                    }
+                    catch ( Exception ex )
+                    {
+                        Console.WriteLine($"Erro ao inserir Advogado: {AdvogadoaSerInserido.Cpf} : {ex.Message}");
                         return;
                     }
-
                 }
             }
         }

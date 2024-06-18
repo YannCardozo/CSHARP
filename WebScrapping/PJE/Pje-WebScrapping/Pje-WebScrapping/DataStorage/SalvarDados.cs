@@ -1105,6 +1105,25 @@ namespace Pje_WebScrapping.DataStorage
                 PolosDoProcesso.Add(PoloAtivoDTO);
                 PolosDoProcesso.Add(PoloPassivoDTO);
                 ConnectDB.InserirPolosPartes(PolosDoProcesso);
+
+                Advogado AdvogadoParaInserir = new Advogado()
+                {
+                    Nome = ProcessoEntidadeRetornado.Advogada,
+                    Cpf = ProcessoEntidadeRetornado.AdvogadaCPF,
+                    Oab = ProcessoEntidadeRetornado.AdvogadaOAB,
+                    CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                    AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor,
+                    DataCadastro = DateTime.Now,
+                    DataAtualizacao = DateTime.Now
+                };
+
+
+                ConnectDB.InserirAdvogados(AdvogadoParaInserir);
+                var AdvogadoDoBanco = ConnectDB.LerAdvogado(AdvogadoParaInserir.Cpf);
+                if(AdvogadoDoBanco != null)
+                {
+                    ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+                }
                 ConnectDB.AtualizarProcessoInicial(ProcessoEntidadeRetornado);
                 //método de ler advogado esta funcionando
                 //var AdvogadoVerifica = ConnectDB.LerAdvogado(28);

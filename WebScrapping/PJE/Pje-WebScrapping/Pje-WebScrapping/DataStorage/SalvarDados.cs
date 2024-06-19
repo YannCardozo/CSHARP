@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+using Justo.Entities.Entidades;
 using Microsoft.Identity.Client;
 using Microsoft.Win32;
 using OpenQA.Selenium;
@@ -1061,13 +1062,55 @@ namespace Pje_WebScrapping.DataStorage
                 }
 
                 var LocalizaProcessoComId = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+                Cliente ClienteASerFormado = new();
 
-                if(LocalizaProcessoComId != null)
+                if (LocalizaProcessoComId != null)
                 {
                     Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");
-                        
+                    ClienteASerFormado = new()
+                    {
+                        EnderecoId = null,
+                        Nome = ProcessoEntidadeRetornado.Cliente,
+                        Cpf = ProcessoEntidadeRetornado.ClienteCPF,
+                        NomeMae = null,
+                        Rg = null,
+                        ComprovanteDeResidencia = null,
+                        Cnh = null,
+                        ContratoSocialCliente = null,
+                        Cnpj = null,
+                        CertificadoReservista = null,
+                        ProcuracaoRepresentacaoLegal = null,
+                        PisPasep = null,
+                        CodClt = null,
+                        NIS = null,
+                        Genero = null,
+                        DataNascimento = null,
+                        Ocupacao = null,
+                        Renda = null,
+                        Escolaridade = null,
+                        Nacionalidade = null,
+                        EstadoCivil = null,
+                        Banco = null,
+                        AgenciaBancaria = null,
+                        ContaCorrente = null,
+                        Telefone = null,
+                        Contato = null,
+                        Email = null,
+                        Tipo = null,
+                        ReuAutor = null,
+                        DataCadastro = DateTime.Now,
+                        CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                        DataAtualizacao = DateTime.Now,
+                        AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+                    };
                 }
-
+                ConnectDB.InserirCliente(ClienteASerFormado);
+                //inserir cliente antes e botar processoentidaderetornado para receber clienteid
+                //precisa fazer o LERCLIENTE para devolver corretamente o id da chave estrangeira
+                Cliente ClienteDoBanco = ConnectDB.LerCliente(ClienteASerFormado.Cpf);
+                Console.WriteLine(ClienteDoBanco.Id);
+                MostraDadosProcesso(ProcessoEntidadeRetornado);
+                Console.WriteLine("parar");
                 //recebe o ID DIRETAMENTE DO BANCO da chave estrangeira da tabela processo em processoatualizacao
                 //ProcessoAtualizado.ProcessoId = testeprocesso.Id;
 
@@ -1124,50 +1167,47 @@ namespace Pje_WebScrapping.DataStorage
                 {
                     ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
                 }
+
+                ProcessoEntidadeRetornado.ClienteId = ClienteDoBanco.Id;
+                ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
                 ConnectDB.AtualizarProcessoInicial(ProcessoEntidadeRetornado);
-                //método de ler advogado esta funcionando
-                //var AdvogadoVerifica = ConnectDB.LerAdvogado(28);
+                Console.WriteLine($"\n\n\n\n meu clienteid é: {ProcessoEntidadeRetornado.ClienteId} e advogadoid é: {ProcessoEntidadeRetornado.AdvogadoId}");
 
-                //if(AdvogadoVerifica != null)
-                //{
-                //    Console.WriteLine($"{AdvogadoVerifica.Id} : {AdvogadoVerifica.Nome}");
-                //}
-
-            //fazer aqui o insert na tabela POLO com esses dados, n esquecer de inserir as chaves estrangeiras
-            //nos locais certos.
+                //fazer aqui o insert na tabela POLO com esses dados, n esquecer de inserir as chaves estrangeiras
+                //nos locais certos.
 
 
-            Console.WriteLine("Encerrei");
+                Console.WriteLine("Encerrei");
 
 
-            //ActionsPJE.EncerrarConsole();
+                //ActionsPJE.EncerrarConsole();
 
 
-            //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM
+                //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM
 
-            //fecha detalhes
-            LinkDetalhesMovimentacaoProcessual.Click();
+                //fecha detalhes
+                LinkDetalhesMovimentacaoProcessual.Click();
 
-            //ActionsPJE.EncerrarConsole();
+                //ActionsPJE.EncerrarConsole();
 
-            ActionsPJE.RetornarParaJanelaPrincipal(driver);
+                ActionsPJE.RetornarParaJanelaPrincipal(driver);
 
 
-
-        }
-
-        public static void MostraDadosProcesso(Processo ProcessoEntidadeParaImprimir)
-        {
-            foreach (var propriedade in typeof(Processo).GetProperties())
-            {
-                //listando atributos do objeto
-
-                var valor = propriedade.GetValue(ProcessoEntidadeParaImprimir);
-                Console.WriteLine($"{propriedade.Name}: {valor}");
 
             }
+
+            public static void MostraDadosProcesso(Processo ProcessoEntidadeParaImprimir)
+            {
+                foreach (var propriedade in typeof(Processo).GetProperties())
+                {
+                    //listando atributos do objeto
+
+                    var valor = propriedade.GetValue(ProcessoEntidadeParaImprimir);
+                    Console.WriteLine($"{propriedade.Name}: {valor}");
+
+                }
+            }
         }
-    }
 
 
 }

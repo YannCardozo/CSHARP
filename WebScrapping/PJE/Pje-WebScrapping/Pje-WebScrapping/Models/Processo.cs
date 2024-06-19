@@ -73,7 +73,7 @@ namespace Pje_WebScrapping.Models
         public DateOnly? DataFim { get; set; } = DateOnly.MinValue;
 
         public int? AdvogadoId { get; set; }
-
+        public int? ClienteId { get; set; }
 
         //tentativa de converter variaveis vindo do banco como datetime ao inves de converter no codigo para datetime.
         //Teoricamente é como se fosse uma "DTO" para receber do banco campos especificos

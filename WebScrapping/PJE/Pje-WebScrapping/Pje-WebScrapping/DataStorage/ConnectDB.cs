@@ -78,16 +78,11 @@ namespace Pje_WebScrapping.DataStorage
                         // Adicionando os parâmetros de forma segura para evitar SQL Injection
                         command.Parameters.AddWithValue("@CodPJEC", (object)ProcessoInicial.CodPJEC ?? DBNull.Value);
                         command.Parameters.AddWithValue("@PJECAcao", (object)ProcessoInicial.CodPJECAcao ?? DBNull.Value);
-                        //command.Parameters.AddWithValue("@Cliente", (object)ProcessoInicial.Cliente ?? DBNull.Value);
-                        //command.Parameters.AddWithValue("@ClienteCPF", (object)ProcessoInicial.ClienteCPF ?? DBNull.Value);
                         if(ProcessoInicial.Advogada == null)
                         {
                             ProcessoInicial.Advogada = "Vazio";
                         }
                         command.Parameters.AddWithValue("@Nome", (object)ProcessoInicial.Advogada ?? DBNull.Value);
-
-                        //command.Parameters.AddWithValue("@AdvogadaOAB", (object)ProcessoInicial.AdvogadaOAB ?? DBNull.Value);
-                        //command.Parameters.AddWithValue("@AdvogadaCPF", (object)ProcessoInicial.AdvogadaCPF ?? DBNull.Value);
                         command.Parameters.AddWithValue("@MeioDeComunicacao", (object)ProcessoInicial.MeioDeComunicacao ?? DBNull.Value);
 
 
@@ -121,8 +116,6 @@ namespace Pje_WebScrapping.DataStorage
                         command.Parameters.AddWithValue("@TutelaLiminar", (object)ProcessoInicial.TutelaLiminar ?? DBNull.Value);
                         command.Parameters.AddWithValue("@Prioridade", (object)ProcessoInicial.Prioridade ?? DBNull.Value);
                         command.Parameters.AddWithValue("@Autuacao", (object)ProcessoInicial.Autuacao ?? DBNull.Value);
-                        //command.Parameters.AddWithValue("@PoloAtivo", (object)ProcessoInicial.PoloAtivo ?? DBNull.Value);
-                        //command.Parameters.AddWithValue("@PoloPassivo", (object)ProcessoInicial.PoloPassivo ?? DBNull.Value);
                         command.Parameters.AddWithValue("@TituloProcesso", (object)ProcessoInicial.TituloProcesso ?? DBNull.Value);
                         command.Parameters.AddWithValue("@PartesProcesso", (object)ProcessoInicial.PartesProcesso ?? DBNull.Value);
                         command.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
@@ -233,6 +226,7 @@ namespace Pje_WebScrapping.DataStorage
                                         TituloProcesso = reader.IsDBNull(reader.GetOrdinal("TituloProcesso")) ? null : reader.GetString(reader.GetOrdinal("TituloProcesso")),
                                         PartesProcesso = reader.IsDBNull(reader.GetOrdinal("PartesProcesso")) ? null : reader.GetString(reader.GetOrdinal("PartesProcesso")),
                                         DataAbertura = SafeGetDateOnly(reader, "DataAbertura"),
+                                        ClienteId = reader.IsDBNull(reader.GetOrdinal("ClienteId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ClienteId")),
                                         AdvogadoId = reader.IsDBNull(reader.GetOrdinal("AdvogadoId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("AdvogadoId"))
                                     };
                                     return ProcessoEncontrado;
@@ -278,6 +272,7 @@ namespace Pje_WebScrapping.DataStorage
                         CodPJEC = @CodPJEC,
                         PJECAcao = @CodPJECAcao,
                         AdvogadoId = @AdvogadoId,
+                        ClienteId = @ClienteId,
                         ObsProcesso = @ObsProcesso,
                         DataFim = @DataFim,
                         MeioDeComunicacao = @MeioDeComunicacao,
@@ -314,6 +309,7 @@ namespace Pje_WebScrapping.DataStorage
                             // Adicionando os parâmetros de forma segura para evitar SQL Injection
                             ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoInicial.Nome ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@AdvogadoId", (object)ProcessoInicial.AdvogadoId ?? DBNull.Value);
+                            ComandoAoBanco.Parameters.AddWithValue("@ClienteId", (object)ProcessoInicial.ClienteId ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)ProcessoInicial.CodPJEC ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@CodPJECAcao", (object)ProcessoInicial.CodPJECAcao ?? DBNull.Value);
@@ -775,11 +771,162 @@ namespace Pje_WebScrapping.DataStorage
             }
         }
 
-
-
-        public static void InserirCliente()
+        public static Cliente LerCliente(string clienteCpf)
         {
+            string connectionString = ConnectDB.EstabelecerConexao(); // Substitua pela sua string de conexão
 
+            Cliente cliente = null;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string queryLerCliente = @"
+                SELECT 
+                    Id, EnderecoId, Nome, Cpf, NomeMae, Rg, ComprovanteDeResidencia, Cnh, 
+                    ContratoSocialCliente, Cnpj, CertificadoReservista, ProcuracaoRepresentacaoLegal, PisPasep, 
+                    CodClt, NIS, Genero, DataNascimento, Ocupacao, Renda, Escolaridade, Nacionalidade, 
+                    EstadoCivil, Banco, AgenciaBancaria, ContaCorrente, Telefone, Contato, Email, Tipo, 
+                    ReuAutor, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor 
+                FROM Cliente 
+                WHERE Cpf = @clienteCpf";
+
+                using (SqlCommand comandoLerCliente = new SqlCommand(queryLerCliente, connection))
+                {
+                    comandoLerCliente.Parameters.AddWithValue("@clienteCpf", clienteCpf);
+
+                    try
+                    {
+                        connection.Open();
+
+                        using (SqlDataReader reader = comandoLerCliente.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                cliente = new Cliente
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    EnderecoId = reader["EnderecoId"] as int?,
+                                    Nome = reader["Nome"].ToString(),
+                                    Cpf = reader["Cpf"].ToString(),
+                                    NomeMae = reader["NomeMae"].ToString(),
+                                    Rg = reader["Rg"].ToString(),
+                                    ComprovanteDeResidencia = reader["ComprovanteDeResidencia"].ToString(),
+                                    Cnh = reader["Cnh"].ToString(),
+                                    ContratoSocialCliente = reader["ContratoSocialCliente"].ToString(),
+                                    Cnpj = reader["Cnpj"].ToString(),
+                                    CertificadoReservista = reader["CertificadoReservista"].ToString(),
+                                    ProcuracaoRepresentacaoLegal = reader["ProcuracaoRepresentacaoLegal"].ToString(),
+                                    PisPasep = reader["PisPasep"].ToString(),
+                                    CodClt = reader["CodClt"].ToString(),
+                                    NIS = reader["NIS"].ToString(),
+                                    Genero = reader["Genero"].ToString(),
+                                    DataNascimento = reader["DataNascimento"] as DateTime?,
+                                    Ocupacao = reader["Ocupacao"].ToString(),
+                                    Renda = reader["Renda"].ToString(),
+                                    Escolaridade = reader["Escolaridade"].ToString(),
+                                    Nacionalidade = reader["Nacionalidade"].ToString(),
+                                    EstadoCivil = reader["EstadoCivil"].ToString(),
+                                    Banco = reader["Banco"].ToString(),
+                                    AgenciaBancaria = reader["AgenciaBancaria"].ToString(),
+                                    ContaCorrente = reader["ContaCorrente"].ToString(),
+                                    Telefone = reader["Telefone"].ToString(),
+                                    Contato = reader["Contato"].ToString(),
+                                    Email = reader["Email"].ToString(),
+                                    Tipo = reader["Tipo"].ToString(),
+                                    ReuAutor = reader["ReuAutor"].ToString(),
+                                    DataCadastro = (DateTime)reader["DataCadastro"],
+                                    CadastradoPor = (int)reader["CadastradoPor"],
+                                    DataAtualizacao = (DateTime)reader["DataAtualizacao"],
+                                    AtualizadoPor = (int)reader["AtualizadoPor"]
+                                };
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao ler o cliente: {ex.Message}");
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+
+            return cliente;
+        }
+
+        public static void InserirCliente(Cliente ClienteAserInserido)
+        {
+            string connectionString = ConnectDB.EstabelecerConexao(); // Substitua pela sua string de conexão
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string QueryInserirCliente = @"
+        INSERT INTO Cliente (
+            EnderecoId, Nome, Cpf, NomeMae, Rg, ComprovanteDeResidencia, Cnh, 
+            ContratoSocialCliente, Cnpj, CertificadoReservista, ProcuracaoRepresentacaoLegal, PisPasep, 
+            CodClt, NIS, Genero, DataNascimento, Ocupacao, Renda, Escolaridade, Nacionalidade, 
+            EstadoCivil, Banco, AgenciaBancaria, ContaCorrente, Telefone, Contato, Email, Tipo, 
+            ReuAutor, DataCadastro, CadastradoPor, DataAtualizacao, AtualizadoPor) 
+        VALUES (
+            @EnderecoId, @Nome, @Cpf, @NomeMae, @Rg, @ComprovanteDeResidencia, @Cnh, 
+            @ContratoSocialCliente, @Cnpj, @CertificadoReservista, @ProcuracaoRepresentacaoLegal, @PisPasep, 
+            @CodClt, @NIS, @Genero, @DataNascimento, @Ocupacao, @Renda, @Escolaridade, @Nacionalidade, 
+            @EstadoCivil, @Banco, @AgenciaBancaria, @ContaCorrente, @Telefone, @Contato, @Email, @Tipo, 
+            @ReuAutor, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
+
+                using (SqlCommand ComandoInserirCliente = new SqlCommand(QueryInserirCliente, connection))
+                {
+                    ComandoInserirCliente.Parameters.AddWithValue("@EnderecoId", (object)ClienteAserInserido.EnderecoId ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Nome", ClienteAserInserido.Nome);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Cpf", ClienteAserInserido.Cpf);
+                    ComandoInserirCliente.Parameters.AddWithValue("@NomeMae", (object)ClienteAserInserido.NomeMae ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Rg", (object)ClienteAserInserido.Rg ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@ComprovanteDeResidencia", (object)ClienteAserInserido.ComprovanteDeResidencia ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Cnh", (object)ClienteAserInserido.Cnh ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@ContratoSocialCliente", (object)ClienteAserInserido.ContratoSocialCliente ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Cnpj", (object)ClienteAserInserido.Cnpj ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@CertificadoReservista", (object)ClienteAserInserido.CertificadoReservista ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@ProcuracaoRepresentacaoLegal", (object)ClienteAserInserido.ProcuracaoRepresentacaoLegal ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@PisPasep", (object)ClienteAserInserido.PisPasep ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@CodClt", (object)ClienteAserInserido.CodClt ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@NIS", (object)ClienteAserInserido.NIS ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Genero", (object)ClienteAserInserido.Genero ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@DataNascimento", (object)ClienteAserInserido.DataNascimento ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Ocupacao", (object)ClienteAserInserido.Ocupacao ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Renda", (object)ClienteAserInserido.Renda ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Escolaridade", (object)ClienteAserInserido.Escolaridade ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Nacionalidade", (object)ClienteAserInserido.Nacionalidade ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@EstadoCivil", (object)ClienteAserInserido.EstadoCivil ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Banco", (object)ClienteAserInserido.Banco ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@AgenciaBancaria", (object)ClienteAserInserido.AgenciaBancaria ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@ContaCorrente", (object)ClienteAserInserido.ContaCorrente ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Telefone", (object)ClienteAserInserido.Telefone ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Contato", (object)ClienteAserInserido.Contato ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Email", (object)ClienteAserInserido.Email ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@Tipo", (object)ClienteAserInserido.Tipo ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@ReuAutor", (object)ClienteAserInserido.ReuAutor ?? DBNull.Value);
+                    ComandoInserirCliente.Parameters.AddWithValue("@DataCadastro", ClienteAserInserido.DataCadastro);
+                    ComandoInserirCliente.Parameters.AddWithValue("@CadastradoPor", ClienteAserInserido.CadastradoPor);
+                    ComandoInserirCliente.Parameters.AddWithValue("@DataAtualizacao", ClienteAserInserido.DataAtualizacao);
+                    ComandoInserirCliente.Parameters.AddWithValue("@AtualizadoPor", ClienteAserInserido.AtualizadoPor);
+
+                    try
+                    {
+                        connection.Open();
+                        ComandoInserirCliente.ExecuteNonQuery();
+                        Console.WriteLine($"Cliente {ClienteAserInserido.Nome} inserido com sucesso.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao inserir o cliente: {ex.Message}");
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
         }
 
 

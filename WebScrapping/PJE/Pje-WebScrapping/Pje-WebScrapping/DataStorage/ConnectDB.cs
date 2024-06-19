@@ -775,6 +775,24 @@ namespace Pje_WebScrapping.DataStorage
             }
         }
 
+
+
+        public static void InserirCliente()
+        {
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         private static DateTime? SafeGetDateTime(SqlDataReader reader, string columnName)
         {
             try

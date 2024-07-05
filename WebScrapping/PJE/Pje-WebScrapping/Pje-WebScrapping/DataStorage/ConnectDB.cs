@@ -19,14 +19,14 @@ namespace Pje_WebScrapping.DataStorage
         //tratamento de catch
 
 
-        public static string connectionStringCasa = "Server=DESKTOP-RAGDGN0\\SQLEXPRESS;Database=JustoTesteValdir;Trusted_Connection=True;TrustServerCertificate=true;";
-        public static string connectionStringTrabalho = "Server=DESKTOP-O22D6C8\\SQLEXPRESS;Database=JustoTesteValdir;Trusted_Connection=True;TrustServerCertificate=true;";
-        public static string connectionStringNotebook = "Server=YANN-GALAXYBOOK\\SQLEXPRESS;Database=master;Trusted_Connection=True;TrustServerCertificate=true;";
-
+        //public static string connectionStringCasa = "Server=DESKTOP-RAGDGN0\\SQLEXPRESS;Database=JustoTesteValdir;Trusted_Connection=True;TrustServerCertificate=true;";
+        //public static string connectionStringTrabalho = "Server=DESKTOP-O22D6C8\\SQLEXPRESS;Database=JustoTesteValdir;Trusted_Connection=True;TrustServerCertificate=true;";
+        //public static string connectionStringNotebook = "Server=YANN-GALAXYBOOK\\SQLEXPRESS;Database=master;Trusted_Connection=True;TrustServerCertificate=true;";
+        public static string connectionStringProducaoSomee = "workstation id=JustoAdv.mssql.somee.com;packet size=4096;user id=Chaons_SQLLogin_1;pwd=ffulsmgjr4;data source=JustoAdv.mssql.somee.com;persist security info=False;initial catalog=JustoAdv;TrustServerCertificate=True";
 
         public static string EstabelecerConexao()
         {
-            string[] connectionStrings = { connectionStringCasa, connectionStringTrabalho, connectionStringNotebook };
+            string[] connectionStrings = { connectionStringProducaoSomee /*connectionStringCasa, connectionStringTrabalho, connectionStringNotebook*/ };
 
             foreach (var connectionString in connectionStrings)
             {

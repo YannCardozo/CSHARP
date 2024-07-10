@@ -264,13 +264,14 @@ namespace Pje_WebScrapping.DataStorage
 
 
 
-            var VerificaSeProcessoEstaSalvo = ConnectDB.LerProcesso(NumProcessoSegundaColDados);
+            var VerificaSeProcessoEstaSalvo = ConnectDB.LerProcessosPorPJECAcao(ProcessoEntidade.CodPJECAcao);
             if (VerificaSeProcessoEstaSalvo != null)
             {
-                //precisa verificar update caso já esteja cadastrado no banco o processo em connectdb
+                Console.WriteLine($"Localizei: {VerificaSeProcessoEstaSalvo.CodPJECAcao}");
             }
             else
             {
+
                 ConnectDB.SalvarProcessoInicial(ProcessoEntidade);
             }
 

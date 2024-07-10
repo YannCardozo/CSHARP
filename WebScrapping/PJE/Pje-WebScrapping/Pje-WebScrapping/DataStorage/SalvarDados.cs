@@ -547,11 +547,11 @@ namespace Pje_WebScrapping.DataStorage
 
                         //inserindo a chave estrangeira de processo em processo atualizacao
 
-                        var testeprocesso = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+                        var testeprocesso = ConnectDB.LerProcessosPorPJECAcao(ProcessoEntidadeRetornado.CodPJECAcao);
 
                         if(testeprocesso != null)
                         {
-                            Console.WriteLine($"Processo encontrado e meu id é: {testeprocesso.CodPJEC} : {testeprocesso.Id}");
+                            Console.WriteLine($"Processo encontrado e meu CodPJECAcao é: {testeprocesso.CodPJECAcao} meu ID é: {testeprocesso.Id}");
                         
                         }
 

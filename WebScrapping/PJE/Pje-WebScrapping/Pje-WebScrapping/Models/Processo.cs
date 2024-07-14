@@ -69,6 +69,7 @@ namespace Pje_WebScrapping.Models
         public string? ObsProcesso { get; set; }
         //datetime DataAbertura
         public DateOnly? DataAbertura { get; set; } = DateOnly.MinValue;
+        public DateTime? DataAberturaDATETIME { get; set; }
         //datetime DATAFIM
         public DateOnly? DataFim { get; set; } = DateOnly.MinValue;
 

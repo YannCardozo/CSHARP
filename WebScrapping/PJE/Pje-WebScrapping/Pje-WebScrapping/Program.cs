@@ -7,10 +7,12 @@ using Pje_WebScrapping;
 using Pje_WebScrapping.Actions;
 using Pje_WebScrapping.Actions.Login;
 using Pje_WebScrapping.Actions.NavBarMenu;
+using Pje_WebScrapping.Actions.Push;
 using Pje_WebScrapping.Models;
 using System;
 using System.Diagnostics;
 using System.Xml.Linq;
+using static System.Net.WebRequestMethods;
 
 public class Program
 {
@@ -20,8 +22,26 @@ public class Program
 
         IWebDriver Driver =  Login_PJE.IniciarPJE("https://tjrj.pje.jus.br/1g/login.seam");
 
+        Driver = NavBarActions.InicializaPush(Driver);
+        ActionsPJE.AguardarPje("Baixo");
+
+        Push.PushProcessos(Driver);
 
 
+
+
+
+
+
+
+
+        //TESTE
+        ActionsPJE.AguardarPje("Alto");
+
+
+
+        //TESTE
+        ActionsPJE.EncerrarPJE(Driver);
 
 
         //VERIFICAR SE VAI PRECISAR SAIR DO FRAME OU NAO AO CONSEGUIR LOGAR.

@@ -18,6 +18,9 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Pje_WebScrapping.Actions.NavBarMenuActions;
+using OpenQA.Selenium.Chrome;
+using static System.Net.WebRequestMethods;
+using Microsoft.Identity.Client;
 
 namespace Pje_WebScrapping.Actions.NavBarMenu
 {
@@ -85,6 +88,33 @@ namespace Pje_WebScrapping.Actions.NavBarMenu
             {
                 Console.WriteLine("Método: " + MetodoFormado + " não encontrado.");
             }
+        }
+
+        public static IWebDriver InicializaPush(IWebDriver driver)
+        {
+            string PUSH = "https://tjrj.pje.jus.br/1g/Painel/painel_usuario/advogado.seam";
+            //verificar essa url: https://tjrj.pje.jus.br/1g/Push/listView.seam
+            driver.Navigate().GoToUrl(PUSH);
+
+            //localizando o cabeçalho:
+            IWebElement TabelaCabeçalho = driver.FindElement(By.Id("tabPanel"));
+            //Console.WriteLine(TabelaCabeçalho.Text + TabelaCabeçalho.TagName);
+
+            //pegando o XPATH do botao PUSH a partir da tag que está dentro do form no cabeçalho do painel.
+            IWebElement BotaoPush = TabelaCabeçalho.FindElement(By.XPath("//*[@id=\"tabPush_lbl\"]"));
+            BotaoPush.Click();
+            Console.WriteLine("Entrei no PUSH.");
+            ActionsPJE.AguardarPje("Baixo");
+
+
+
+
+            string IFRAMEPUSH = "https://tjrj.pje.jus.br/1g/Push/listView.seam?iframe=true";
+            //redirecionando para a tela DO PUSH
+            driver.Navigate().GoToUrl(IFRAMEPUSH);
+            ActionsPJE.AguardarPje("Baixo");
+
+            return driver;
         }
 
     }

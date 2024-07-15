@@ -139,9 +139,9 @@ namespace Pje_WebScrapping.Actions.Push
                         Console.WriteLine("Iniciando movimentação processual:");
                         SalvarMovimentacaoProcessual(driver, ProcessoPushInicial);
 
-                        //Console.WriteLine("Iniciando Detalhes TOPO:");
+                        Console.WriteLine("Iniciando Detalhes TOPO:");
                         //leitura do topo do processo
-                        //MovimentacaoProcessualDetalhesPush(driver, ProcessoPushInicial);
+                        MovimentacaoProcessualDetalhesPush(driver, ProcessoPushInicial);
 
 
 
@@ -957,47 +957,9 @@ namespace Pje_WebScrapping.Actions.Push
             //Console.WriteLine(LocalizaProcessoComId.CodPJEC);
             Cliente ClienteASerFormado = new();
 
-            //if (LocalizaProcessoComId != null)
-            //{
-            //    Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");
-            //    ClienteASerFormado = new()
-            //    {
-            //        EnderecoId = null,
-            //        Nome = ProcessoEntidadeRetornado.Cliente,
-            //        Cpf = ProcessoEntidadeRetornado.ClienteCPF,
-            //        NomeMae = null,
-            //        Rg = null,
-            //        ComprovanteDeResidencia = null,
-            //        Cnh = null,
-            //        ContratoSocialCliente = null,
-            //        Cnpj = null,
-            //        CertificadoReservista = null,
-            //        ProcuracaoRepresentacaoLegal = null,
-            //        PisPasep = null,
-            //        CodClt = null,
-            //        NIS = null,
-            //        Genero = null,
-            //        DataNascimento = null,
-            //        Ocupacao = null,
-            //        Renda = null,
-            //        Escolaridade = null,
-            //        Nacionalidade = null,
-            //        EstadoCivil = null,
-            //        Banco = null,
-            //        AgenciaBancaria = null,
-            //        ContaCorrente = null,
-            //        Telefone = null,
-            //        Contato = null,
-            //        Email = null,
-            //        Tipo = null,
-            //        ReuAutor = null,
-            //        DataCadastro = DateTime.Now,
-            //        CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
-            //        DataAtualizacao = DateTime.Now,
-            //        AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
-            //    };
-            //}
-
+            if (LocalizaProcessoComId != null)
+            {
+                Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");
                 ClienteASerFormado = new()
                 {
                     EnderecoId = null,
@@ -1034,6 +996,44 @@ namespace Pje_WebScrapping.Actions.Push
                     DataAtualizacao = DateTime.Now,
                     AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
                 };
+            }
+
+            //ClienteASerFormado = new()
+            //    {
+            //        EnderecoId = null,
+            //        Nome = ProcessoEntidadeRetornado.Cliente,
+            //        Cpf = ProcessoEntidadeRetornado.ClienteCPF,
+            //        NomeMae = null,
+            //        Rg = null,
+            //        ComprovanteDeResidencia = null,
+            //        Cnh = null,
+            //        ContratoSocialCliente = null,
+            //        Cnpj = null,
+            //        CertificadoReservista = null,
+            //        ProcuracaoRepresentacaoLegal = null,
+            //        PisPasep = null,
+            //        CodClt = null,
+            //        NIS = null,
+            //        Genero = null,
+            //        DataNascimento = null,
+            //        Ocupacao = null,
+            //        Renda = null,
+            //        Escolaridade = null,
+            //        Nacionalidade = null,
+            //        EstadoCivil = null,
+            //        Banco = null,
+            //        AgenciaBancaria = null,
+            //        ContaCorrente = null,
+            //        Telefone = null,
+            //        Contato = null,
+            //        Email = null,
+            //        Tipo = null,
+            //        ReuAutor = null,
+            //        DataCadastro = DateTime.Now,
+            //        CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+            //        DataAtualizacao = DateTime.Now,
+            //        AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+            //    };
             ConnectDB.InserirCliente(ClienteASerFormado);
             //inserir cliente antes e botar processoentidaderetornado para receber clienteid
             //precisa fazer o LERCLIENTE para devolver corretamente o id da chave estrangeira
@@ -1047,7 +1047,7 @@ namespace Pje_WebScrapping.Actions.Push
 
             Polo PoloAtivoDTO = new Polo
             {
-                ProcessoId = ProcessoEntidadeRetornado.Id,
+                ProcessoId = LocalizaProcessoComId.Id,
                 NomeParte = ProcessoEntidadeRetornado.PoloAtivo.NomeParte,
                 CPFCNPJParte = ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte,
                 NomeAdvogado = ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado,
@@ -1061,7 +1061,7 @@ namespace Pje_WebScrapping.Actions.Push
             };
             Polo PoloPassivoDTO = new Polo
             {
-                ProcessoId = ProcessoEntidadeRetornado.Id,
+                ProcessoId = LocalizaProcessoComId.Id,
                 NomeParte = ProcessoEntidadeRetornado.PoloPassivo.NomeParte,
                 CPFCNPJParte = ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte,
                 NomeAdvogado = ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado,

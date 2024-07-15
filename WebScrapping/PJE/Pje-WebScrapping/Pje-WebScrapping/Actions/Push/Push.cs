@@ -957,6 +957,9 @@ namespace Pje_WebScrapping.Actions.Push
             //Console.WriteLine(LocalizaProcessoComId.CodPJEC);
             Cliente ClienteASerFormado = new();
 
+            Console.WriteLine("\n\nTESTANDO LOCALIZAPROCESSOCOMID:");
+            SalvarDados.MostraDadosProcesso(LocalizaProcessoComId);
+            Console.WriteLine("\n\n");
             if (LocalizaProcessoComId != null)
             {
                 Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");

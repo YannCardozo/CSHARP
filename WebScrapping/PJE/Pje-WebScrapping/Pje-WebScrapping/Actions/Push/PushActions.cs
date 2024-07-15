@@ -1,4 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using Justo.Entities.Entidades;
+using OpenQA.Selenium;
+using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,5 +103,28 @@ namespace Pje_WebScrapping.Actions.Push
                 throw new FormatException("Formato de data inválido");
             }
         }
+
+        public static void MostraDadosProcesso(Processo ProcessoEntidadeParaImprimir)
+        {
+            foreach (var propriedade in typeof(Processo).GetProperties())
+            {
+                //listando atributos do objeto
+
+                var valor = propriedade.GetValue(ProcessoEntidadeParaImprimir);
+                Console.WriteLine($"{propriedade.Name}: {valor}");
+
+            }
+        }
+        public static void MostraDadosCliente(Cliente ClienteEntidadeParaImprimir)
+        {
+            Console.WriteLine($"Lendo CLIENTE: {ClienteEntidadeParaImprimir.Cpf}\n\n");
+            foreach (var propriedade in typeof(Cliente).GetProperties())
+            {
+                var valor = propriedade.GetValue(ClienteEntidadeParaImprimir);
+                Console.WriteLine($"{propriedade.Name}: {valor}");
+
+            }
+        }
+
     }
 }

@@ -555,7 +555,7 @@ namespace Pje_WebScrapping.DataStorage
 
         public static void AtualizarProcessoInicial(Processo ProcessoInicial)
         {
-            if (!string.IsNullOrEmpty(ProcessoInicial.CodPJECAcao))
+            if (!string.IsNullOrEmpty(ProcessoInicial.CodPJEC))
             {
                 string StringConexao = ConnectDB.EstabelecerConexao();
                 using (var ConexaoAoBanco = new SqlConnection(StringConexao))
@@ -565,7 +565,6 @@ namespace Pje_WebScrapping.DataStorage
                     SET
                         Nome = @Nome,
                         CodPJEC = @CodPJEC,
-                        PJECAcao = @CodPJECAcao,
                         AdvogadoId = @AdvogadoId,
                         ClienteId = @ClienteId,
                         ObsProcesso = @ObsProcesso,
@@ -594,8 +593,7 @@ namespace Pje_WebScrapping.DataStorage
                         CadastradoPor = @CadastradoPor,
                         DataAtualizacao = @DataAtualizacao,
                         AtualizadoPor = @AtualizadoPor
-                    WHERE CodPJEC = @CodPJEC
-                    and PJECAcao = @CodPJECAcao";
+                    WHERE CodPJEC = @CodPJEC";
 
                     using (var ComandoAoBanco = new SqlCommand(QueryAtualizada, ConexaoAoBanco))
                     {
@@ -607,7 +605,6 @@ namespace Pje_WebScrapping.DataStorage
                             ComandoAoBanco.Parameters.AddWithValue("@ClienteId", (object)ProcessoInicial.ClienteId ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)ProcessoInicial.CodPJEC ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@CodPJECAcao", (object)ProcessoInicial.CodPJECAcao ?? DBNull.Value);
 
                             DateTime? dataFim = ActionsPJE.DateOnlyToDateTime(ProcessoInicial.DataFim);
                             if (dataFim == null || dataFim < SqlDateTime.MinValue.Value)

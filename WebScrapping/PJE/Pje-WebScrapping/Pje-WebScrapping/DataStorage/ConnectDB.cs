@@ -342,6 +342,85 @@ namespace Pje_WebScrapping.DataStorage
 
         //vai precisar de um método para verificar o CodPJECAcao pois poderão ter varios diferentes para o mesmo processo.
         //como intimação, procuração e etc e eetc
+        //public static Processo LerProcesso(string codPJEC)
+        //{
+        //    if (!string.IsNullOrEmpty(codPJEC))
+        //    {
+        //        string StringConexao = ConnectDB.EstabelecerConexao();
+        //        using (var ConexaoAoBanco = new SqlConnection(StringConexao))
+        //        {
+        //            string ConsultaQueryProcesso = @"SELECT * FROM Processo WHERE CodPJEC = @codPJEC";
+        //            using (var ComandoAoBanco = new SqlCommand(ConsultaQueryProcesso, ConexaoAoBanco))
+        //            {
+        //                ComandoAoBanco.Parameters.AddWithValue("@codPJEC", codPJEC);
+
+        //                try
+        //                {
+        //                    ConexaoAoBanco.Open();
+        //                    using (var reader = ComandoAoBanco.ExecuteReader())
+        //                    {
+        //                        if (reader.Read())
+        //                        {
+        //                            Console.WriteLine("Processo encontrado.");
+        //                            var ProcessoEncontrado = new Processo
+        //                            {
+        //                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+        //                                Nome = reader.GetString(reader.GetOrdinal("Nome")),
+        //                                CodPJEC = reader.GetString(reader.GetOrdinal("CodPJEC")),
+        //                                CodPJECAcao = reader.GetString(reader.GetOrdinal("PJECAcao")),
+        //                                ObsProcesso = reader.IsDBNull(reader.GetOrdinal("ObsProcesso")) ? null : reader.GetString(reader.GetOrdinal("ObsProcesso")),
+        //                                DataFim_DATETIME = SafeGetDateTime(reader, "DataFim"),
+        //                                MeioDeComunicacao = reader.IsDBNull(reader.GetOrdinal("MeioDeComunicacao")) ? null : reader.GetString(reader.GetOrdinal("MeioDeComunicacao")),
+        //                                MeioDeComunicacaoData_DATETIME = SafeGetDateTime(reader, "MeioDeComunicacaoData"),
+        //                                Prazo = reader.IsDBNull(reader.GetOrdinal("Prazo")) ? null : reader.GetString(reader.GetOrdinal("Prazo")),
+        //                                ProximoPrazo = reader.IsDBNull(reader.GetOrdinal("ProximoPrazo")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazo")),
+        //                                ProximoPrazoData = reader.IsDBNull(reader.GetOrdinal("ProximoPrazoData")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazoData")),
+        //                                UltimaMovimentacaoProcessual = reader.IsDBNull(reader.GetOrdinal("UltimaMovimentacaoProcessual")) ? null : reader.GetString(reader.GetOrdinal("UltimaMovimentacaoProcessual")),
+        //                                UltimaMovimentacaoProcessualData_DATETIME = SafeGetDateTime(reader, "UltimaMovimentacaoProcessualData"),
+        //                                AdvogadaCiente = reader.IsDBNull(reader.GetOrdinal("AdvogadaCiente")) ? null : reader.GetString(reader.GetOrdinal("AdvogadaCiente")),
+        //                                Comarca = reader.IsDBNull(reader.GetOrdinal("Comarca")) ? null : reader.GetString(reader.GetOrdinal("Comarca")),
+        //                                OrgaoJulgador = reader.IsDBNull(reader.GetOrdinal("OrgaoJulgador")) ? null : reader.GetString(reader.GetOrdinal("OrgaoJulgador")),
+        //                                Competencia = reader.IsDBNull(reader.GetOrdinal("Competencia")) ? null : reader.GetString(reader.GetOrdinal("Competencia")),
+        //                                MotivosProcesso = reader.IsDBNull(reader.GetOrdinal("MotivosProcesso")) ? null : reader.GetString(reader.GetOrdinal("MotivosProcesso")),
+        //                                SegredoJustica = reader.IsDBNull(reader.GetOrdinal("SegredoJustica")) ? null : reader.GetString(reader.GetOrdinal("SegredoJustica")),
+        //                                JusGratis = reader.IsDBNull(reader.GetOrdinal("JusGratis")) ? null : reader.GetString(reader.GetOrdinal("JusGratis")),
+        //                                TutelaLiminar = reader.IsDBNull(reader.GetOrdinal("TutelaLiminar")) ? null : reader.GetString(reader.GetOrdinal("TutelaLiminar")),
+        //                                Prioridade = reader.IsDBNull(reader.GetOrdinal("Prioridade")) ? null : reader.GetString(reader.GetOrdinal("Prioridade")),
+        //                                Autuacao = reader.IsDBNull(reader.GetOrdinal("Autuacao")) ? null : reader.GetString(reader.GetOrdinal("Autuacao")),
+        //                                TituloProcesso = reader.IsDBNull(reader.GetOrdinal("TituloProcesso")) ? null : reader.GetString(reader.GetOrdinal("TituloProcesso")),
+        //                                PartesProcesso = reader.IsDBNull(reader.GetOrdinal("PartesProcesso")) ? null : reader.GetString(reader.GetOrdinal("PartesProcesso")),
+        //                                DataAbertura = SafeGetDateOnly(reader, "DataAbertura"),
+        //                                ClienteId = reader.IsDBNull(reader.GetOrdinal("ClienteId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ClienteId")),
+        //                                AdvogadoId = reader.IsDBNull(reader.GetOrdinal("AdvogadoId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("AdvogadoId"))
+        //                            };
+        //                            return ProcessoEncontrado;
+        //                        }
+        //                        else
+        //                        {
+        //                            Console.WriteLine("Processo não encontrado.");
+        //                            return null;
+        //                        }
+        //                    }
+        //                }
+        //                catch (SqlException ex)
+        //                {
+        //                    Console.WriteLine($"Erro na leitura de ID do processo: {codPJEC} - {ex.Message}");
+        //                    return null;
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Console.WriteLine($"Erro ao ler processo: {ex.Message}");
+        //                    return null;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("CODPJEC não preenchido ou está inválido.");
+        //        return null;
+        //    }
+        //}
         public static Processo LerProcesso(string codPJEC)
         {
             if (!string.IsNullOrEmpty(codPJEC))
@@ -362,37 +441,89 @@ namespace Pje_WebScrapping.DataStorage
                                 if (reader.Read())
                                 {
                                     Console.WriteLine("Processo encontrado.");
-                                    var ProcessoEncontrado = new Processo
-                                    {
-                                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                        Nome = reader.GetString(reader.GetOrdinal("Nome")),
-                                        CodPJEC = reader.GetString(reader.GetOrdinal("CodPJEC")),
-                                        CodPJECAcao = reader.GetString(reader.GetOrdinal("PJECAcao")),
-                                        ObsProcesso = reader.IsDBNull(reader.GetOrdinal("ObsProcesso")) ? null : reader.GetString(reader.GetOrdinal("ObsProcesso")),
-                                        DataFim_DATETIME = SafeGetDateTime(reader, "DataFim"),
-                                        MeioDeComunicacao = reader.IsDBNull(reader.GetOrdinal("MeioDeComunicacao")) ? null : reader.GetString(reader.GetOrdinal("MeioDeComunicacao")),
-                                        MeioDeComunicacaoData_DATETIME = SafeGetDateTime(reader, "MeioDeComunicacaoData"),
-                                        Prazo = reader.IsDBNull(reader.GetOrdinal("Prazo")) ? null : reader.GetString(reader.GetOrdinal("Prazo")),
-                                        ProximoPrazo = reader.IsDBNull(reader.GetOrdinal("ProximoPrazo")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazo")),
-                                        ProximoPrazoData = reader.IsDBNull(reader.GetOrdinal("ProximoPrazoData")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazoData")),
-                                        UltimaMovimentacaoProcessual = reader.IsDBNull(reader.GetOrdinal("UltimaMovimentacaoProcessual")) ? null : reader.GetString(reader.GetOrdinal("UltimaMovimentacaoProcessual")),
-                                        UltimaMovimentacaoProcessualData_DATETIME = SafeGetDateTime(reader, "UltimaMovimentacaoProcessualData"),
-                                        AdvogadaCiente = reader.IsDBNull(reader.GetOrdinal("AdvogadaCiente")) ? null : reader.GetString(reader.GetOrdinal("AdvogadaCiente")),
-                                        Comarca = reader.IsDBNull(reader.GetOrdinal("Comarca")) ? null : reader.GetString(reader.GetOrdinal("Comarca")),
-                                        OrgaoJulgador = reader.IsDBNull(reader.GetOrdinal("OrgaoJulgador")) ? null : reader.GetString(reader.GetOrdinal("OrgaoJulgador")),
-                                        Competencia = reader.IsDBNull(reader.GetOrdinal("Competencia")) ? null : reader.GetString(reader.GetOrdinal("Competencia")),
-                                        MotivosProcesso = reader.IsDBNull(reader.GetOrdinal("MotivosProcesso")) ? null : reader.GetString(reader.GetOrdinal("MotivosProcesso")),
-                                        SegredoJustica = reader.IsDBNull(reader.GetOrdinal("SegredoJustica")) ? null : reader.GetString(reader.GetOrdinal("SegredoJustica")),
-                                        JusGratis = reader.IsDBNull(reader.GetOrdinal("JusGratis")) ? null : reader.GetString(reader.GetOrdinal("JusGratis")),
-                                        TutelaLiminar = reader.IsDBNull(reader.GetOrdinal("TutelaLiminar")) ? null : reader.GetString(reader.GetOrdinal("TutelaLiminar")),
-                                        Prioridade = reader.IsDBNull(reader.GetOrdinal("Prioridade")) ? null : reader.GetString(reader.GetOrdinal("Prioridade")),
-                                        Autuacao = reader.IsDBNull(reader.GetOrdinal("Autuacao")) ? null : reader.GetString(reader.GetOrdinal("Autuacao")),
-                                        TituloProcesso = reader.IsDBNull(reader.GetOrdinal("TituloProcesso")) ? null : reader.GetString(reader.GetOrdinal("TituloProcesso")),
-                                        PartesProcesso = reader.IsDBNull(reader.GetOrdinal("PartesProcesso")) ? null : reader.GetString(reader.GetOrdinal("PartesProcesso")),
-                                        DataAbertura = SafeGetDateOnly(reader, "DataAbertura"),
-                                        ClienteId = reader.IsDBNull(reader.GetOrdinal("ClienteId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ClienteId")),
-                                        AdvogadoId = reader.IsDBNull(reader.GetOrdinal("AdvogadoId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("AdvogadoId"))
-                                    };
+                                    var ProcessoEncontrado = new Processo();
+
+                                    try { ProcessoEncontrado.Id = reader.GetInt32(reader.GetOrdinal("Id")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'Id': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.Nome = reader.GetString(reader.GetOrdinal("Nome")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'Nome': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.CodPJEC = reader.GetString(reader.GetOrdinal("CodPJEC")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'CodPJEC': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.ObsProcesso = reader.IsDBNull(reader.GetOrdinal("ObsProcesso")) ? null : reader.GetString(reader.GetOrdinal("ObsProcesso")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'ObsProcesso': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.DataFim_DATETIME = SafeGetDateTime(reader, "DataFim"); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'DataFim': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.MeioDeComunicacao = reader.IsDBNull(reader.GetOrdinal("MeioDeComunicacao")) ? null : reader.GetString(reader.GetOrdinal("MeioDeComunicacao")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'MeioDeComunicacao': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.MeioDeComunicacaoData_DATETIME = SafeGetDateTime(reader, "MeioDeComunicacaoData"); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'MeioDeComunicacaoData': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.Prazo = reader.IsDBNull(reader.GetOrdinal("Prazo")) ? null : reader.GetString(reader.GetOrdinal("Prazo")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'Prazo': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.ProximoPrazo = reader.IsDBNull(reader.GetOrdinal("ProximoPrazo")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazo")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'ProximoPrazo': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.ProximoPrazoData = reader.IsDBNull(reader.GetOrdinal("ProximoPrazoData")) ? null : reader.GetString(reader.GetOrdinal("ProximoPrazoData")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'ProximoPrazoData': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.UltimaMovimentacaoProcessual = reader.IsDBNull(reader.GetOrdinal("UltimaMovimentacaoProcessual")) ? null : reader.GetString(reader.GetOrdinal("UltimaMovimentacaoProcessual")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'UltimaMovimentacaoProcessual': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.UltimaMovimentacaoProcessualData_DATETIME = SafeGetDateTime(reader, "UltimaMovimentacaoProcessualData"); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'UltimaMovimentacaoProcessualData': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.AdvogadaCiente = reader.IsDBNull(reader.GetOrdinal("AdvogadaCiente")) ? null : reader.GetString(reader.GetOrdinal("AdvogadaCiente")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'AdvogadaCiente': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.Comarca = reader.IsDBNull(reader.GetOrdinal("Comarca")) ? null : reader.GetString(reader.GetOrdinal("Comarca")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'Comarca': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.OrgaoJulgador = reader.IsDBNull(reader.GetOrdinal("OrgaoJulgador")) ? null : reader.GetString(reader.GetOrdinal("OrgaoJulgador")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'OrgaoJulgador': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.Competencia = reader.IsDBNull(reader.GetOrdinal("Competencia")) ? null : reader.GetString(reader.GetOrdinal("Competencia")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'Competencia': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.MotivosProcesso = reader.IsDBNull(reader.GetOrdinal("MotivosProcesso")) ? null : reader.GetString(reader.GetOrdinal("MotivosProcesso")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'MotivosProcesso': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.SegredoJustica = reader.IsDBNull(reader.GetOrdinal("SegredoJustica")) ? null : reader.GetString(reader.GetOrdinal("SegredoJustica")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'SegredoJustica': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.JusGratis = reader.IsDBNull(reader.GetOrdinal("JusGratis")) ? null : reader.GetString(reader.GetOrdinal("JusGratis")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'JusGratis': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.TutelaLiminar = reader.IsDBNull(reader.GetOrdinal("TutelaLiminar")) ? null : reader.GetString(reader.GetOrdinal("TutelaLiminar")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'TutelaLiminar': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.Prioridade = reader.IsDBNull(reader.GetOrdinal("Prioridade")) ? null : reader.GetString(reader.GetOrdinal("Prioridade")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'Prioridade': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.Autuacao = reader.IsDBNull(reader.GetOrdinal("Autuacao")) ? null : reader.GetString(reader.GetOrdinal("Autuacao")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'Autuacao': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.TituloProcesso = reader.IsDBNull(reader.GetOrdinal("TituloProcesso")) ? null : reader.GetString(reader.GetOrdinal("TituloProcesso")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'TituloProcesso': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.PartesProcesso = reader.IsDBNull(reader.GetOrdinal("PartesProcesso")) ? null : reader.GetString(reader.GetOrdinal("PartesProcesso")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'PartesProcesso': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.DataAbertura = SafeGetDateOnly(reader, "DataAbertura"); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'DataAbertura': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.ClienteId = reader.IsDBNull(reader.GetOrdinal("ClienteId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ClienteId")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'ClienteId': {ex.Message}"); }
+
+                                    try { ProcessoEncontrado.AdvogadoId = reader.IsDBNull(reader.GetOrdinal("AdvogadoId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("AdvogadoId")); }
+                                    catch (Exception ex) { Console.WriteLine($"Erro ao ler coluna 'AdvogadoId': {ex.Message}"); }
+
                                     return ProcessoEncontrado;
                                 }
                                 else

@@ -85,7 +85,7 @@ namespace Pje_WebScrapping.Actions.Push
 
 
 
-
+                    
                     PushMovimentacaoProcessual(PushWebDriver, Janela_Principal, ProcessoFormadoPush);
                 }
                 else
@@ -135,10 +135,11 @@ namespace Pje_WebScrapping.Actions.Push
 
                         //precisa colocar aqui movimentacaoprocessual antes de ir para detalhes
 
-                        
 
+                        Console.WriteLine("Iniciando movimentação processual:");
                         SalvarMovimentacaoProcessual(driver, ProcessoPushInicial);
 
+                        //Console.WriteLine("Iniciando Detalhes TOPO:");
                         //leitura do topo do processo
                         //MovimentacaoProcessualDetalhesPush(driver, ProcessoPushInicial);
 

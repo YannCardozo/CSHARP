@@ -27,7 +27,7 @@ namespace Pje_WebScrapping.Models
         public string? Prazo { get; set; }
         public string? ProximoPrazo { get; set; }
         public string? ProximoPrazoData { get; set; }
-        public string? CodPJEC { get; set; }
+        public string CodPJEC { get; set; }
         public string? CodPJECAcao { get; set; }
         public string? UltimaMovimentacaoProcessual { get; set; }
         //datetime UltimaMovimentacaoProcessualData

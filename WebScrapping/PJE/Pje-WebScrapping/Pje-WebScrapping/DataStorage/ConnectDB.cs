@@ -6,6 +6,7 @@ using Pje_WebScrapping.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace Pje_WebScrapping.DataStorage
             var ProcessosDoBanco = ConnectDB.LerTodosProcessos();
 
             // Verificar se ProcessoInicial.CodPJECAcao já está na lista
-            var processoExistente = ProcessosDoBanco.Any(p => p.CodPJECAcao == ProcessoInicial.CodPJECAcao);
+            var processoExistente = ProcessosDoBanco.Any(p => p.CodPJEC == ProcessoInicial.CodPJEC);
 
             if (processoExistente)
             {
@@ -79,7 +80,7 @@ namespace Pje_WebScrapping.DataStorage
                     @UltimaMovimentacaoProcessual, @UltimaMovimentacaoProcessualData, @AdvogadaCiente, @Comarca,
                     @OrgaoJulgador, @Competencia, @MotivosProcesso, @ValorDaCausa, @SegredoJustica, @JusGratis, @TutelaLiminar,
                     @Prioridade, @Autuacao, @TituloProcesso, @PartesProcesso, @ObsProcesso,
-                    @DataAbertura, @DataFim, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
+                    @DataAberturaDATETIME, @DataFim, @DataCadastro, @CadastradoPor, @DataAtualizacao, @AtualizadoPor)";
 
                     //@AdvogadaOAB, @Cliente, @ClienteCPF , @AdvogadaCPF , @PoloAtivo, @PoloPassivo
                     using (var command = new SqlCommand(insertQuery, connectionBanco))
@@ -134,14 +135,14 @@ namespace Pje_WebScrapping.DataStorage
                             command.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
 
 
-                            DateTime? dataAbertura = ActionsPJE.DateOnlyToDateTime(ProcessoInicial.DataAbertura);
-                            if (dataAbertura == null || dataAbertura < SqlDateTime.MinValue.Value)
-                            {
-                                dataAbertura = SqlDateTime.MinValue.Value;
-                            }
-                            Console.WriteLine($"data abertura: {dataAbertura}");
-                            command.Parameters.AddWithValue("@DataAbertura", (object)dataAbertura ?? DBNull.Value);
-                            command.Parameters.AddWithValue("@DataCadastro", (object)dataAbertura ?? DBNull.Value);
+                            //DateTime? dataAbertura = ActionsPJE.DateOnlyToDateTime(ProcessoInicial.DataAbertura);
+                            //if (dataAbertura == null || dataAbertura < SqlDateTime.MinValue.Value)
+                            //{
+                            //    dataAbertura = SqlDateTime.MinValue.Value;
+                            //}
+                            //Console.WriteLine($"data abertura: {dataAbertura}");
+                            command.Parameters.AddWithValue("@DataAberturaDATETIME", (object)ProcessoInicial.DataAberturaDATETIME ?? DBNull.Value);
+                            command.Parameters.AddWithValue("@DataCadastro", (object)ProcessoInicial.DataAberturaDATETIME ?? DBNull.Value);
 
                             DateTime? dataFim = ActionsPJE.DateOnlyToDateTime(ProcessoInicial.DataFim);
                             if (dataFim == null || dataFim < SqlDateTime.MinValue.Value)
@@ -1165,6 +1166,11 @@ namespace Pje_WebScrapping.DataStorage
                 Console.WriteLine($"Erro ao converter o campo '{columnName}' para DateOnly: {ex.Message}");
                 return DateOnly.FromDateTime(DateTime.MinValue);
             }
+        }
+        public static DateTime? SafeGetDateTime(IDataReader reader, string columnName)
+        {
+            int ordinal = reader.GetOrdinal(columnName);
+            return reader.IsDBNull(ordinal) ? (DateTime?)null : reader.GetDateTime(ordinal);
         }
     }
         //salvar movimentação processual aqui,  fazendo inserts nas respectivas tabelas para isso.

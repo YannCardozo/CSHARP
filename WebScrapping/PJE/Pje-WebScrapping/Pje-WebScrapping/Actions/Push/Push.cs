@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Justo.Entities.Entidades;
+using Microsoft.Win32;
 using OpenQA.Selenium;
 using Pje_WebScrapping.DataStorage;
 using Pje_WebScrapping.Models;
@@ -21,7 +22,7 @@ namespace Pje_WebScrapping.Actions.Push
             //por isso instanciamos o endereço da janela que estamos antes de começar a abrir outros links de outras janelas
             string Janela_Principal = ActionsPJE.RetornarParaJanelaPrincipal(PushWebDriver);
 
-            ActionsPJE.AguardarPje("Baixo");
+            //ActionsPJE.AguardarPje("Baixo");
 
             for(int i = 0; i<10; i++)
             {
@@ -42,13 +43,6 @@ namespace Pje_WebScrapping.Actions.Push
 
                 ActionsPJE.AguardarPje("Baixo");
 
-                for (int i = 0; i < 10; i++)
-                {
-                    ActionsPJE.DescerBarraDeRolagem(PushWebDriver, "j_id169:j_id173");
-                }
-
-
-
                 //instanciando objetos da coluna a receber.
                 //1 processo , 2 data de inclusao , 3 observacao
                 List<IWebElement> TdsDentroDoTr = registro.FindElements(By.TagName("td")).ToList();
@@ -61,11 +55,11 @@ namespace Pje_WebScrapping.Actions.Push
                     var numeroprocesso = TdsDentroDoTr[1].Text;
 
                     // Data de inclusao
-                    var data_inclusao = ETLDataInclusao(TdsDentroDoTr[2].Text);
+                    var data_inclusao = PushActions.ETLDataInclusao(TdsDentroDoTr[2].Text);
 
 
                     //Observacao
-                    var observacao = ETLObservacao(TdsDentroDoTr[3].Text.ToString());
+                    var observacao = PushActions.ETLObservacao(TdsDentroDoTr[3].Text.ToString());
 
                     Console.WriteLine($"nº: {numeroprocesso}; data: {data_inclusao}; observacao: {observacao}");
 
@@ -76,11 +70,23 @@ namespace Pje_WebScrapping.Actions.Push
                         DataAberturaDATETIME = data_inclusao,
                     };
 
+                    //inserindo o PROCESSO INICIAL AGORA, antes de abrir o movimentação processual dele:
+                    ConnectDB.SalvarProcessoInicial(ProcessoFormadoPush);
+                    //Console.WriteLine("teste");
+
+
+
                     //INICIAREMOS MOVIMENTACAO PROCESSUAL AQUI:
                     ActionsPJE.AguardarPje("Baixo");
+                    //clica no botão para ver a movimentação processual
                     BotaoLinkMovimentacaoProcessual[0].Click();
-                    ActionsPJE.AguardarPje("Medio");
-                    PushMovimentacaoProcessual(PushWebDriver, Janela_Principal);
+                    ActionsPJE.AguardarPje("Baixo");
+                    //métiodo pára fazer a extração de movimentação processual
+
+
+
+
+                    PushMovimentacaoProcessual(PushWebDriver, Janela_Principal, ProcessoFormadoPush);
                 }
                 else
                 {
@@ -96,31 +102,7 @@ namespace Pje_WebScrapping.Actions.Push
             return PushWebDriver;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public static void PushMovimentacaoProcessual(IWebDriver driver, string Janela_Principal)
+        public static void PushMovimentacaoProcessual(IWebDriver driver, string Janela_Principal, Processo ProcessoPushInicial)
         {
             foreach (var NOVA_JANELA in driver.WindowHandles)
             {
@@ -134,7 +116,8 @@ namespace Pje_WebScrapping.Actions.Push
                     //aqui abrirá para a janela do processo aberto
                     if (driver.Url.Contains("https://tjrj.pje.jus.br/1g/Processo/ConsultaProcesso/Detalhe/listProcessoCompletoAdvogado.seam"))
                     {
-                        // Você está na janela desejada, execute ações necessárias aqui
+                        PushActions.DescerBarraDeRolagemPUSH(driver, "divTimeLine:divEventosTimeLine");
+
                         Console.WriteLine("Mudei para: " + driver.Title);
                         ActionsPJE.AguardarPje("Baixo");
 
@@ -150,9 +133,14 @@ namespace Pje_WebScrapping.Actions.Push
 
 
 
-                        //SalvarDados.SalvarMovimentacaoProcessual(driver, ProcessoRetornado);
+                        //precisa colocar aqui movimentacaoprocessual antes de ir para detalhes
 
+                        
 
+                        SalvarMovimentacaoProcessual(driver, ProcessoPushInicial);
+
+                        //leitura do topo do processo
+                        //MovimentacaoProcessualDetalhesPush(driver, ProcessoPushInicial);
 
 
 
@@ -199,44 +187,936 @@ namespace Pje_WebScrapping.Actions.Push
 
 
 
-
-
-
-
-
-
-
-
-
-        //Espaço para Extract Transform Load >>>>>
-        public static string ETLObservacao(string ObservacaoSuja)
+        public static void SalvarMovimentacaoProcessual(IWebDriver driver, Processo ProcessoEntidadeRetornado)
         {
-            if (string.IsNullOrEmpty(ObservacaoSuja))
+
+            int ponto_de_parada = 0;
+            //instanciar um novo perfil de advogado e salvar usando o perfil dele no banco?
+            int ContadorDataAberturaProcessual = 0;
+
+
+            //instancia a lista de mediabodybox ( boxes dentro da movimentação processual contendo as atualizações )
+            IList<IWebElement> MediaBodyBoxHistoricoProcessual = new List<IWebElement>();
+            MediaBodyBoxHistoricoProcessual = driver.FindElements(By.ClassName("media-body"));
+
+
+            //instancia a lista de iwebelements contendo a tag <SPAN> que tem os titulos de cada atualizacao dentro da classe mediabodybox
+            IList<IWebElement> TituloMovimentacaoProcessual = new List<IWebElement>();
+            TituloMovimentacaoProcessual = driver.FindElements(By.ClassName("texto-movimento"));
+
+
+            int contatipod = 0;
+            int contaanexos = 0;
+            int ContaTextoTipoM = 0;
+
+
+            //ActionsPJE.AguardarPje("Medio");
+            ActionsPJE.DescerBarraDeRolagem(driver, "divTimeLine:divEventosTimeLine");
+
+            //Objeto contando todos os elementos da tela de movimentação processual
+            IWebElement PaginaMovimentacaoProcessual = driver.FindElement(By.Id("divTimeLine:eventosTimeLineElement"));
+
+
+            // Encontrar todos os elementos filhos do elemento pai
+            IList<IWebElement> filhos = PaginaMovimentacaoProcessual.FindElements(By.XPath(".//*"));
+
+            // Armazenar os elementos filhos em uma lista
+            List<IWebElement> listaDeElementosFilhos = new List<IWebElement>(filhos);
+
+            Console.WriteLine("\n\n\n\n");
+
+            //esta lendo do sentido correto agora
+            listaDeElementosFilhos.Reverse();
+
+
+            // elemento da div totalmente carregada apos descer rolagem
+            // PaginaMovimentacaoProcessual
+
+            IList<IWebElement> ElementosDentroDeMovimentacaoProcessual = PaginaMovimentacaoProcessual.FindElements(By.XPath("./*"));
+
+            //removendo o elemento div-data-rolagem
+            ElementosDentroDeMovimentacaoProcessual = ElementosDentroDeMovimentacaoProcessual.Where(elemento => !elemento.GetAttribute("class").Contains("div-data-rolagem")).ToList();
+            // Itere sobre os elementos filhos
+
+
+
+
+            int posicao = 0;
+            //int posicao_inicial = 1;
+            int posicao_inicial = 0;
+
+
+
+            int Controle_Elementos_Lista = 0;
+            int Controle_Elementos_Lista_Atualizado = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+            int controle_elementos_anteriores_data = 0;
+            int posicao_data = 0;
+
+            int controle_inicio_for_elementos = 0;
+            int proximaPosicaoMediaData = -1;
+            int FimMediaData = 0;
+            int LocalizadorElementoMediaData = 0;
+            int marco_inicial = 0;
+
+
+
+            // Lista para armazenar os elementos irmãos antes de cada "media data"
+            List<List<IWebElement>> ElementosAnteriores = new List<List<IWebElement>>();
+
+
+            //controle_elementos_anteriores_data
+
+            //criando lista para receber elementos invertidos
+            IList<IWebElement> ElementosDentroDeMovimentacaoProcessualINVERTIDO = ElementosDentroDeMovimentacaoProcessual.Where(elemento => !elemento.GetAttribute("class").Contains("div-data-rolagem")).ToList();
+
+
+
+
+
+            //lista destinada aos CONTEUDOS nos casos da classe media tipo-D , que tem varias informações dentro do media box
+            IList<IWebElement> ListaConteudoMovimentoProcessual = new List<IWebElement>();
+
+            string ConteudoTipoD = "";
+
+
+
+            //for para inverter a ordem dos elementos da lista da movimentação processual, colocando em ordem CRONOLÓGICA.
+            for (int i = ElementosDentroDeMovimentacaoProcessual.Count - 1, j = 0; i >= 0; i--, j++)
             {
-                Console.WriteLine("observacao VAZIA");
-                return null;
+                //Console.WriteLine("Elemento: " + ElementosDentroDeMovimentacaoProcessual[i].Text);
+                ElementosDentroDeMovimentacaoProcessualINVERTIDO[j] = ElementosDentroDeMovimentacaoProcessual[i];
             }
 
-            string ObservacaoLIMPA = ObservacaoSuja.Replace("AUTOR: ", "");
-            ObservacaoLIMPA = ObservacaoLIMPA.Replace("RÉU: ", "");
 
-            return ObservacaoLIMPA;
+
+            //instanciando LISTA de objetos que receberão os registros da lista de movimentação processual
+            List<ProcessoAtualizacao> ListaProcessosAtualizados = new List<ProcessoAtualizacao>();
+
+            //esse for faz a leitura dos elementos dentro de movimentacao processual
+            for (int i = 0; i < ElementosDentroDeMovimentacaoProcessualINVERTIDO.Count; i++)
+            {
+
+                //for para localizar a proxima data na lista de elementos e pegar o indice e atrbuir a variavel proximaPosicaoMediaData
+                //que vai entrar no for de indice J
+                for (int z = LocalizadorElementoMediaData; z < ElementosDentroDeMovimentacaoProcessualINVERTIDO.Count; z++)
+                {
+                    if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[z].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessualINVERTIDO[z].GetAttribute("class").Contains("div-data-rolagem"))
+                    {
+                        proximaPosicaoMediaData = z;
+
+                        //Console.WriteLine("Achei a próxima data e ela está em: " + proximaPosicaoMediaData);
+                        break;
+                    }
+                    else
+                    {
+                        proximaPosicaoMediaData = -1;
+                    }
+                }
+                if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[i].GetAttribute("class").Contains("media data") && !ElementosDentroDeMovimentacaoProcessualINVERTIDO[i].GetAttribute("class").Contains("div-data-rolagem"))
+                {
+
+                    //recebe o index da data atual para não se perder
+                    posicao_data = i;
+                    //Console.WriteLine("antes de: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[i].Text);
+
+                    Console.WriteLine("Testando value pos: " + posicao + " e pos inic: " + posicao_inicial + "\n\n");
+                    for (int j = posicao_inicial; j <= proximaPosicaoMediaData; j++)
+                    {
+                        if (proximaPosicaoMediaData == -1)
+                        {
+                            //Console.WriteLine("Acabaram os elementos DATA - break - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+
+                            break;
+                        }
+
+
+                        ProcessoAtualizacao ProcessoAtualizado = new ProcessoAtualizacao();
+                        ProcessoAtualizado.CodPJEC = ProcessoEntidadeRetornado.CodPJEC;
+
+                        if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media data"))
+                        {
+                            Console.WriteLine("Acabaram os elementos DATA - continue - DATA ATUAL: " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+                            ContadorDataAberturaProcessual++;
+                            if (ContadorDataAberturaProcessual == 1)
+                            {
+                                ProcessoEntidadeRetornado.DataAbertura = ActionsPJE.ConverterFormatoData(ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+                            }
+                            // Atribuindo a data convertida à propriedade DataMovimentacao
+
+
+                            continue;
+                        }
+
+                        //inserindo a data para os registros de movimentação processual
+                        if (proximaPosicaoMediaData != -1)
+                        {
+                            string dataString = ElementosDentroDeMovimentacaoProcessualINVERTIDO[proximaPosicaoMediaData].Text;
+
+                            try
+                            {
+                                //DateOnly dataConvertida = ActionsPJE.ConverterFormatoData(dataString);
+                                DateTime dataConvertida = ActionsPJE.ConverterFormatoStringParaDatetime(dataString);
+                                //Console.WriteLine("Data é: " + dataString);
+                                Console.WriteLine("Data é: " + dataConvertida);
+                                ProcessoAtualizado.DataMovimentacao = dataConvertida;
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"erro : {ex.Message}");
+                                Console.WriteLine("teste erro em aquisicao de data processoatualizado SalvarDados");
+                            }
+                        }
+                        if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-D"))
+                        {
+                            //encotrando o TITULO da movimentação processual
+
+                            IWebElement MediaBodyBoxTipoD = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].FindElement(By.ClassName("media-body"));
+
+                            IList<IWebElement> MaisDeUmElementoSpanNoMediaBoxTipoD = MediaBodyBoxTipoD.FindElements(By.ClassName("texto-movimento"));
+
+
+                            IWebElement SpanTextoMovimentacao = MediaBodyBoxTipoD.FindElement(By.TagName("span"));
+                            ProcessoAtualizado.TituloMovimento = SpanTextoMovimentacao.Text;
+
+
+
+                            ListaConteudoMovimentoProcessual = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].FindElements(By.TagName("span")).Skip(1).ToList();
+
+
+                            //montando uma variavel para armazenar toda a lista do 
+                            foreach (var testa in ListaConteudoMovimentoProcessual.Skip(1))
+                            {
+                                ConteudoTipoD += testa.Text + " ";
+                            }
+
+                            //insere o conteúdo da atualizacao para o objeto
+
+                            ProcessoAtualizado.ConteudoAtualizacao = ConteudoTipoD;
+
+
+                            //esvazia a string para a próxima atualização de dados
+                            ConteudoTipoD = string.Empty;
+                        }
+                        else if (ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].GetAttribute("class").Contains("media interno tipo-M"))
+                        {
+                            //encotrando o TITULO da movimentação processual
+                            IWebElement MediaBodyBoxTipoM = ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].FindElement(By.ClassName("media-body"));
+                            IWebElement SpanTextoMovimentacao = MediaBodyBoxTipoM.FindElement(By.ClassName("texto-movimento"));
+
+                            IList<IWebElement> ListaDeSpansNoMediaBodyBox = MediaBodyBoxTipoM.FindElements(By.ClassName("texto-movimento"));
+
+                            ProcessoAtualizado.TituloMovimento = SpanTextoMovimentacao.Text;
+
+                            if (ListaDeSpansNoMediaBodyBox.Count <= 1)
+                            {
+                                ProcessoAtualizado.ConteudoAtualizacao = "Sem Documentos ou Anexos no PJE";
+                            }
+
+                            //ALIMENTAR OS PROCESSOS AQUI
+
+                            //ProcessoAtualizado.TituloMovimento = primeiroSpan.Text;
+
+                        }
+
+
+                        //inserindo a chave estrangeira de processo em processo atualizacao
+
+                        var testeprocesso = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+
+                        if (testeprocesso != null)
+                        {
+                            Console.WriteLine($"Processo encontrado e meu CodPJEC é: {testeprocesso.CodPJEC} meu ID é: {testeprocesso.Id}");
+
+                        }
+
+                        //recebe o ID DIRETAMENTE DO BANCO da chave estrangeira da tabela processo em processoatualizacao
+                        ProcessoAtualizado.ProcessoId = testeprocesso.Id;
+                        ProcessoAtualizado.Nome = "Vazio";
+                        //atualizando entidade base:
+                        ProcessoAtualizado.DataCadastro = DateTime.Now;
+                        ProcessoAtualizado.CadastradoPor = 5;
+                        ProcessoAtualizado.DataAtualizacao = DateTime.Now;
+                        ProcessoAtualizado.AtualizadoPor = 5;
+                        ListaProcessosAtualizados.Add(ProcessoAtualizado);
+
+                        //5 será o numero para o webscrapping
+
+                        //foreach (var propriedade in typeof(Processo).GetProperties())
+                        //{
+                        //    var valor = propriedade.GetValue(testeprocesso);
+                        //    Console.WriteLine($"{propriedade.Name}: {valor}");
+
+
+                        //}
+                        //Console.WriteLine("teste");
+
+
+                        //insere o objeto na lista
+
+
+                        //ConnectDB.SalvarProcessoMovimentacaoProcessual(ListaProcessosAtualizados);
+
+
+
+                        //reinicia a lista após terminar ela
+                        //ListaProcessosAtualizados.Clear();
+
+
+                        //realizar de para dos objetos aqui
+                        //implementar parametro em salvar movimentacao processual ( método ) para que dê o objeto processo
+                        //para obter seu numero de processo e outros dados caso necessário
+
+
+
+
+
+
+                        Console.WriteLine("Elemento: " + j + " :  " + ElementosDentroDeMovimentacaoProcessualINVERTIDO[j].Text);
+
+                        //Console.WriteLine("\n\n\n\n Lendo Processo atualizado");
+
+                        //foreach (var propriedade in typeof(ProcessoAtualizacao).GetProperties())
+                        //{
+                        //    var valor = propriedade.GetValue(ProcessoAtualizado);
+                        //    Console.WriteLine($"{propriedade.Name}: {valor}");
+
+
+                        //}
+
+                        //Console.WriteLine("Acabei de ler: " + ProcessoAtualizado.CodPJEC + " atualizados agora!");
+
+                    }
+                    posicao_inicial = proximaPosicaoMediaData;
+                }
+
+                posicao++;
+                LocalizadorElementoMediaData++;
+
+                // Verifica se é o último elemento
+                if (i == ElementosDentroDeMovimentacaoProcessualINVERTIDO.Count - 1)
+                {
+                    ConnectDB.SalvarProcessoMovimentacaoProcessual(ListaProcessosAtualizados);
+                }
+
+                //for para verificar as proximas elementos datas no vetor
+                if (proximaPosicaoMediaData == -1)
+                {
+                    Console.WriteLine("Acabaram os elementos DATA ");
+                    break;
+                }
+            }
+            //ActionsPJE.EncerrarConsole();
+
+            //ActionsPJE.EncerrarConsole();
+
+            //testando a lista de movimentacao processual
+
+
+            Console.WriteLine("\n\n\n\n");
+
+            //Console.WriteLine("Encerrei");
+            //ActionsPJE.EncerrarConsole();
+
+            //ActionsPJE.EncerrarConsole();
         }
 
-        public static DateTime ETLDataInclusao(string data_inclusao_string)
-        {
-            DateTime data_inclusao;
-            if (DateTime.TryParseExact(data_inclusao_string, "dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out data_inclusao))
-            {
-                return data_inclusao;
-            }
-            else
-            {
-                // Tratamento de erro, caso a conversão falhe
-                throw new FormatException("Formato de data inválido");
-            }
-        }
 
+
+
+            //método que faz a leitura do TOPO do processo, onde constam as informações dos processos.
+            public static void MovimentacaoProcessualDetalhesPush(IWebDriver driver, Processo ProcessoEntidadeRetornado)
+            {
+            
+            IWebElement LinkDetalhesMovimentacaoProcessual = driver.FindElement(By.ClassName("titulo-topo"));
+
+            //aqui abre o menu de detalhes ( acima da movimentacao processual )
+            LinkDetalhesMovimentacaoProcessual.Click();
+            ActionsPJE.AguardarPje("Baixo");
+            IWebElement Detalhes = driver.FindElement(By.Id("maisDetalhes"));
+
+            //POLO ATIVO
+
+            IWebElement PoloAtivo = driver.FindElement(By.Id("poloAtivo"));
+            IList<IWebElement> ElementosPoloAtivo = PoloAtivo.FindElements(By.TagName("span"));
+
+            List<string> ElementosPoloAtivoUNICOS = new List<string>();
+
+            //Polo Passivo
+
+            IWebElement PoloPassivo = driver.FindElement(By.Id("poloPassivo"));
+            IList<IWebElement> ElementosPoloPassivo = PoloPassivo.FindElements(By.TagName("span"));
+
+            List<string> ElementosPoloPassivoUNICOS = new List<string>();
+
+            //fazendo uma lista de elementos do polo ativo sem DUPLICATAS
+
+            foreach (var elemento in ElementosPoloAtivo)
+            {
+                if (!ElementosPoloAtivoUNICOS.Contains(elemento.Text))
+                {
+                    ElementosPoloAtivoUNICOS.Add(elemento.Text);
+                }
+            }
+
+            foreach (var elemento in ElementosPoloPassivo)
+            {
+                if (!ElementosPoloPassivoUNICOS.Contains(elemento.Text))
+                {
+                    ElementosPoloPassivoUNICOS.Add(elemento.Text);
+                }
+            }
+
+            IList<IWebElement> ElementosDentroDeDetalhes = Detalhes.FindElements(By.TagName("dt"));
+
+
+            //detalhes aba lateral esquerda
+            for (int zelta = 0; zelta < ElementosDentroDeDetalhes.Count; zelta++)
+            {
+                // Extrai o texto de <dt> e <dd> correspondente
+
+                //tag do conteudo
+                string dtText = ElementosDentroDeDetalhes[zelta].Text;
+
+                //conteudo 
+                string ddText = ElementosDentroDeDetalhes[zelta].FindElement(By.XPath("./following-sibling::dd")).Text;
+
+                if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Assunto")
+                {
+                    ProcessoEntidadeRetornado.MotivosProcesso = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Competência")
+                {
+                    ProcessoEntidadeRetornado.Competencia = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Órgão julgador")
+                {
+                    ProcessoEntidadeRetornado.OrgaoJulgador = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Valor da causa")
+                {
+                    ProcessoEntidadeRetornado.ValorCausa = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Segredo de justiça?")
+                {
+                    ProcessoEntidadeRetornado.SegredoJustica = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Justiça gratuita?")
+                {
+                    ProcessoEntidadeRetornado.JusGratis = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Tutela/liminar?")
+                {
+                    ProcessoEntidadeRetornado.TutelaLiminar = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Prioridade?")
+                {
+                    ProcessoEntidadeRetornado.Prioridade = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Autuação")
+                {
+                    ProcessoEntidadeRetornado.Autuacao = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+                else if (((!string.IsNullOrEmpty(ddText) || !string.IsNullOrEmpty(dtText)) && !string.IsNullOrEmpty(dtText)) && dtText == "Jurisdição")
+                {
+                    ProcessoEntidadeRetornado.Comarca = ddText;
+                    Console.WriteLine($"{dtText}: {ddText}");
+                }
+
+
+
+                // Imprime o resultado
+                //Console.WriteLine($"{dtText}: {ddText}");
+            }
+
+
+            //verificando elementos do polo ativo unico
+            string NomePartePolo = "";
+            string ParteCpfPolo = "";
+            ProcessoEntidadeRetornado.PoloAtivo = new();
+            foreach (var DentroPoloAtivo in ElementosPoloAtivoUNICOS)
+            {
+                if (ProcessoEntidadeRetornado.PoloAtivo == null)
+                {
+                    ProcessoEntidadeRetornado.PoloAtivo = new Polo(); // ou qualquer método de inicialização apropriado
+                }
+                if (DentroPoloAtivo.Contains("(AUTOR)"))
+                {
+                    Console.WriteLine($"Autor é : {DentroPoloAtivo}");
+                    if (DentroPoloAtivo.Contains("CNPJ"))
+                    {
+                        var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloAtivo).Trim();
+                        var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PJ";
+                        ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
+                        ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
+                        if (!string.IsNullOrEmpty(RazaoSocial))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
+                        }
+                        if (!string.IsNullOrEmpty(cnpjParte))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
+                        }
+                    }
+                    else
+                    {
+                        NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                        ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PF";
+                        if (!string.IsNullOrEmpty(NomePartePolo))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.NomeParte = NomePartePolo;
+                        }
+                        if (!string.IsNullOrEmpty(ParteCpfPolo))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = ParteCpfPolo;
+                        }
+                    }
+
+                }
+                else if (DentroPoloAtivo.Contains("(ADVOGADO)"))
+                {
+                    Console.WriteLine($"Adv é : {DentroPoloAtivo}");
+                    var nomeAdvogado = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                    var oabAdvogado = ActionsPJE.ExtrairOABDeDetalhes(DentroPoloAtivo).Trim();
+                    var cpfAdvogado = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
+
+
+                    //dados da natali ADV
+                    if ((cpfAdvogado == "152.489.457-55" || oabAdvogado == "RJ253001") && (nomeAdvogado == "NATALI CORDEIRO MARQUES"))
+                    {
+                        ProcessoEntidadeRetornado.ClienteCPF = ParteCpfPolo;
+                        ProcessoEntidadeRetornado.Cliente = NomePartePolo;
+                        ProcessoEntidadeRetornado.Advogada = nomeAdvogado;
+                        ProcessoEntidadeRetornado.AdvogadaOAB = oabAdvogado;
+                        ProcessoEntidadeRetornado.AdvogadaCPF = cpfAdvogado;
+                    }
+
+
+
+                    if (!string.IsNullOrEmpty(nomeAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado = nomeAdvogado;
+                    }
+                    if (!string.IsNullOrEmpty(oabAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.OAB = oabAdvogado;
+                    }
+                    if (!string.IsNullOrEmpty(cpfAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado = cpfAdvogado;
+                    }
+                }
+                else if (DentroPoloAtivo.Contains("(RÉU)"))
+                {
+                    Console.WriteLine($"Réu é : {DentroPoloAtivo}");
+                    if (DentroPoloAtivo.Contains("CNPJ"))
+                    {
+
+                        var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloAtivo).Trim();
+                        var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PJ";
+                        ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
+                        ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
+                        if (!string.IsNullOrEmpty(RazaoSocial))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.NomeParte = RazaoSocial;
+                        }
+                        if (!string.IsNullOrEmpty(cnpjParte))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cnpjParte;
+                        }
+                    }
+                    else
+                    {
+                        var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
+                        var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+                        ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PF";
+                        if (!string.IsNullOrEmpty(nomeReu))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.NomeParte = nomeReu;
+                        }
+                        if (!string.IsNullOrEmpty(cpfPolo))
+                        {
+                            ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = cpfPolo;
+                        }
+                    }
+                }
+
+
+            }
+
+            ProcessoEntidadeRetornado.PoloPassivo = new();
+            //verificando elementos do polo passivo
+            foreach (var DentroPoloPassivo in ElementosPoloPassivoUNICOS)
+            {
+                if (ProcessoEntidadeRetornado.PoloPassivo == null)
+                {
+                    ProcessoEntidadeRetornado.PoloPassivo = new Polo(); // ou qualquer método de inicialização apropriado
+                }
+                if (DentroPoloPassivo.Contains("(AUTOR)"))
+                {
+                    Console.WriteLine($"Autor é : {DentroPoloPassivo}");
+                    if (DentroPoloPassivo.Contains("CNPJ"))
+                    {
+                        var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
+                        var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+
+                        Console.WriteLine("cnpj do passivo e " + cnpjParte);
+
+                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
+                        ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                        ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                        if (!string.IsNullOrEmpty(RazaoSocial))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                        }
+                        if (!string.IsNullOrEmpty(cnpjParte))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                        }
+                    }
+                    else
+                    {
+                        NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                        ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
+                        if (!string.IsNullOrEmpty(NomePartePolo))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = NomePartePolo;
+                        }
+                        if (!string.IsNullOrEmpty(ParteCpfPolo))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = ParteCpfPolo;
+                        }
+
+                    }
+
+                }
+                else if (DentroPoloPassivo.Contains("(ADVOGADO)"))
+                {
+                    Console.WriteLine($"Adv é : {DentroPoloPassivo}");
+                    var nomeAdvogado = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                    var oabAdvogado = ActionsPJE.ExtrairOABDeDetalhes(DentroPoloPassivo).Trim();
+                    var cpfAdvogado = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+
+
+                    //dados da natali ADV
+                    if ((cpfAdvogado == "152.489.457-55" || oabAdvogado == "RJ253001") && (nomeAdvogado == "NATALI CORDEIRO MARQUES"))
+                    {
+                        ProcessoEntidadeRetornado.ClienteCPF = ParteCpfPolo;
+                        ProcessoEntidadeRetornado.Cliente = NomePartePolo;
+                        ProcessoEntidadeRetornado.Advogada = nomeAdvogado;
+                        ProcessoEntidadeRetornado.AdvogadaOAB = oabAdvogado;
+                        ProcessoEntidadeRetornado.AdvogadaCPF = cpfAdvogado;
+                    }
+
+
+
+
+                    if (!string.IsNullOrEmpty(nomeAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado = nomeAdvogado;
+                    }
+                    if (!string.IsNullOrEmpty(oabAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloPassivo.OAB = oabAdvogado;
+                    }
+                    if (!string.IsNullOrEmpty(cpfAdvogado))
+                    {
+                        ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado = cpfAdvogado;
+                    }
+                }
+                else if (DentroPoloPassivo.Contains("(RÉU)"))
+                {
+                    Console.WriteLine($"Réu é : {DentroPoloPassivo}");
+                    if (DentroPoloPassivo.Contains("CNPJ"))
+                    {
+
+                        var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
+                        var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
+                        ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                        ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                        if (!string.IsNullOrEmpty(RazaoSocial))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                        }
+                        if (!string.IsNullOrEmpty(cnpjParte))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                        }
+                    }
+                    else
+                    {
+                        var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                        var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
+                        if (!string.IsNullOrEmpty(nomeReu))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = nomeReu;
+                        }
+                        if (!string.IsNullOrEmpty(cpfPolo))
+                        {
+                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cpfPolo;
+                        }
+                    }
+                }
+            }
+
+            ProcessoEntidadeRetornado.PartesProcesso = ProcessoEntidadeRetornado.PoloAtivo.NomeParte + " x " + ProcessoEntidadeRetornado.PoloPassivo.NomeParte;
+
+
+
+
+
+
+
+
+
+
+
+
+            //alimentando entidade base
+            ProcessoEntidadeRetornado.DataCadastro = DateTime.Now;
+            ProcessoEntidadeRetornado.CadastradoPor = 5;
+            ProcessoEntidadeRetornado.DataAtualizacao = DateTime.Now;
+            ProcessoEntidadeRetornado.AtualizadoPor = 5;
+
+
+
+            //fazer o UPDATE AQUI dos dados de detalhes.
+
+
+
+            ElementosPoloAtivoUNICOS.Clear();
+            ElementosPoloPassivoUNICOS.Clear();
+
+
+            //ActionsPJE.EncerrarConsole();
+
+            Console.WriteLine("\n\n\n\n");
+
+            foreach (var propriedade in typeof(Processo).GetProperties())
+            {
+                //listando atributos do objeto
+
+                var valor = propriedade.GetValue(ProcessoEntidadeRetornado);
+                Console.WriteLine($"{propriedade.Name}: {valor}");
+
+            }
+
+            //fazer update aqui de tudo que foi obtido, verificar dentro do for se as variaveis estao chegando normalmente
+            //e tal.
+
+
+            Console.WriteLine("\n\n\n\n Listando POLO ATIVO");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.NomeParte}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.TipoParte}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloAtivo.OAB}");
+
+            Console.WriteLine("\n\n\n\n Listando POLO PASSIVO");
+
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.NomeParte}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.TipoParte}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado}");
+            Console.WriteLine($"{ProcessoEntidadeRetornado.PoloPassivo.OAB}");
+            if (string.IsNullOrEmpty(ProcessoEntidadeRetornado.Nome))
+            {
+                ProcessoEntidadeRetornado.Nome = "Sem nome";
+            }
+
+            var LocalizaProcessoComId = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+            //Console.WriteLine(LocalizaProcessoComId.CodPJEC);
+            Cliente ClienteASerFormado = new();
+
+            //if (LocalizaProcessoComId != null)
+            //{
+            //    Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");
+            //    ClienteASerFormado = new()
+            //    {
+            //        EnderecoId = null,
+            //        Nome = ProcessoEntidadeRetornado.Cliente,
+            //        Cpf = ProcessoEntidadeRetornado.ClienteCPF,
+            //        NomeMae = null,
+            //        Rg = null,
+            //        ComprovanteDeResidencia = null,
+            //        Cnh = null,
+            //        ContratoSocialCliente = null,
+            //        Cnpj = null,
+            //        CertificadoReservista = null,
+            //        ProcuracaoRepresentacaoLegal = null,
+            //        PisPasep = null,
+            //        CodClt = null,
+            //        NIS = null,
+            //        Genero = null,
+            //        DataNascimento = null,
+            //        Ocupacao = null,
+            //        Renda = null,
+            //        Escolaridade = null,
+            //        Nacionalidade = null,
+            //        EstadoCivil = null,
+            //        Banco = null,
+            //        AgenciaBancaria = null,
+            //        ContaCorrente = null,
+            //        Telefone = null,
+            //        Contato = null,
+            //        Email = null,
+            //        Tipo = null,
+            //        ReuAutor = null,
+            //        DataCadastro = DateTime.Now,
+            //        CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+            //        DataAtualizacao = DateTime.Now,
+            //        AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+            //    };
+            //}
+
+                ClienteASerFormado = new()
+                {
+                    EnderecoId = null,
+                    Nome = ProcessoEntidadeRetornado.Cliente,
+                    Cpf = ProcessoEntidadeRetornado.ClienteCPF,
+                    NomeMae = null,
+                    Rg = null,
+                    ComprovanteDeResidencia = null,
+                    Cnh = null,
+                    ContratoSocialCliente = null,
+                    Cnpj = null,
+                    CertificadoReservista = null,
+                    ProcuracaoRepresentacaoLegal = null,
+                    PisPasep = null,
+                    CodClt = null,
+                    NIS = null,
+                    Genero = null,
+                    DataNascimento = null,
+                    Ocupacao = null,
+                    Renda = null,
+                    Escolaridade = null,
+                    Nacionalidade = null,
+                    EstadoCivil = null,
+                    Banco = null,
+                    AgenciaBancaria = null,
+                    ContaCorrente = null,
+                    Telefone = null,
+                    Contato = null,
+                    Email = null,
+                    Tipo = null,
+                    ReuAutor = null,
+                    DataCadastro = DateTime.Now,
+                    CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                    DataAtualizacao = DateTime.Now,
+                    AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+                };
+            ConnectDB.InserirCliente(ClienteASerFormado);
+            //inserir cliente antes e botar processoentidaderetornado para receber clienteid
+            //precisa fazer o LERCLIENTE para devolver corretamente o id da chave estrangeira
+            Cliente ClienteDoBanco = ConnectDB.LerCliente(ClienteASerFormado.Cpf);
+            //Console.WriteLine(ClienteDoBanco.Id);
+            SalvarDados.MostraDadosProcesso(ProcessoEntidadeRetornado);
+            Console.WriteLine("parar");
+            //recebe o ID DIRETAMENTE DO BANCO da chave estrangeira da tabela processo em processoatualizacao
+            //ProcessoAtualizado.ProcessoId = testeprocesso.Id;
+
+
+            Polo PoloAtivoDTO = new Polo
+            {
+                ProcessoId = ProcessoEntidadeRetornado.Id,
+                NomeParte = ProcessoEntidadeRetornado.PoloAtivo.NomeParte,
+                CPFCNPJParte = ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte,
+                NomeAdvogado = ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado,
+                CPFAdvogado = ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado,
+                OAB = ProcessoEntidadeRetornado.PoloAtivo.OAB,
+                Nome = ProcessoEntidadeRetornado.Nome,
+                CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                DataCadastro = DateTime.Now,
+                DataAtualizacao = DateTime.Now,
+                AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+            };
+            Polo PoloPassivoDTO = new Polo
+            {
+                ProcessoId = ProcessoEntidadeRetornado.Id,
+                NomeParte = ProcessoEntidadeRetornado.PoloPassivo.NomeParte,
+                CPFCNPJParte = ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte,
+                NomeAdvogado = ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado,
+                CPFAdvogado = ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado,
+                OAB = ProcessoEntidadeRetornado.PoloPassivo.OAB,
+                Nome = ProcessoEntidadeRetornado.Nome,
+                CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                DataCadastro = DateTime.Now,
+                DataAtualizacao = DateTime.Now,
+                AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+            };
+
+            List<Polo> PolosDoProcesso = new();
+            PolosDoProcesso.Add(PoloAtivoDTO);
+            PolosDoProcesso.Add(PoloPassivoDTO);
+            ConnectDB.InserirPolosPartes(PolosDoProcesso);
+
+            Advogado AdvogadoParaInserir = new Advogado()
+            {
+                Nome = ProcessoEntidadeRetornado.Advogada,
+                Cpf = ProcessoEntidadeRetornado.AdvogadaCPF,
+                Oab = ProcessoEntidadeRetornado.AdvogadaOAB,
+                CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor,
+                DataCadastro = DateTime.Now,
+                DataAtualizacao = DateTime.Now
+            };
+
+
+            ConnectDB.InserirAdvogados(AdvogadoParaInserir);
+            var AdvogadoDoBanco = ConnectDB.LerAdvogado(AdvogadoParaInserir.Cpf);
+            if (AdvogadoDoBanco != null)
+            {
+                ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+            }
+
+            ProcessoEntidadeRetornado.ClienteId = ClienteDoBanco.Id;
+            ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+            ConnectDB.AtualizarProcessoInicial(ProcessoEntidadeRetornado);
+            Console.WriteLine($"\n\n\n\n meu clienteid é: {ProcessoEntidadeRetornado.ClienteId} e advogadoid é: {ProcessoEntidadeRetornado.AdvogadoId}");
+
+            //fazer aqui o insert na tabela POLO com esses dados, n esquecer de inserir as chaves estrangeiras
+            //nos locais certos.
+
+
+            Console.WriteLine("Encerrei");
+
+
+            //ActionsPJE.EncerrarConsole();
+
+
+            //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM
+
+            //fecha detalhes
+            LinkDetalhesMovimentacaoProcessual.Click();
+        }
 
     }
 }

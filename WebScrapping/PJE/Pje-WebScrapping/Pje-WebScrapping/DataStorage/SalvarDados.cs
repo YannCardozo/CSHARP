@@ -1208,7 +1208,20 @@ namespace Pje_WebScrapping.DataStorage
 
                 }
             }
+        public static void MostraDadosPolo(List<Polo> Polos)
+        {
+            foreach (var polo in Polos)
+            {
+                foreach (var propriedade in typeof(Polo).GetProperties())
+                {
+                    // listando atributos do objeto
+                    var valor = propriedade.GetValue(polo);
+                    Console.WriteLine("Lendo Lisconsorcio agora:");
+                    Console.WriteLine($"{propriedade.Name}: {valor}");
+                }
+            }
         }
+    }
 
 
 }

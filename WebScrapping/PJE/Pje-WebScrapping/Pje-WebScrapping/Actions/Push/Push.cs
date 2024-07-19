@@ -576,23 +576,42 @@ namespace Pje_WebScrapping.Actions.Push
                 //portanto precisa ser maior que 2 para configurar como lisconsorcio.
                 if (ContadorPartes > 2)
                 {
-                    Console.WriteLine($"Processo {ProcessoEntidadeRetornado.CodPJEC} tem mais de uma pessoa");
+                    Console.WriteLine($"Processo {ProcessoEntidadeRetornado.CodPJEC} tem mais de uma pessoa no Polo ATIVO.");
                 }
 
             }
 
             List<string> ElementosPoloAtivoUNICOS = new List<string>();
 
+
             //Polo Passivo
 
             IWebElement PoloPassivo = driver.FindElement(By.Id("poloPassivo"));
             IList<IWebElement> ElementosPoloPassivo = PoloPassivo.FindElements(By.TagName("span"));
-
             List<string> ElementosPoloPassivoUNICOS = new List<string>();
             IList<IWebElement> LisConsorcioPassivo = new List<IWebElement>();
 
-            //fazendo uma lista de elementos do polo ativo sem DUPLICATAS
+            if (ElementosPoloPassivo.Count > 0)
+            {
+                foreach (var registro in ElementosPoloPassivo)
+                {
+                    if (registro.Text.Contains("AUTOR") || registro.Text.Contains("RÉU"))
+                    {
+                        ContadorPartesPassivo++;
+                        LisConsorcioPassivo.Add(registro);
+                    }
+                }
+                //o span do réu ou autor está dentro de outro spán então ele contabiliza como se fosse 2 span para cada autor ou reu.
+                //portanto precisa ser maior que 2 para configurar como lisconsorcio.
+                if (ContadorPartesPassivo > 2)
+                {
+                    Console.WriteLine($"Processo {ProcessoEntidadeRetornado.CodPJEC} tem mais de uma pessoa no Polo PASSIVO.");
+                }
 
+            }
+
+
+            //fazendo uma lista de elementos do polo ativo sem DUPLICATAS
             foreach (var elemento in ElementosPoloAtivo)
             {
                 if (!ElementosPoloAtivoUNICOS.Contains(elemento.Text) && !ElementosPoloAtivoUNICOS.Equals("Polo ativo"))
@@ -603,11 +622,11 @@ namespace Pje_WebScrapping.Actions.Push
             }
             foreach (var elemento in ElementosPoloPassivo)
             {
-                ContadorPartesPassivo++;
-                if (!ElementosPoloPassivoUNICOS.Contains(elemento.Text))
+                if (!ElementosPoloPassivoUNICOS.Contains(elemento.Text) && !ElementosPoloAtivoUNICOS.Equals("Polo Passivo"))
                 {
                     ElementosPoloPassivoUNICOS.Add(elemento.Text);
-                    LisConsorcioPassivo.Add(elemento);
+                    //LisConsorcioPassivo.Add(elemento);
+                    Console.WriteLine($"sou: " + elemento.Text);
                 }
             }
 
@@ -697,7 +716,7 @@ namespace Pje_WebScrapping.Actions.Push
                 if (DentroPoloAtivo.Contains("(AUTOR)"))
                 {
                     //LISTA de LISCONSORCIO:
-                    if(ContadorPartes > 3)
+                    if(ContadorPartes > 2)
                     {
                         Console.WriteLine($"Lendo LISCONSORCIO:");
 
@@ -916,19 +935,26 @@ namespace Pje_WebScrapping.Actions.Push
                         registro.NomeAdvogado = ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado;
                         registro.OAB = ProcessoEntidadeRetornado.PoloAtivo.OAB;
                         registro.CPFAdvogado = ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado;
+                        registro.DataCadastro = DateTime.Now;
+                        registro.CadastradoPor = 5;
+                        registro.DataAtualizacao = DateTime.Now;
+                        registro.AtualizadoPor = 5;
                     }
+                    Console.WriteLine("teste");
                 }
 
             }
 
-            if(PoloLisConsorcioAtivo != null)
+            if(PoloLisConsorcioAtivo != null && PoloLisConsorcioAtivo.Count > 0)
             {
 
                 SalvarDados.MostraDadosPolo(PoloLisConsorcioAtivo);
                 Console.WriteLine("TESTE");
             }
-            ProcessoEntidadeRetornado.PoloPassivo = new();
+
             //verificando elementos do polo passivo
+            ProcessoEntidadeRetornado.PoloPassivo = new();
+            List<Polo> PoloLisConsorcioPassivo = new();
             foreach (var DentroPoloPassivo in ElementosPoloPassivoUNICOS)
             {
                 if (ProcessoEntidadeRetornado.PoloPassivo == null)
@@ -937,42 +963,99 @@ namespace Pje_WebScrapping.Actions.Push
                 }
                 if (DentroPoloPassivo.Contains("(AUTOR)"))
                 {
-                    Console.WriteLine($"Autor é : {DentroPoloPassivo}");
-                    if (DentroPoloPassivo.Contains("CNPJ"))
+                    //caso tenha mais de um cliente no POLO
+                    if(ContadorPartesPassivo > 2)
                     {
-                        var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
-                        var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
-
-                        Console.WriteLine("cnpj do passivo e " + cnpjParte);
-
-                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
-                        ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
-                        ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
-                        if (!string.IsNullOrEmpty(RazaoSocial))
+                        Console.WriteLine($"Autor é : {DentroPoloPassivo}");
+                        if (DentroPoloPassivo.Contains("CNPJ"))
                         {
-                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
-                        }
-                        if (!string.IsNullOrEmpty(cnpjParte))
-                        {
+                            var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
+                            var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+
+                            Console.WriteLine("cnpj do passivo e " + cnpjParte);
+
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
                             ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            if (!string.IsNullOrEmpty(RazaoSocial))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            }
+                            if (!string.IsNullOrEmpty(cnpjParte))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            }
+                            PoloLisConsorcioPassivo.Add(new Polo
+                            {
+                                ProcessoId = ProcessoEntidadeRetornado.Id,
+                                TipoParte = ProcessoEntidadeRetornado.PoloPassivo.TipoParte,
+                                CPFCNPJParte = cnpjParte,
+                                NomeParte = RazaoSocial,
+                            });
+                        }
+                        else
+                        {
+                            NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                            ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
+                            if (!string.IsNullOrEmpty(NomePartePolo))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = NomePartePolo;
+                            }
+                            if (!string.IsNullOrEmpty(ParteCpfPolo))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = ParteCpfPolo;
+                            }
+
+                            PoloLisConsorcioPassivo.Add(new Polo
+                            {
+                                ProcessoId = ProcessoEntidadeRetornado.Id,
+                                TipoParte = ProcessoEntidadeRetornado.PoloPassivo.TipoParte,
+                                CPFCNPJParte = ParteCpfPolo,
+                                NomeParte = NomePartePolo,
+                            });
+
                         }
                     }
+                    //caso não tenha lisconsorcio procederá para sem lista
                     else
                     {
-                        NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
-                        ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
-                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
-                        if (!string.IsNullOrEmpty(NomePartePolo))
+                        Console.WriteLine($"Autor é : {DentroPoloPassivo}");
+                        if (DentroPoloPassivo.Contains("CNPJ"))
                         {
-                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = NomePartePolo;
-                        }
-                        if (!string.IsNullOrEmpty(ParteCpfPolo))
-                        {
-                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = ParteCpfPolo;
-                        }
+                            var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
+                            var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
 
+                            Console.WriteLine("cnpj do passivo e " + cnpjParte);
+
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
+                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            if (!string.IsNullOrEmpty(RazaoSocial))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            }
+                            if (!string.IsNullOrEmpty(cnpjParte))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            }
+                        }
+                        else
+                        {
+                            NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                            ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
+                            if (!string.IsNullOrEmpty(NomePartePolo))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = NomePartePolo;
+                            }
+                            if (!string.IsNullOrEmpty(ParteCpfPolo))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = ParteCpfPolo;
+                            }
+
+                        }
                     }
-
                 }
                 else if (DentroPoloPassivo.Contains("(ADVOGADO)"))
                 {
@@ -1010,52 +1093,110 @@ namespace Pje_WebScrapping.Actions.Push
                 }
                 else if (DentroPoloPassivo.Contains("(RÉU)"))
                 {
-                    Console.WriteLine($"Réu é : {DentroPoloPassivo}");
-                    if (DentroPoloPassivo.Contains("CNPJ"))
+                    if (ContadorPartesPassivo > 2)
                     {
+                        Console.WriteLine($"Réu é : {DentroPoloPassivo}");
+                        if (DentroPoloPassivo.Contains("CNPJ"))
+                        {
 
-                        var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
-                        var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
-                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
-                        ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
-                        ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
-                        if (!string.IsNullOrEmpty(RazaoSocial))
-                        {
-                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
-                        }
-                        if (!string.IsNullOrEmpty(cnpjParte))
-                        {
+                            var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
+                            var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
                             ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            if (!string.IsNullOrEmpty(RazaoSocial))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            }
+                            if (!string.IsNullOrEmpty(cnpjParte))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            }
+                            PoloLisConsorcioPassivo.Add(new Polo
+                            {
+                                ProcessoId = ProcessoEntidadeRetornado.Id,
+                                TipoParte = ProcessoEntidadeRetornado.PoloPassivo.TipoParte,
+                                CPFCNPJParte = ParteCpfPolo,
+                                NomeParte = NomePartePolo,
+                            });
+                        }
+                        else
+                        {
+                            var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                            var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
+                            if (!string.IsNullOrEmpty(nomeReu))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = nomeReu;
+                            }
+                            if (!string.IsNullOrEmpty(cpfPolo))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cpfPolo;
+                            }
+                            PoloLisConsorcioPassivo.Add(new Polo
+                            {
+                                ProcessoId = ProcessoEntidadeRetornado.Id,
+                                TipoParte = ProcessoEntidadeRetornado.PoloPassivo.TipoParte,
+                                CPFCNPJParte = ParteCpfPolo,
+                                NomeParte = NomePartePolo,
+                            });
                         }
                     }
                     else
                     {
-                        var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
-                        var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
-                        ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
-                        if (!string.IsNullOrEmpty(nomeReu))
+                        Console.WriteLine($"Réu é : {DentroPoloPassivo}");
+                        if (DentroPoloPassivo.Contains("CNPJ"))
                         {
-                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = nomeReu;
+
+                            var cnpjParte = ActionsPJE.ExtrairCNPJDeDetalhes(DentroPoloPassivo).Trim();
+                            var RazaoSocial = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PJ";
+                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            if (!string.IsNullOrEmpty(RazaoSocial))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = RazaoSocial;
+                            }
+                            if (!string.IsNullOrEmpty(cnpjParte))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cnpjParte;
+                            }
                         }
-                        if (!string.IsNullOrEmpty(cpfPolo))
+                        else
                         {
-                            ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cpfPolo;
+                            var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                            var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
+                            if (!string.IsNullOrEmpty(nomeReu))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = nomeReu;
+                            }
+                            if (!string.IsNullOrEmpty(cpfPolo))
+                            {
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cpfPolo;
+                            }
                         }
                     }
+
+                }
+                //alimentando os dados de advogados para os polos
+                if (PoloLisConsorcioPassivo != null && PoloLisConsorcioPassivo.Count > 0)
+                {
+                    foreach (var registro in PoloLisConsorcioPassivo)
+                    {
+                        registro.NomeAdvogado = ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado;
+                        registro.OAB = ProcessoEntidadeRetornado.PoloPassivo.OAB;
+                        registro.CPFAdvogado = ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado;
+                        registro.DataCadastro = DateTime.Now;
+                        registro.CadastradoPor = 5;
+                        registro.DataAtualizacao = DateTime.Now;
+                        registro.AtualizadoPor = 5;
+                    }
+                    Console.WriteLine("teste poloconsorciopassivo");
                 }
             }
 
             ProcessoEntidadeRetornado.PartesProcesso = ProcessoEntidadeRetornado.PoloAtivo.NomeParte + " x " + ProcessoEntidadeRetornado.PoloPassivo.NomeParte;
-
-
-
-
-
-
-
-
-
-
 
 
             //alimentando entidade base
@@ -1112,97 +1253,238 @@ namespace Pje_WebScrapping.Actions.Push
                 ProcessoEntidadeRetornado.Nome = "Sem nome";
             }
 
-            var LocalizaProcessoComId = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
-            //Console.WriteLine(LocalizaProcessoComId.CodPJEC);
+            List<Cliente> ClientesDoLisConsorcio = new();
+            var LocalizaProcessoComId = new Processo();
             Cliente ClienteASerFormado = new();
+            List<Cliente> ListaClienteASerFormadoLisConsorcio = new();
+            Cliente ClienteDoBanco = new();
 
-            Console.WriteLine("\n\nTESTANDO LOCALIZAPROCESSOCOMID:");
-            SalvarDados.MostraDadosProcesso(LocalizaProcessoComId);
-            Console.WriteLine("\n\n");
-            if (LocalizaProcessoComId != null)
+            //LisConsorcioPassivo.Count > 0 && PoloLisConsorcioAtivo.Count > 0
+            if (ContadorPartes > 2 || ContadorPartesPassivo > 2)
             {
-                Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");
-                ClienteASerFormado = new()
+                SalvarDados.MostraDadosPolo(PoloLisConsorcioAtivo);
+                SalvarDados.MostraDadosPolo(PoloLisConsorcioPassivo);
+                //passivo esta vindo VAZIO
+                Console.WriteLine("Fim");
+                SalvarDados.MostraDadosProcesso(ProcessoEntidadeRetornado);
+                Console.WriteLine("Verifica");
+                bool identificacliente = false;
+                LocalizaProcessoComId = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+                foreach (var registroPoloAtivo in PoloLisConsorcioAtivo)
                 {
-                    EnderecoId = null,
-                    Nome = ProcessoEntidadeRetornado.Cliente,
-                    Cpf = ProcessoEntidadeRetornado.ClienteCPF,
-                    NomeMae = null,
-                    Rg = null,
-                    ComprovanteDeResidencia = null,
-                    Cnh = null,
-                    ContratoSocialCliente = null,
-                    Cnpj = null,
-                    CertificadoReservista = null,
-                    ProcuracaoRepresentacaoLegal = null,
-                    PisPasep = null,
-                    CodClt = null,
-                    NIS = null,
-                    Genero = null,
-                    DataNascimento = null,
-                    Ocupacao = null,
-                    Renda = null,
-                    Escolaridade = null,
-                    Nacionalidade = null,
-                    EstadoCivil = null,
-                    Banco = null,
-                    AgenciaBancaria = null,
-                    ContaCorrente = null,
-                    Telefone = null,
-                    Contato = null,
-                    Email = null,
-                    Tipo = null,
-                    ReuAutor = null,
-                    DataCadastro = DateTime.Now,
+                    //PoloLisConsorcioAtivo
+                    registroPoloAtivo.ProcessoId = LocalizaProcessoComId.Id;
+                    if((registroPoloAtivo.CPFAdvogado == "152.489.457-55" || registroPoloAtivo.OAB == "RJ253001") && (registroPoloAtivo.NomeAdvogado == "NATALI CORDEIRO MARQUES"))
+                    {
+                        identificacliente = true;
+                    }
+                    else if(registroPoloAtivo.NomeParte == "NATALI CORDEIRO MARQUES" || registroPoloAtivo.CPFCNPJParte == "152.489.457-55")
+                    {
+                        identificacliente = true;
+                    }
+                }
+                if(identificacliente == true)
+                {
+                    foreach(var PoloAtivoParaCliente in PoloLisConsorcioAtivo)
+                    {
+                        Cliente ClienteASerFormadoLisConsorcio = new()
+                        {
+                            EnderecoId = null,
+                            Nome = PoloAtivoParaCliente.NomeParte,
+                            Cpf = PoloAtivoParaCliente.CPFCNPJParte,
+                            NomeMae = null,
+                            Rg = null,
+                            ComprovanteDeResidencia = null,
+                            Cnh = null,
+                            ContratoSocialCliente = null,
+                            Cnpj = null,
+                            CertificadoReservista = null,
+                            ProcuracaoRepresentacaoLegal = null,
+                            PisPasep = null,
+                            CodClt = null,
+                            NIS = null,
+                            Genero = null,
+                            DataNascimento = null,
+                            Ocupacao = null,
+                            Renda = null,
+                            Escolaridade = null,
+                            Nacionalidade = null,
+                            EstadoCivil = null,
+                            Banco = null,
+                            AgenciaBancaria = null,
+                            ContaCorrente = null,
+                            Telefone = null,
+                            Contato = null,
+                            Email = null,
+                            Tipo = PoloAtivoParaCliente.TipoParte,
+                            ReuAutor = null,
+                            DataCadastro = DateTime.Now,
+                            CadastradoPor = 5,
+                            DataAtualizacao = DateTime.Now,
+                            AtualizadoPor = 5
+                        };
+                        ConnectDB.InserirCliente(ClienteASerFormadoLisConsorcio);
+                    }
+                }
+                identificacliente = false;
+                foreach (var registroPoloPassivo in PoloLisConsorcioPassivo)
+                {
+                    //PoloLisConsorcioPassivo
+                    registroPoloPassivo.ProcessoId = LocalizaProcessoComId.Id;
+                    if ((registroPoloPassivo.CPFAdvogado == "152.489.457-55" || registroPoloPassivo.OAB == "RJ253001") && (registroPoloPassivo.NomeAdvogado == "NATALI CORDEIRO MARQUES"))
+                    {
+                        identificacliente = true;
+                    }
+                    else if (registroPoloPassivo.NomeParte == "NATALI CORDEIRO MARQUES" || registroPoloPassivo.CPFCNPJParte == "152.489.457-55")
+                    {
+                        identificacliente = true;
+                    }
+                }
+
+
+                if (identificacliente == true)
+                {
+                    foreach (var PoloPassivoParaCliente in PoloLisConsorcioPassivo)
+                    {
+                        Cliente ClienteASerFormadoLisConsorcio = new()
+                        {
+                            EnderecoId = null,
+                            Nome = PoloPassivoParaCliente.NomeParte,
+                            Cpf = PoloPassivoParaCliente.CPFCNPJParte,
+                            NomeMae = null,
+                            Rg = null,
+                            ComprovanteDeResidencia = null,
+                            Cnh = null,
+                            ContratoSocialCliente = null,
+                            Cnpj = null,
+                            CertificadoReservista = null,
+                            ProcuracaoRepresentacaoLegal = null,
+                            PisPasep = null,
+                            CodClt = null,
+                            NIS = null,
+                            Genero = null,
+                            DataNascimento = null,
+                            Ocupacao = null,
+                            Renda = null,
+                            Escolaridade = null,
+                            Nacionalidade = null,
+                            EstadoCivil = null,
+                            Banco = null,
+                            AgenciaBancaria = null,
+                            ContaCorrente = null,
+                            Telefone = null,
+                            Contato = null,
+                            Email = null,
+                            Tipo = PoloPassivoParaCliente.TipoParte,
+                            ReuAutor = null,
+                            DataCadastro = DateTime.Now,
+                            CadastradoPor = 5,
+                            DataAtualizacao = DateTime.Now,
+                            AtualizadoPor = 5
+                        };
+                        ConnectDB.InserirCliente(ClienteASerFormadoLisConsorcio);
+                    }
+                }
+                ConnectDB.InserirPolosPartes(PoloLisConsorcioAtivo);
+                ConnectDB.InserirPolosPartes(PoloLisConsorcioPassivo);
+                //como conseguir distinguir se é cliente ou nao cliente
+            }
+            else
+            {
+                LocalizaProcessoComId = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+                //Console.WriteLine(LocalizaProcessoComId.CodPJEC);
+                Console.WriteLine("\n\nTESTANDO LOCALIZAPROCESSOCOMID:");
+                SalvarDados.MostraDadosProcesso(LocalizaProcessoComId);
+                Console.WriteLine("\n\n");
+                if (LocalizaProcessoComId != null)
+                {
+                    Console.WriteLine($"Processo encontrado e meu id é: {LocalizaProcessoComId.CodPJEC} : {LocalizaProcessoComId.Id}");
+                    ClienteASerFormado = new()
+                    {
+                        EnderecoId = null,
+                        Nome = ProcessoEntidadeRetornado.Cliente,
+                        Cpf = ProcessoEntidadeRetornado.ClienteCPF,
+                        NomeMae = null,
+                        Rg = null,
+                        ComprovanteDeResidencia = null,
+                        Cnh = null,
+                        ContratoSocialCliente = null,
+                        Cnpj = null,
+                        CertificadoReservista = null,
+                        ProcuracaoRepresentacaoLegal = null,
+                        PisPasep = null,
+                        CodClt = null,
+                        NIS = null,
+                        Genero = null,
+                        DataNascimento = null,
+                        Ocupacao = null,
+                        Renda = null,
+                        Escolaridade = null,
+                        Nacionalidade = null,
+                        EstadoCivil = null,
+                        Banco = null,
+                        AgenciaBancaria = null,
+                        ContaCorrente = null,
+                        Telefone = null,
+                        Contato = null,
+                        Email = null,
+                        Tipo = null,
+                        ReuAutor = null,
+                        DataCadastro = DateTime.Now,
+                        CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                        DataAtualizacao = DateTime.Now,
+                        AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+                    };
+                }
+                ConnectDB.InserirCliente(ClienteASerFormado);
+                //inserir cliente antes e botar processoentidaderetornado para receber clienteid
+                //precisa fazer o LERCLIENTE para devolver corretamente o id da chave estrangeira
+                ClienteDoBanco = ConnectDB.LerCliente(ClienteASerFormado.Cpf);
+                //Console.WriteLine(ClienteDoBanco.Id);
+                SalvarDados.MostraDadosProcesso(ProcessoEntidadeRetornado);
+                Console.WriteLine("parar");
+            }
+
+
+            //caso não seja lisconsorcio o Polo será assim:
+            if(ContadorPartes < 3 && ContadorPartesPassivo < 3)
+            {
+                Polo PoloAtivoDTO = new Polo
+                {
+                    ProcessoId = LocalizaProcessoComId.Id,
+                    NomeParte = ProcessoEntidadeRetornado.PoloAtivo.NomeParte,
+                    CPFCNPJParte = ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte,
+                    NomeAdvogado = ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado,
+                    CPFAdvogado = ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado,
+                    OAB = ProcessoEntidadeRetornado.PoloAtivo.OAB,
+                    Nome = ProcessoEntidadeRetornado.Nome,
                     CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                    DataCadastro = DateTime.Now,
                     DataAtualizacao = DateTime.Now,
                     AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
                 };
+                Polo PoloPassivoDTO = new Polo
+                {
+                    ProcessoId = LocalizaProcessoComId.Id,
+                    NomeParte = ProcessoEntidadeRetornado.PoloPassivo.NomeParte,
+                    CPFCNPJParte = ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte,
+                    NomeAdvogado = ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado,
+                    CPFAdvogado = ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado,
+                    OAB = ProcessoEntidadeRetornado.PoloPassivo.OAB,
+                    Nome = ProcessoEntidadeRetornado.Nome,
+                    CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                    DataCadastro = DateTime.Now,
+                    DataAtualizacao = DateTime.Now,
+                    AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
+                };
+                List<Polo> PolosDoProcesso = new();
+                PolosDoProcesso.Add(PoloAtivoDTO);
+                PolosDoProcesso.Add(PoloPassivoDTO);
+                ConnectDB.InserirPolosPartes(PolosDoProcesso);
             }
-            ConnectDB.InserirCliente(ClienteASerFormado);
-            //inserir cliente antes e botar processoentidaderetornado para receber clienteid
-            //precisa fazer o LERCLIENTE para devolver corretamente o id da chave estrangeira
-            Cliente ClienteDoBanco = ConnectDB.LerCliente(ClienteASerFormado.Cpf);
-            //Console.WriteLine(ClienteDoBanco.Id);
-            SalvarDados.MostraDadosProcesso(ProcessoEntidadeRetornado);
-            Console.WriteLine("parar");
-            //recebe o ID DIRETAMENTE DO BANCO da chave estrangeira da tabela processo em processoatualizacao
-            //ProcessoAtualizado.ProcessoId = testeprocesso.Id;
 
 
-            Polo PoloAtivoDTO = new Polo
-            {
-                ProcessoId = LocalizaProcessoComId.Id,
-                NomeParte = ProcessoEntidadeRetornado.PoloAtivo.NomeParte,
-                CPFCNPJParte = ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte,
-                NomeAdvogado = ProcessoEntidadeRetornado.PoloAtivo.NomeAdvogado,
-                CPFAdvogado = ProcessoEntidadeRetornado.PoloAtivo.CPFAdvogado,
-                OAB = ProcessoEntidadeRetornado.PoloAtivo.OAB,
-                Nome = ProcessoEntidadeRetornado.Nome,
-                CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
-                DataCadastro = DateTime.Now,
-                DataAtualizacao = DateTime.Now,
-                AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
-            };
-            Polo PoloPassivoDTO = new Polo
-            {
-                ProcessoId = LocalizaProcessoComId.Id,
-                NomeParte = ProcessoEntidadeRetornado.PoloPassivo.NomeParte,
-                CPFCNPJParte = ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte,
-                NomeAdvogado = ProcessoEntidadeRetornado.PoloPassivo.NomeAdvogado,
-                CPFAdvogado = ProcessoEntidadeRetornado.PoloPassivo.CPFAdvogado,
-                OAB = ProcessoEntidadeRetornado.PoloPassivo.OAB,
-                Nome = ProcessoEntidadeRetornado.Nome,
-                CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
-                DataCadastro = DateTime.Now,
-                DataAtualizacao = DateTime.Now,
-                AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
-            };
 
-            List<Polo> PolosDoProcesso = new();
-            PolosDoProcesso.Add(PoloAtivoDTO);
-            PolosDoProcesso.Add(PoloPassivoDTO);
-            ConnectDB.InserirPolosPartes(PolosDoProcesso);
 
             Advogado AdvogadoParaInserir = new Advogado()
             {

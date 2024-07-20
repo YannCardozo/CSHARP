@@ -543,6 +543,7 @@ namespace Pje_WebScrapping.Actions.Push
             {
             int ContadorPartes = 0;
             int ContadorPartesPassivo = 0;
+            var CodigoProcessoLisConsorcio = ProcessoEntidadeRetornado.CodPJEC;
             
             IWebElement LinkDetalhesMovimentacaoProcessual = driver.FindElement(By.ClassName("titulo-topo"));
 
@@ -1391,7 +1392,7 @@ namespace Pje_WebScrapping.Actions.Push
             }
             else
             {
-                LocalizaProcessoComId = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
+                LocalizaProcessoComId = ConnectDB.LerProcesso(CodigoProcessoLisConsorcio);
                 //Console.WriteLine(LocalizaProcessoComId.CodPJEC);
                 Console.WriteLine("\n\nTESTANDO LOCALIZAPROCESSOCOMID:");
                 SalvarDados.MostraDadosProcesso(LocalizaProcessoComId);
@@ -1486,27 +1487,81 @@ namespace Pje_WebScrapping.Actions.Push
 
 
 
-            Advogado AdvogadoParaInserir = new Advogado()
-            {
-                Nome = ProcessoEntidadeRetornado.Advogada,
-                Cpf = ProcessoEntidadeRetornado.AdvogadaCPF,
-                Oab = ProcessoEntidadeRetornado.AdvogadaOAB,
-                CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
-                AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor,
-                DataCadastro = DateTime.Now,
-                DataAtualizacao = DateTime.Now
-            };
 
 
-            ConnectDB.InserirAdvogados(AdvogadoParaInserir);
-            var AdvogadoDoBanco = ConnectDB.LerAdvogado(AdvogadoParaInserir.Cpf);
-            if (AdvogadoDoBanco != null)
+            //
+            //não é lisconsorcio
+            if(ContadorPartes < 2 || ContadorPartesPassivo < 2)
             {
+                Advogado AdvogadoParaInserir = new Advogado()
+                {
+                    Nome = ProcessoEntidadeRetornado.Advogada,
+                    Cpf = ProcessoEntidadeRetornado.AdvogadaCPF,
+                    Oab = ProcessoEntidadeRetornado.AdvogadaOAB,
+                    CadastradoPor = ProcessoEntidadeRetornado.CadastradoPor,
+                    AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor,
+                    DataCadastro = DateTime.Now,
+                    DataAtualizacao = DateTime.Now
+                };
+                ConnectDB.InserirAdvogados(AdvogadoParaInserir);
+                var AdvogadoDoBanco = ConnectDB.LerAdvogado(AdvogadoParaInserir.Cpf);
+                if (AdvogadoDoBanco != null)
+                {
+                    ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+                }
+                //ProcessoEntidadeRetornado.ClienteId = ClienteDoBanco.Id;
                 ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
             }
+            else if(ContadorPartes > 3 || ContadorPartesPassivo > 3)
+            {
+                foreach (var registroPoloPassivo in PoloLisConsorcioPassivo)
+                {
+                    Advogado AdvogadoParaInserir = new Advogado()
+                    {
+                        Nome = registroPoloPassivo.NomeAdvogado,
+                        Cpf = registroPoloPassivo.CPFAdvogado,
+                        Oab = registroPoloPassivo.OAB,
+                        CadastradoPor = registroPoloPassivo.CadastradoPor,
+                        AtualizadoPor = registroPoloPassivo.AtualizadoPor,
+                        DataCadastro = DateTime.Now,
+                        DataAtualizacao = DateTime.Now
+                    };
+                    ConnectDB.InserirAdvogados(AdvogadoParaInserir);
+                    var AdvogadoDoBanco = ConnectDB.LerAdvogado(AdvogadoParaInserir.Cpf);
+                    if (AdvogadoDoBanco != null)
+                    {
+                        ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+                    }
+                    //ProcessoEntidadeRetornado.ClienteId = ClienteDoBanco.Id;
+                    ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
 
-            ProcessoEntidadeRetornado.ClienteId = ClienteDoBanco.Id;
-            ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+                }
+
+
+                foreach (var PoloAtivoParaCliente in PoloLisConsorcioAtivo)
+                {
+                    Advogado AdvogadoParaInserir = new Advogado()
+                    {
+                        Nome = PoloAtivoParaCliente.NomeAdvogado,
+                        Cpf = PoloAtivoParaCliente.CPFAdvogado,
+                        Oab = PoloAtivoParaCliente.OAB,
+                        CadastradoPor = PoloAtivoParaCliente.CadastradoPor,
+                        AtualizadoPor = PoloAtivoParaCliente.AtualizadoPor,
+                        DataCadastro = DateTime.Now,
+                        DataAtualizacao = DateTime.Now
+                    };
+                    ConnectDB.InserirAdvogados(AdvogadoParaInserir);
+                    var AdvogadoDoBanco = ConnectDB.LerAdvogado(AdvogadoParaInserir.Cpf);
+                    if (AdvogadoDoBanco != null)
+                    {
+                        ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+                    }
+                    ProcessoEntidadeRetornado.ClienteId = ClienteDoBanco.Id;
+                    ProcessoEntidadeRetornado.AdvogadoId = AdvogadoDoBanco.Id;
+                }
+            }
+
+
             ConnectDB.AtualizarProcessoInicial(ProcessoEntidadeRetornado);
             Console.WriteLine($"\n\n\n\n meu clienteid é: {ProcessoEntidadeRetornado.ClienteId} e advogadoid é: {ProcessoEntidadeRetornado.AdvogadoId}");
 
@@ -1527,6 +1582,8 @@ namespace Pje_WebScrapping.Actions.Push
             //SALVAR MOVIMENTAÇÃO PROCESSUAL AQUI E PROCESSO TAMBÉM
 
             //fecha detalhes
+            PoloLisConsorcioAtivo.Clear();
+            PoloLisConsorcioPassivo.Clear();
             LinkDetalhesMovimentacaoProcessual.Click();
         }
 

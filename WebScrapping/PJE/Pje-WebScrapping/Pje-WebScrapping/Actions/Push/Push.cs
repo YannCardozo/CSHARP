@@ -552,6 +552,40 @@ namespace Pje_WebScrapping.Actions.Push
             ActionsPJE.AguardarPje("Baixo");
             IWebElement Detalhes = driver.FindElement(By.Id("maisDetalhes"));
 
+            //Polo "Outros interessados" caso de processo sigilo JUSTIÇA
+
+            IWebElement? OutrosInteressadosSIGILOJUS = null;
+            List<string> ListaOutrosInteressadosUnicos = new List<string>();
+            try
+            {
+                OutrosInteressadosSIGILOJUS = driver.FindElement(By.Id("outrosInteressados"));
+            }
+            catch (NoSuchElementException)
+            {
+                Console.WriteLine("Sem segredo de justiça I.");
+            }
+            if (OutrosInteressadosSIGILOJUS != null)
+            {
+                IList<IWebElement> ListaOutrosInteressados = OutrosInteressadosSIGILOJUS.FindElements(By.TagName("span"));
+                if (ListaOutrosInteressados.Count > 0)
+                {
+                    foreach(var elemento in ListaOutrosInteressados)
+                    {
+                        if(!ListaOutrosInteressadosUnicos.Contains(elemento.Text))
+                        {
+                            ListaOutrosInteressadosUnicos.Add(elemento.Text);
+                        }
+                        
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Sem segredo de justiça II.");
+            }
+
+
+
             //POLO ATIVO
 
             IWebElement PoloAtivo = driver.FindElement(By.Id("poloAtivo"));
@@ -788,17 +822,27 @@ namespace Pje_WebScrapping.Actions.Push
                         }
                         else
                         {
-                            NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
-                            ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
-                            ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PF";
-                            if (!string.IsNullOrEmpty(NomePartePolo))
+                            //Caso seja segredo de justiça preencher com esses dados
+                            if(ListaOutrosInteressadosUnicos.Count > 0)
                             {
-                                ProcessoEntidadeRetornado.PoloAtivo.NomeParte = NomePartePolo;
+                                ProcessoEntidadeRetornado.PoloAtivo.NomeParte = "Segredo de Justiça";
+                                ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = $"Verificar:{ProcessoEntidadeRetornado.CodPJEC}";
                             }
-                            if (!string.IsNullOrEmpty(ParteCpfPolo))
+                            else
                             {
-                                ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = ParteCpfPolo;
-                            }
+                                NomePartePolo = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloAtivo).Trim();
+
+                                ParteCpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloAtivo).Trim();
+                                ProcessoEntidadeRetornado.PoloAtivo.TipoParte = "PF";
+                                if (!string.IsNullOrEmpty(NomePartePolo))
+                                {
+                                    ProcessoEntidadeRetornado.PoloAtivo.NomeParte = NomePartePolo;
+                                }
+                                if (!string.IsNullOrEmpty(ParteCpfPolo))
+                                {
+                                    ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = ParteCpfPolo;
+                                }
+                            }                            
                         }
                     }
 
@@ -1165,17 +1209,28 @@ namespace Pje_WebScrapping.Actions.Push
                         }
                         else
                         {
-                            var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
-                            var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
-                            ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
-                            if (!string.IsNullOrEmpty(nomeReu))
+
+                            //Caso seja segredo de justiça preencher com esses dados
+                            if (ListaOutrosInteressadosUnicos.Count > 0)
                             {
-                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = nomeReu;
+                                ProcessoEntidadeRetornado.PoloPassivo.NomeParte = "Segredo de Justiça";
+                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = $"Verificar:{ProcessoEntidadeRetornado.CodPJEC}";
                             }
-                            if (!string.IsNullOrEmpty(cpfPolo))
+                            else
                             {
-                                ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cpfPolo;
+                                var cpfPolo = ActionsPJE.ExtrairCPFDeDetalhes(DentroPoloPassivo).Trim();
+                                var nomeReu = ActionsPJE.ExtrairNomeDeDetalhes(DentroPoloPassivo).Trim();
+                                ProcessoEntidadeRetornado.PoloPassivo.TipoParte = "PF";
+                                if (!string.IsNullOrEmpty(nomeReu))
+                                {
+                                    ProcessoEntidadeRetornado.PoloPassivo.NomeParte = nomeReu;
+                                }
+                                if (!string.IsNullOrEmpty(cpfPolo))
+                                {
+                                    ProcessoEntidadeRetornado.PoloPassivo.CPFCNPJParte = cpfPolo;
+                                }
                             }
+
                         }
                     }
 
@@ -1325,6 +1380,7 @@ namespace Pje_WebScrapping.Actions.Push
                             AtualizadoPor = 5
                         };
                         ConnectDB.InserirCliente(ClienteASerFormadoLisConsorcio);
+                        ListaClienteASerFormadoLisConsorcio.Add(ClienteASerFormadoLisConsorcio);
                     }
                 }
                 identificacliente = false;
@@ -1384,6 +1440,7 @@ namespace Pje_WebScrapping.Actions.Push
                             AtualizadoPor = 5
                         };
                         ConnectDB.InserirCliente(ClienteASerFormadoLisConsorcio);
+                        ListaClienteASerFormadoLisConsorcio.Add(ClienteASerFormadoLisConsorcio);
                     }
                 }
                 ConnectDB.InserirPolosPartes(PoloLisConsorcioAtivo);
@@ -1442,13 +1499,14 @@ namespace Pje_WebScrapping.Actions.Push
                 //precisa fazer o LERCLIENTE para devolver corretamente o id da chave estrangeira
                 ClienteDoBanco = ConnectDB.LerCliente(ClienteASerFormado.Cpf);
                 //Console.WriteLine(ClienteDoBanco.Id);
+                ListaClienteASerFormadoLisConsorcio.Add(ClienteASerFormado);
                 SalvarDados.MostraDadosProcesso(ProcessoEntidadeRetornado);
                 Console.WriteLine("parar");
             }
 
 
             //caso não seja lisconsorcio o Polo será assim:
-            if(ContadorPartes < 3 && ContadorPartesPassivo < 3)
+            if (ContadorPartes < 3 && ContadorPartesPassivo < 3)
             {
                 Polo PoloAtivoDTO = new Polo
                 {
@@ -1483,6 +1541,49 @@ namespace Pje_WebScrapping.Actions.Push
                 PolosDoProcesso.Add(PoloPassivoDTO);
                 ConnectDB.InserirPolosPartes(PolosDoProcesso);
             }
+            //caso seja lisconsorcio:
+            else
+            {
+                List<Polo> PolosDoProcessoLisConsorcio = new();
+                foreach (var PoloAtivoParaCliente in PoloLisConsorcioAtivo)
+                {
+                    Polo PoloAtivoDTO = new Polo
+                    {
+                        ProcessoId = LocalizaProcessoComId.Id,
+                        NomeParte = PoloAtivoParaCliente.NomeParte,
+                        CPFCNPJParte = PoloAtivoParaCliente.CPFCNPJParte,
+                        NomeAdvogado = PoloAtivoParaCliente.NomeAdvogado,
+                        CPFAdvogado = PoloAtivoParaCliente.CPFAdvogado,
+                        OAB = PoloAtivoParaCliente.OAB,
+                        Nome = PoloAtivoParaCliente.NomeParte,
+                        CadastradoPor = PoloAtivoParaCliente.CadastradoPor,
+                        DataCadastro = DateTime.Now,
+                        DataAtualizacao = DateTime.Now,
+                        AtualizadoPor = PoloAtivoParaCliente.AtualizadoPor
+                    };
+                    PolosDoProcessoLisConsorcio.Add(PoloAtivoDTO);
+                }
+                foreach (var PoloPassivoParaCliente in PoloLisConsorcioPassivo)
+                {
+                    Polo PoloPassivoDTO = new Polo
+                    {
+                        ProcessoId = LocalizaProcessoComId.Id,
+                        NomeParte = PoloPassivoParaCliente.NomeParte,
+                        CPFCNPJParte = PoloPassivoParaCliente.CPFCNPJParte,
+                        NomeAdvogado = PoloPassivoParaCliente.NomeAdvogado,
+                        CPFAdvogado = PoloPassivoParaCliente.CPFAdvogado,
+                        OAB = PoloPassivoParaCliente.OAB,
+                        Nome = PoloPassivoParaCliente.NomeParte,
+                        CadastradoPor = PoloPassivoParaCliente.CadastradoPor,
+                        DataCadastro = DateTime.Now,
+                        DataAtualizacao = DateTime.Now,
+                        AtualizadoPor = PoloPassivoParaCliente.AtualizadoPor
+                    };
+                    PolosDoProcessoLisConsorcio.Add(PoloPassivoDTO);
+                }
+                ConnectDB.InserirPolosPartes(PolosDoProcessoLisConsorcio);
+                Console.WriteLine("Terminei de preencher os polos do lisconsorcio.");
+            }
 
 
 
@@ -1490,7 +1591,7 @@ namespace Pje_WebScrapping.Actions.Push
 
 
             //
-            //não é lisconsorcio
+            //não é lisconsorcio ADVOGADO
             if(ContadorPartes < 2 || ContadorPartesPassivo < 2)
             {
                 Advogado AdvogadoParaInserir = new Advogado()
@@ -1563,14 +1664,23 @@ namespace Pje_WebScrapping.Actions.Push
 
 
             ConnectDB.AtualizarProcessoInicial(ProcessoEntidadeRetornado);
-            Console.WriteLine($"\n\n\n\n meu clienteid é: {ProcessoEntidadeRetornado.ClienteId} e advogadoid é: {ProcessoEntidadeRetornado.AdvogadoId}");
-
-
+            Console.WriteLine($"\n\n\n\n meu clienteid é: {ProcessoEntidadeRetornado.ClienteId} e advogadoid é: {ProcessoEntidadeRetornado.AdvogadoId}");            
             //aqui iniciaremos o relacionamento de cliente para processos
             //fazer aqui o relacionamento na tabela ClientePROCESSO, fazer webscrapping em caso de mais de um cliente antes.
 
-
-
+            if(ListaClienteASerFormadoLisConsorcio != null && ListaClienteASerFormadoLisConsorcio.Count > 0)
+            {
+                foreach (var registro in ListaClienteASerFormadoLisConsorcio)
+                {
+                    var ClienteAbuscarId = ConnectDB.LerCliente(registro.Cpf);
+                    ClienteProcesso ClienteProcessoASerInserido = new()
+                    {
+                        ClientesId = ClienteAbuscarId.Id,
+                        ProcessosId = ProcessoEntidadeRetornado.Id
+                    };
+                    ConnectDB.InserirClienteProcesso(ClienteProcessoASerInserido);
+                }
+            }
 
 
             Console.WriteLine("Encerrei");
@@ -1584,6 +1694,7 @@ namespace Pje_WebScrapping.Actions.Push
             //fecha detalhes
             PoloLisConsorcioAtivo.Clear();
             PoloLisConsorcioPassivo.Clear();
+            ListaClienteASerFormadoLisConsorcio.Clear();
             LinkDetalhesMovimentacaoProcessual.Click();
         }
 

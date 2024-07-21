@@ -1351,7 +1351,37 @@ namespace Pje_WebScrapping.DataStorage
         }
 
 
+        public static void InserirClienteProcesso(ClienteProcesso clienteProcessos)
+        {
+            string connectionString = ConnectDB.EstabelecerConexao();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string QueryInserirCliente = @"
+                INSERT INTO clienteprocesso (ClientesId, ProcessosId) 
+                VALUES (@ClientesId, @ProcessosId)";
 
+                using (SqlCommand ComandoInserirCliente = new SqlCommand(QueryInserirCliente, connection))
+                {
+                    ComandoInserirCliente.Parameters.AddWithValue("@ClientesId", clienteProcessos.ClientesId);
+                    ComandoInserirCliente.Parameters.AddWithValue("@ProcessosId", clienteProcessos.ProcessosId);
+
+                    try
+                    {
+                        connection.Open();
+                        ComandoInserirCliente.ExecuteNonQuery();
+                        Console.WriteLine($"ClienteProcesso processo id: {clienteProcessos.ProcessosId} cliente id: {clienteProcessos.ClientesId} inserido com sucesso.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao inserir ClienteProcesso: {ex.Message} >>> processo id: {clienteProcessos.ProcessosId} cliente id: {clienteProcessos.ClientesId}");
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+        }
 
 
 

@@ -1673,15 +1673,22 @@ namespace Pje_WebScrapping.Actions.Push
                 foreach (var registro in ListaClienteASerFormadoLisConsorcio)
                 {
                     var ClienteAbuscarId = ConnectDB.LerCliente(registro.Cpf);
+                    var ProcessoABuscarID = ConnectDB.LerProcesso(ProcessoEntidadeRetornado.CodPJEC);
                     ClienteProcesso ClienteProcessoASerInserido = new()
                     {
                         ClientesId = ClienteAbuscarId.Id,
-                        ProcessosId = ProcessoEntidadeRetornado.Id
+                        ProcessosId = ProcessoABuscarID.Id
                     };
                     ConnectDB.InserirClienteProcesso(ClienteProcessoASerInserido);
                 }
             }
-
+            //var ClienteAbuscarId = ConnectDB.LerCliente(registro.Cpf);
+            //ClienteProcesso ClienteProcessoASerInserido = new()
+            //{
+            //    ClientesId = ClienteAbuscarId.Id,
+            //    ProcessosId = ProcessoEntidadeRetornado.Id
+            //};
+            //ConnectDB.InserirClienteProcesso(ClienteProcessoASerInserido);
 
             Console.WriteLine("Encerrei");
 

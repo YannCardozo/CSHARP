@@ -825,8 +825,10 @@ namespace Pje_WebScrapping.Actions.Push
                             //Caso seja segredo de justiça preencher com esses dados
                             if(ListaOutrosInteressadosUnicos.Count > 0)
                             {
-                                ProcessoEntidadeRetornado.PoloAtivo.NomeParte = "Segredo de Justiça";
-                                ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = $"Verificar:{ProcessoEntidadeRetornado.CodPJEC}";
+                                //ProcessoEntidadeRetornado.PoloAtivo.NomeParte = "Segredo de Justiça";
+                                //ProcessoEntidadeRetornado.PoloAtivo.CPFCNPJParte = $"Verificar:{ProcessoEntidadeRetornado.CodPJEC}";
+                                SalvarDados.MostraDadosProcesso(ProcessoEntidadeRetornado);
+                                Console.WriteLine("teste");
                             }
                             else
                             {
@@ -1592,7 +1594,7 @@ namespace Pje_WebScrapping.Actions.Push
 
             //
             //não é lisconsorcio ADVOGADO
-            if(ContadorPartes < 2 || ContadorPartesPassivo < 2)
+            if(ContadorPartes <= 2 || ContadorPartesPassivo <= 2)
             {
                 Advogado AdvogadoParaInserir = new Advogado()
                 {
@@ -1682,13 +1684,6 @@ namespace Pje_WebScrapping.Actions.Push
                     ConnectDB.InserirClienteProcesso(ClienteProcessoASerInserido);
                 }
             }
-            //var ClienteAbuscarId = ConnectDB.LerCliente(registro.Cpf);
-            //ClienteProcesso ClienteProcessoASerInserido = new()
-            //{
-            //    ClientesId = ClienteAbuscarId.Id,
-            //    ProcessosId = ProcessoEntidadeRetornado.Id
-            //};
-            //ConnectDB.InserirClienteProcesso(ClienteProcessoASerInserido);
 
             Console.WriteLine("Encerrei");
 

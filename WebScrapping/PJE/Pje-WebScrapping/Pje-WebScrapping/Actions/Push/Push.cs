@@ -1381,6 +1381,12 @@ namespace Pje_WebScrapping.Actions.Push
                             DataAtualizacao = DateTime.Now,
                             AtualizadoPor = 5
                         };
+                        string SegredoJus = "";
+                        if (ProcessoEntidadeRetornado.SegredoJustica == "SIM")
+                        {
+                            ClienteASerFormadoLisConsorcio.Nome = "Verificar processo: " + CodigoProcessoLisConsorcio;
+                            ClienteASerFormadoLisConsorcio.Cpf  = "Verificar processo: " + CodigoProcessoLisConsorcio;
+                        }
                         ConnectDB.InserirCliente(ClienteASerFormadoLisConsorcio);
                         ListaClienteASerFormadoLisConsorcio.Add(ClienteASerFormadoLisConsorcio);
                     }
@@ -1441,6 +1447,12 @@ namespace Pje_WebScrapping.Actions.Push
                             DataAtualizacao = DateTime.Now,
                             AtualizadoPor = 5
                         };
+                        string SegredoJus = "";
+                        if (ProcessoEntidadeRetornado.SegredoJustica == "SIM")
+                        {
+                            ClienteASerFormadoLisConsorcio.Nome = "Verificar processo: " + CodigoProcessoLisConsorcio;
+                            ClienteASerFormadoLisConsorcio.Cpf = "Verificar processo: " + CodigoProcessoLisConsorcio;
+                        }
                         ConnectDB.InserirCliente(ClienteASerFormadoLisConsorcio);
                         ListaClienteASerFormadoLisConsorcio.Add(ClienteASerFormadoLisConsorcio);
                     }
@@ -1495,6 +1507,12 @@ namespace Pje_WebScrapping.Actions.Push
                         DataAtualizacao = DateTime.Now,
                         AtualizadoPor = ProcessoEntidadeRetornado.AtualizadoPor
                     };
+                }
+                string SegredoJus = "";
+                if (ProcessoEntidadeRetornado.SegredoJustica == "SIM")
+                {
+                    ClienteASerFormado.Nome = "Verificar processo: " + CodigoProcessoLisConsorcio;
+                    ClienteASerFormado.Cpf = "Verificar processo: " + CodigoProcessoLisConsorcio;
                 }
                 ConnectDB.InserirCliente(ClienteASerFormado);
                 //inserir cliente antes e botar processoentidaderetornado para receber clienteid
@@ -1594,7 +1612,7 @@ namespace Pje_WebScrapping.Actions.Push
 
             //
             //não é lisconsorcio ADVOGADO
-            if(ContadorPartes <= 2 || ContadorPartesPassivo <= 2)
+            if(ContadorPartes <= 2 || ContadorPartesPassivo < 2)
             {
                 Advogado AdvogadoParaInserir = new Advogado()
                 {

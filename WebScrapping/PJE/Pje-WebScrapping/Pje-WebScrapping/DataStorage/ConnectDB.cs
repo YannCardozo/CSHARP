@@ -566,7 +566,6 @@ namespace Pje_WebScrapping.DataStorage
                         Nome = @Nome,
                         CodPJEC = @CodPJEC,
                         AdvogadoId = @AdvogadoId,
-                        ClienteId = @ClienteId,
                         ObsProcesso = @ObsProcesso,
                         DataFim = @DataFim,
                         MeioDeComunicacao = @MeioDeComunicacao,
@@ -602,7 +601,6 @@ namespace Pje_WebScrapping.DataStorage
                             // Adicionando os parâmetros de forma segura para evitar SQL Injection
                             ComandoAoBanco.Parameters.AddWithValue("@Nome", (object)ProcessoInicial.Nome ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@AdvogadoId", (object)ProcessoInicial.AdvogadoId ?? DBNull.Value);
-                            ComandoAoBanco.Parameters.AddWithValue("@ClienteId", (object)ProcessoInicial.ClienteId ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@ObsProcesso", (object)ProcessoInicial.ObsProcesso ?? DBNull.Value);
                             ComandoAoBanco.Parameters.AddWithValue("@CodPJEC", (object)ProcessoInicial.CodPJEC ?? DBNull.Value);
 
@@ -1357,7 +1355,7 @@ namespace Pje_WebScrapping.DataStorage
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string QueryInserirCliente = @"
-                INSERT INTO clienteprocesso (ClientesId, ProcessosId) 
+                INSERT INTO clienteprocessos (ClienteId, ProcessoId) 
                 VALUES (@ClientesId, @ProcessosId)";
 
                 using (SqlCommand ComandoInserirCliente = new SqlCommand(QueryInserirCliente, connection))

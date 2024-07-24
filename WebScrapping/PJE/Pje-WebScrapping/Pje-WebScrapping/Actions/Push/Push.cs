@@ -733,7 +733,7 @@ namespace Pje_WebScrapping.Actions.Push
 
 
                 // Imprime o resultado
-                //Console.WriteLine($"{dtText}: {ddText}");
+                Console.WriteLine($"{dtText}: {ddText}");
             }
 
 
